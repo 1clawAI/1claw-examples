@@ -1,0 +1,17 @@
+{
+  "name": "1claw-basic-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "npx tsx src/index.ts",
+    "signup": "npx tsx src/signup-and-share.ts"
+  },
+  "dependencies": {
+    "@1claw/sdk": "file:../../packages/sdk"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

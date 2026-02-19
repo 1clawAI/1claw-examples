@@ -6,6 +6,7 @@ Example applications demonstrating the [1Claw](https://1claw.xyz) SDK and API.
 
 | Example | Description |
 |---------|-------------|
+| [basic](./basic/) | Simple TypeScript scripts: vault CRUD, secrets, billing, signup, and email-based sharing |
 | [nextjs-agent-secret](./nextjs-agent-secret/) | AI agent (Claude + Vercel AI SDK) accesses vault secrets with human approval gates |
 
 ## About 1Claw
