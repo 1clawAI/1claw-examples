@@ -13,6 +13,6 @@ Example applications demonstrating the [1Claw](https://1claw.xyz) SDK and API.
 
 1Claw is an HSM-backed secrets manager for AI agents and humans. It provides encrypted vaults, granular access policies, human-in-the-loop approvals, and x402 micropayments for API access.
 
-- **SDK**: [@1claw/sdk](https://github.com/kmjones1979/1claw-sdk)
+- **SDK**: [@1claw/sdk](https://github.com/1clawAI/1claw-sdk)
 - **Docs**: [docs.1claw.xyz](https://docs.1claw.xyz)
 - **Dashboard**: [1claw.xyz](https://1claw.xyz)
