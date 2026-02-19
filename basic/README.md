@@ -4,10 +4,10 @@ Simple TypeScript examples demonstrating the core `@1claw/sdk` workflows.
 
 ## Examples
 
-| Script | Description |
-|--------|-------------|
-| `src/index.ts` | Create vault, store/retrieve/list secrets, check billing, clean up |
-| `src/signup-and-share.ts` | Sign up via API, create a secret, share it by email |
+| Script                    | Description                                                        |
+| ------------------------- | ------------------------------------------------------------------ |
+| `src/index.ts`            | Create vault, store/retrieve/list secrets, check billing, clean up |
+| `src/signup-and-share.ts` | Sign up via API, create a secret, share it by email                |
 
 ## Setup
 
@@ -31,14 +31,15 @@ npm run signup
 
 ## Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
-| `ONECLAW_API_KEY` | Yes* | Your API key (`ocv_...`) — not needed for the signup example |
+| Variable           | Required | Description                                                  |
+| ------------------ | -------- | ------------------------------------------------------------ |
+| `ONECLAW_BASE_URL` | No       | API URL (default: `https://api.1claw.xyz`)                   |
+| `ONECLAW_API_KEY`  | Yes\*    | Your API key (`ocv_...`) — not needed for the signup example |
 
 ## What You'll See
 
 **`npm start`** (requires API key):
+
 ```
 Creating client...
 
@@ -67,6 +68,7 @@ Vault and secret deleted.
 ```
 
 **`npm run signup`** (no API key needed):
+
 ```
 --- Signing up ---
 Account created! JWT received.
