@@ -83,7 +83,32 @@ async function main() {
         console.log(`Policy granted: ${policyRes.data!.secret_path_pattern} → [${policyRes.data!.permissions.join(", ")}]`);
     }
 
-    // ── 5. Verify agent status ─────────────────────────────────────
+    // ── 5. Submit a transaction intent via the proxy ────────────────
+    console.log("\n--- Submitting transaction ---");
+
+    // Authenticate as the agent to call the proxy endpoint
+    const agentClient = createClient({
+        baseUrl: BASE_URL,
+        apiKey: agent.api_key,
+        agentId: agent.agent.id,
+    });
+    await new Promise((r) => setTimeout(r, 500));
+
+    const txRes = await agentClient.agents.submitTransaction(agent.agent.id, {
+        to: "0x000000000000000000000000000000000000dEaD",
+        value: "0.001",
+        chain: "base",
+    });
+    if (txRes.error) {
+        console.error("Tx failed:", txRes.error.message);
+    } else {
+        const tx = txRes.data!;
+        console.log(`  Status: ${tx.status}`);
+        console.log(`  Tx hash: ${tx.tx_hash ?? "n/a"}`);
+        console.log(`  Signed tx: ${tx.signed_tx ? tx.signed_tx.slice(0, 30) + "..." : "n/a"}`);
+    }
+
+    // ── 6. Verify agent status ─────────────────────────────────────
     console.log("\n--- Verifying agent ---");
     const getRes = await client.agents.get(agent.agent.id);
     if (getRes.error) {
@@ -96,7 +121,7 @@ async function main() {
         console.log(`  Scopes: [${a.scopes.join(", ")}]`);
     }
 
-    // ── 6. Toggle proxy off ────────────────────────────────────────
+    // ── 8. Toggle proxy off ────────────────────────────────────────
     console.log("\n--- Disabling crypto proxy ---");
     const updateRes = await client.agents.update(agent.agent.id, {
         crypto_proxy_enabled: false,
@@ -107,7 +132,7 @@ async function main() {
         console.log(`  crypto_proxy_enabled: ${updateRes.data!.crypto_proxy_enabled}`);
     }
 
-    // ── 7. Clean up ────────────────────────────────────────────────
+    // ── 9. Clean up ────────────────────────────────────────────────
     console.log("\n--- Cleaning up ---");
     await client.agents.delete(agent.agent.id);
     await client.secrets.delete(vault.id, "keys/base-signer");

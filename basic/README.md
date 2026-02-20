@@ -8,7 +8,7 @@ Simple TypeScript examples demonstrating the core `@1claw/sdk` workflows.
 | ------------------------- | -------------------------------------------------------------------------------- |
 | `src/index.ts`            | Create vault, store/retrieve/list secrets, check billing, clean up               |
 | `src/signup-and-share.ts` | Sign up via API, create a secret, share it by email                              |
-| `src/crypto-proxy.ts`     | Register agent with crypto proxy, grant vault access, toggle proxy on/off        |
+| `src/crypto-proxy.ts`     | Register agent with crypto proxy, submit transaction, toggle proxy on/off        |
 
 ## Setup
 
@@ -87,6 +87,11 @@ Agent: defi-bot (uuid)
 
 --- Granting vault access ---
 Policy granted: keys/** → [read]
+
+--- Submitting transaction ---
+  Status: signed
+  Tx hash: 0x...
+  Signed tx: 0xf86c...
 
 --- Verifying agent ---
   Name: defi-bot
