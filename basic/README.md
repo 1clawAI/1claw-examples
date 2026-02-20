@@ -4,10 +4,11 @@ Simple TypeScript examples demonstrating the core `@1claw/sdk` workflows.
 
 ## Examples
 
-| Script                    | Description                                                        |
-| ------------------------- | ------------------------------------------------------------------ |
-| `src/index.ts`            | Create vault, store/retrieve/list secrets, check billing, clean up |
-| `src/signup-and-share.ts` | Sign up via API, create a secret, share it by email                |
+| Script                    | Description                                                                      |
+| ------------------------- | -------------------------------------------------------------------------------- |
+| `src/index.ts`            | Create vault, store/retrieve/list secrets, check billing, clean up               |
+| `src/signup-and-share.ts` | Sign up via API, create a secret, share it by email                              |
+| `src/crypto-proxy.ts`     | Register agent with crypto proxy, grant vault access, toggle proxy on/off        |
 
 ## Setup
 
@@ -27,6 +28,9 @@ npm start
 
 # Signup and email-sharing flow
 npm run signup
+
+# Crypto transaction proxy flow
+npm run crypto-proxy
 ```
 
 ## Environment Variables
@@ -65,6 +69,36 @@ Secret: OPENAI_KEY
 
 --- Cleaning up ---
 Vault and secret deleted.
+```
+
+**`npm run crypto-proxy`** (requires API key):
+
+```
+--- Creating vault ---
+Vault: signing-keys (uuid)
+
+--- Storing signing key ---
+Key stored: keys/base-signer (v1)
+
+--- Registering agent with crypto proxy ---
+Agent: defi-bot (uuid)
+  crypto_proxy_enabled: true
+  API key: ocv_xxxxxxxx...
+
+--- Granting vault access ---
+Policy granted: keys/** → [read]
+
+--- Verifying agent ---
+  Name: defi-bot
+  Active: true
+  Crypto proxy: true
+  Scopes: [vault:read, tx:sign]
+
+--- Disabling crypto proxy ---
+  crypto_proxy_enabled: false
+
+--- Cleaning up ---
+Agent, key, and vault deleted.
 ```
 
 **`npm run signup`** (no API key needed):
