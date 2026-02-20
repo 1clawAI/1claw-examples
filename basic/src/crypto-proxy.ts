@@ -71,12 +71,12 @@ async function main() {
 
     // ── 4. Grant the agent read access to the signing keys vault ───
     console.log("\n--- Granting vault access ---");
-    const policyRes = await client.access.grantAgent(vault.id, {
-        secret_path_pattern: "keys/**",
-        principal_type: "agent",
-        principal_id: agent.agent.id,
-        permissions: ["read"],
-    });
+    const policyRes = await client.access.grantAgent(
+        vault.id,
+        agent.agent.id,
+        ["read"],
+        { secretPathPattern: "keys/**" },
+    );
     if (policyRes.error) {
         console.error("Failed:", policyRes.error.message);
     } else {
