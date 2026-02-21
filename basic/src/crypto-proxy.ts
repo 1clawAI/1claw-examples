@@ -41,10 +41,15 @@ async function main() {
 
     // ── 2. Store a signing key in the vault ────────────────────────
     console.log("\n--- Storing signing key ---");
-    const putRes = await client.secrets.set(vault.id, "keys/base-signer", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80", {
-        type: "private_key",
-        metadata: { chain: "base", label: "DeFi bot signer" },
-    });
+    const putRes = await client.secrets.set(
+        vault.id,
+        "keys/base-signer",
+        "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+        {
+            type: "private_key",
+            metadata: { chain: "base", label: "DeFi bot signer" },
+        },
+    );
     if (putRes.error) {
         console.error("Failed:", putRes.error.message);
         return;
@@ -55,7 +60,8 @@ async function main() {
     console.log("\n--- Registering agent with crypto proxy ---");
     const agentRes = await client.agents.create({
         name: "defi-bot",
-        description: "Automated DeFi agent that submits transactions via the signing proxy",
+        description:
+            "Automated DeFi agent that submits transactions via the signing proxy",
         auth_method: "api_key",
         scopes: ["vault:read", "tx:sign"],
         crypto_proxy_enabled: true,
@@ -80,7 +86,9 @@ async function main() {
     if (policyRes.error) {
         console.error("Failed:", policyRes.error.message);
     } else {
-        console.log(`Policy granted: ${policyRes.data!.secret_path_pattern} → [${policyRes.data!.permissions.join(", ")}]`);
+        console.log(
+            `Policy granted: ${policyRes.data!.secret_path_pattern} → [${policyRes.data!.permissions.join(", ")}]`,
+        );
     }
 
     // ── 5. Submit a transaction intent via the proxy ────────────────
@@ -105,7 +113,9 @@ async function main() {
         const tx = txRes.data!;
         console.log(`  Status: ${tx.status}`);
         console.log(`  Tx hash: ${tx.tx_hash ?? "n/a"}`);
-        console.log(`  Signed tx: ${tx.signed_tx ? tx.signed_tx.slice(0, 30) + "..." : "n/a"}`);
+        console.log(
+            `  Signed tx: ${tx.signed_tx ? tx.signed_tx.slice(0, 30) + "..." : "n/a"}`,
+        );
     }
 
     // ── 6. Verify agent status ─────────────────────────────────────
@@ -129,7 +139,9 @@ async function main() {
     if (updateRes.error) {
         console.error("Failed:", updateRes.error.message);
     } else {
-        console.log(`  crypto_proxy_enabled: ${updateRes.data!.crypto_proxy_enabled}`);
+        console.log(
+            `  crypto_proxy_enabled: ${updateRes.data!.crypto_proxy_enabled}`,
+        );
     }
 
     // ── 9. Clean up ────────────────────────────────────────────────

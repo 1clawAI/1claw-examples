@@ -1,0 +1,20 @@
+{
+    "name": "1claw-langchain-agent",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "start": "npx tsx src/tool-calling.ts",
+        "mcp": "npx tsx src/mcp-client.ts"
+    },
+    "dependencies": {
+        "@1claw/sdk": "file:../../packages/sdk",
+        "@langchain/core": "^0.3.0",
+        "@langchain/openai": "^0.4.0",
+        "@langchain/mcp-adapters": "^0.1.0"
+    },
+    "devDependencies": {
+        "tsx": "^4.0.0",
+        "typescript": "^5.0.0"
+    }
+}

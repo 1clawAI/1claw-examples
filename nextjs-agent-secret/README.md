@@ -1,5 +1,7 @@
 # 1Claw Agent Secret Demo
 
+> **Warning — Not for production use.** This example is for reference and learning only. Review and adapt for your own security requirements before using in production.
+
 **1Claw** is an HSM-backed secrets manager for AI agents and humans, featuring encrypted vaults, access policies, human-in-the-loop approvals, and x402 micropayments.
 
 This demo shows an AI agent (Claude) using the `@1claw/sdk` to securely access secrets stored in a 1Claw vault, with human approval gates and server-side-only secret handling.

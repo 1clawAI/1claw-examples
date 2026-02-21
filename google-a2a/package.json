@@ -1,0 +1,22 @@
+{
+    "name": "1claw-google-a2a",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "worker": "npx tsx src/worker-agent.ts",
+        "coordinator": "npx tsx src/coordinator.ts",
+        "start": "npx tsx src/start-all.ts"
+    },
+    "dependencies": {
+        "@1claw/sdk": "file:../../packages/sdk",
+        "express": "^5.0.0",
+        "openai": "^4.0.0"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.0",
+        "@types/node": "^22.0.0",
+        "tsx": "^4.0.0",
+        "typescript": "^5.0.0"
+    }
+}

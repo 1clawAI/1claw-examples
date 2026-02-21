@@ -1,14 +1,16 @@
 # 1Claw SDK — Basic Examples
 
+> **Warning — Not for production use.** This example is for reference and learning only. Review and adapt for your own security requirements before using in production.
+
 Simple TypeScript examples demonstrating the core `@1claw/sdk` workflows.
 
 ## Examples
 
-| Script                    | Description                                                                      |
-| ------------------------- | -------------------------------------------------------------------------------- |
-| `src/index.ts`            | Create vault, store/retrieve/list secrets, check billing, clean up               |
-| `src/signup-and-share.ts` | Sign up via API, create a secret, share it by email                              |
-| `src/crypto-proxy.ts`     | Register agent with crypto proxy, submit transaction, toggle proxy on/off        |
+| Script                    | Description                                                               |
+| ------------------------- | ------------------------------------------------------------------------- |
+| `src/index.ts`            | Create vault, store/retrieve/list secrets, check billing, clean up        |
+| `src/signup-and-share.ts` | Sign up via API, create a secret, share it by email                       |
+| `src/crypto-proxy.ts`     | Register agent with crypto proxy, submit transaction, toggle proxy on/off |
 
 ## Setup
 

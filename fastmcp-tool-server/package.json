@@ -1,0 +1,20 @@
+{
+    "name": "1claw-fastmcp-tool-server",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "start": "npx tsx src/server.ts",
+        "dev": "npx tsx --watch src/server.ts"
+    },
+    "dependencies": {
+        "@1claw/sdk": "file:../../packages/sdk",
+        "fastmcp": "^3.33.0",
+        "zod": "^3.24.0"
+    },
+    "devDependencies": {
+        "tsx": "^4.0.0",
+        "typescript": "^5.0.0",
+        "@types/node": "^22.0.0"
+    }
+}

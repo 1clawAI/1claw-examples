@@ -1,0 +1,13 @@
+{
+    "mcpServers": {
+        "1claw-devops": {
+            "command": "npx",
+            "args": ["tsx", "src/server.ts"],
+            "cwd": ".",
+            "env": {
+                "ONECLAW_AGENT_TOKEN": "<your-agent-jwt>",
+                "ONECLAW_VAULT_ID": "<your-vault-uuid>"
+            }
+        }
+    }
+}

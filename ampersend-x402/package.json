@@ -1,0 +1,21 @@
+{
+    "name": "1claw-ampersend-x402",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "start": "npx tsx src/mcp-with-payments.ts",
+        "http": "npx tsx src/http-with-payments.ts",
+        "hybrid": "npx tsx src/custom-treasurer.ts"
+    },
+    "dependencies": {
+        "@1claw/sdk": "file:../../packages/sdk",
+        "@ampersend_ai/ampersend-sdk": "^0.1.0",
+        "viem": "^2.0.0"
+    },
+    "devDependencies": {
+        "tsx": "^4.0.0",
+        "typescript": "^5.0.0",
+        "@types/node": "^22.0.0"
+    }
+}
