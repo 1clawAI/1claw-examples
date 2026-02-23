@@ -34,11 +34,17 @@ export async function resolveBuyerKey(opts: ResolveOptions): Promise<Hex> {
         `[bootstrap] BUYER_PRIVATE_KEY not set — fetching from 1Claw vault at "${keyPath}"`,
     );
 
-    const sdk = createClient({
-        baseUrl: opts.baseUrl,
-        apiKey: opts.apiKey,
-        agentId: opts.agentId,
-    });
+    const sdk = createClient({ baseUrl: opts.baseUrl });
+
+    // Explicitly authenticate before fetching (autoAuthenticate is non-blocking)
+    if (opts.agentId) {
+        await sdk.auth.agentToken({
+            api_key: opts.apiKey,
+            agent_id: opts.agentId,
+        });
+    } else {
+        await sdk.auth.apiKeyToken({ api_key: opts.apiKey });
+    }
 
     const res = await sdk.secrets.get(opts.vaultId, keyPath);
 

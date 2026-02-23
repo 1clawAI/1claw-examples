@@ -4,21 +4,30 @@
     "private": true,
     "license": "PolyForm-Noncommercial-1.0.0",
     "type": "module",
+    "engines": {
+        "node": ">=20"
+    },
     "scripts": {
-        "start": "npx tsx src/mcp-with-payments.ts",
-        "http": "npx tsx src/http-with-payments.ts",
-        "hybrid": "npx tsx src/custom-treasurer.ts"
+        "start": "npx tsx --env-file=.env src/mcp-with-payments.ts",
+        "http": "npx tsx --env-file=.env src/http-with-payments.ts",
+        "hybrid": "npx tsx --env-file=.env src/custom-treasurer.ts",
+        "server": "npx tsx --env-file=.env src/x402-server.ts",
+        "client": "npx tsx --env-file=.env src/x402-client.ts"
     },
     "dependencies": {
         "@1claw/sdk": "file:../../packages/sdk",
         "@ampersend_ai/ampersend-sdk": "^0.0.7",
         "@x402/core": "^2.1.0",
+        "@x402/evm": "^2.4.0",
+        "@x402/express": "^2.4.0",
         "@x402/fetch": "^2.3.0",
+        "express": "^4.21.0",
         "viem": "^2.0.0"
     },
     "devDependencies": {
+        "@types/express": "^5.0.0",
+        "@types/node": "^22.0.0",
         "tsx": "^4.0.0",
-        "typescript": "^5.0.0",
-        "@types/node": "^22.0.0"
+        "typescript": "^5.0.0"
     }
 }
