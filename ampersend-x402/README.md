@@ -4,7 +4,7 @@
 
 **Difficulty: Advanced**
 
-Budget-controlled x402 micropayments for 1Claw API access using the [Ampersend SDK](https://github.com/edgeandnode/ampersend-sdk). When the agent exceeds the free tier, Ampersend handles payment authorization and wallet signing so API calls continue seamlessly.
+Budget-controlled x402 micropayments for 1Claw API access using the [Ampersend SDK](https://github.com/edgeandnode/ampersend-sdk) (`@ampersend_ai/ampersend-sdk@0.0.7`) with `@x402/core` and `@x402/fetch`. When the agent exceeds the free tier, Ampersend handles payment authorization and wallet signing so API calls continue seamlessly.
 
 ## Architecture
 

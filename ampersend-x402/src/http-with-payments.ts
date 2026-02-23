@@ -1,44 +1,65 @@
 /**
  * 1Claw + Ampersend — HTTP Client with x402 Payments
  *
- * Lower-level approach: wraps the standard fetch() with Ampersend's
- * payment layer. When a request returns 402, the wrapper automatically
- * handles payment and retries.
+ * Wraps fetch with the x402 payment layer. When a request returns 402,
+ * the wrapper consults the treasurer, signs payment with the wallet, and retries.
  *
- * This approach works with the 1Claw REST API directly (no MCP).
+ * The buyer key can come from either:
+ *   - BUYER_PRIVATE_KEY env var (traditional)
+ *   - Fetched from a 1Claw vault at BUYER_KEY_PATH (default: "keys/x402-session-key")
  */
 
-import { createAmpersendHttpClient } from "@ampersend_ai/ampersend-sdk";
-import { wrapWithAmpersend } from "@ampersend_ai/ampersend-sdk/x402/http";
-import { AccountWallet } from "@ampersend_ai/ampersend-sdk";
-import { NaiveTreasurer } from "@ampersend_ai/ampersend-sdk/x402/treasurers";
+import { AccountWallet, wrapWithAmpersend } from "@ampersend_ai/ampersend-sdk";
+import type { Authorization, PaymentContext, PaymentStatus, X402Treasurer } from "@ampersend_ai/ampersend-sdk";
+import type { PaymentRequirements } from "x402/types";
+import { x402Client } from "@x402/core/client";
+import { wrapFetchWithPayment } from "@x402/fetch";
 import { createClient } from "@1claw/sdk";
+import { resolveBuyerKey } from "./resolve-buyer-key.js";
 
-const PRIVATE_KEY = process.env.BUYER_PRIVATE_KEY;
 const API_KEY = process.env.ONECLAW_API_KEY;
 const VAULT_ID = process.env.ONECLAW_VAULT_ID;
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 
-if (!PRIVATE_KEY || !API_KEY || !VAULT_ID) {
-    console.error(
-        "Required: BUYER_PRIVATE_KEY, ONECLAW_API_KEY, ONECLAW_VAULT_ID",
-    );
+if (!API_KEY || !VAULT_ID) {
+    console.error("Required: ONECLAW_API_KEY, ONECLAW_VAULT_ID");
     process.exit(1);
 }
 
 console.log("=== 1Claw + Ampersend HTTP Client ===\n");
 
-// ── Set up payment-aware fetch ──────────────────────────────────────
-
-const wallet = new AccountWallet(PRIVATE_KEY as `0x${string}`);
-const treasurer = new NaiveTreasurer(wallet);
-
-const paymentFetch = wrapWithAmpersend(fetch, {
-    wallet,
-    treasurer,
+const PRIVATE_KEY = await resolveBuyerKey({
+    apiKey: API_KEY,
+    vaultId: VAULT_ID,
+    baseUrl: BASE_URL,
+    agentId: process.env.ONECLAW_AGENT_ID,
 });
 
-// ── Use the 1Claw SDK with payment-aware fetch ─────────────────────
+class NaiveTreasurer implements X402Treasurer {
+    constructor(private wallet: { createPayment(req: PaymentRequirements): Promise<{ payload: unknown }> }) {}
+    async onPaymentRequired(
+        requirements: ReadonlyArray<PaymentRequirements>,
+        _context?: PaymentContext,
+    ): Promise<Authorization | null> {
+        if (requirements.length === 0) return null;
+        const payment = await this.wallet.createPayment(requirements[0]);
+        return {
+            payment: payment as Authorization["payment"],
+            authorizationId: crypto.randomUUID(),
+        };
+    }
+    async onStatus(
+        _status: PaymentStatus,
+        _authorization: Authorization,
+        _context?: PaymentContext,
+    ): Promise<void> {}
+}
+
+const wallet = AccountWallet.fromPrivateKey(PRIVATE_KEY);
+const treasurer = new NaiveTreasurer(wallet);
+const client = new x402Client();
+wrapWithAmpersend(client, treasurer, ["base"]);
+const paymentFetch = wrapFetchWithPayment(fetch, client);
 
 const sdk = createClient({
     baseUrl: BASE_URL,
@@ -46,7 +67,7 @@ const sdk = createClient({
     agentId: process.env.ONECLAW_AGENT_ID || undefined,
 });
 
-console.log("1. Listing secrets via SDK...");
+console.log("\n1. Listing secrets via SDK...");
 const secrets = await sdk.secrets.list(VAULT_ID);
 if (secrets.error) {
     console.log(`   Error: ${secrets.error.message}`);
@@ -56,8 +77,6 @@ if (secrets.error) {
         console.log(`   - ${s.path} (${s.type}, v${s.version})`);
     }
 }
-
-// ── Direct HTTP call with payment wrapping ──────────────────────────
 
 console.log("\n2. Direct API call with payment-aware fetch...");
 console.log("   (If quota exceeded, payment is handled automatically)\n");
@@ -80,8 +99,6 @@ if (res.ok) {
     const text = await res.text();
     console.log(`   Response: ${text.slice(0, 200)}`);
 }
-
-// ── Check payment headers ───────────────────────────────────────────
 
 console.log("\n3. Checking response headers for billing info:");
 const headers = [

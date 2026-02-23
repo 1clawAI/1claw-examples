@@ -1,47 +1,48 @@
 /**
  * 1Claw + Ampersend — Custom Treasurer (Hybrid Billing)
  *
- * A custom X402Treasurer that checks 1Claw's prepaid credit balance
- * before falling through to on-chain payment. This implements a
- * "credits first, x402 fallback" strategy:
- *
- *   1. API call exceeds quota → 402 Payment Required
- *   2. Custom Treasurer checks 1Claw credit balance
- *   3. If credits available → uses credits (no on-chain payment)
- *   4. If credits depleted → falls through to Ampersend wallet payment
- *
- * This demonstrates the most advanced integration pattern: combining
- * 1Claw's credit system with Ampersend's on-chain payment layer.
+ * Credits first, x402 fallback. The buyer key can come from either:
+ *   - BUYER_PRIVATE_KEY env var (traditional)
+ *   - Fetched from a 1Claw vault at BUYER_KEY_PATH (default: "keys/x402-session-key")
  */
 
 import {
     AccountWallet,
-    type X402Treasurer,
+    wrapWithAmpersend,
     type Authorization,
     type PaymentContext,
+    type PaymentStatus,
+    type X402Treasurer,
 } from "@ampersend_ai/ampersend-sdk";
-import { wrapWithAmpersend } from "@ampersend_ai/ampersend-sdk/x402/http";
+import type { PaymentRequirements } from "x402/types";
+import { x402Client } from "@x402/core/client";
+import { wrapFetchWithPayment } from "@x402/fetch";
 import { createClient } from "@1claw/sdk";
+import { resolveBuyerKey } from "./resolve-buyer-key.js";
 
-const PRIVATE_KEY = process.env.BUYER_PRIVATE_KEY;
 const API_KEY = process.env.ONECLAW_API_KEY;
 const VAULT_ID = process.env.ONECLAW_VAULT_ID;
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 
-if (!PRIVATE_KEY || !API_KEY || !VAULT_ID) {
-    console.error(
-        "Required: BUYER_PRIVATE_KEY, ONECLAW_API_KEY, ONECLAW_VAULT_ID",
-    );
+if (!API_KEY || !VAULT_ID) {
+    console.error("Required: ONECLAW_API_KEY, ONECLAW_VAULT_ID");
     process.exit(1);
 }
+
+console.log("=== 1Claw + Ampersend Hybrid Billing ===\n");
+
+const PRIVATE_KEY = await resolveBuyerKey({
+    apiKey: API_KEY,
+    vaultId: VAULT_ID,
+    baseUrl: BASE_URL,
+    agentId: process.env.ONECLAW_AGENT_ID,
+});
 
 const sdk = createClient({
     baseUrl: BASE_URL,
     apiKey: API_KEY,
     agentId: process.env.ONECLAW_AGENT_ID || undefined,
 });
-
-// ── Custom Treasurer: credits first, x402 fallback ──────────────────
 
 class HybridTreasurer implements X402Treasurer {
     private wallet: AccountWallet;
@@ -52,10 +53,14 @@ class HybridTreasurer implements X402Treasurer {
         this.creditThresholdCents = creditThresholdCents;
     }
 
-    async authorize(context: PaymentContext): Promise<Authorization> {
+    async onPaymentRequired(
+        requirements: ReadonlyArray<PaymentRequirements>,
+        _context?: PaymentContext,
+    ): Promise<Authorization | null> {
+        if (requirements.length === 0) return null;
+
         console.log(
-            `  [treasurer] Payment requested: ${context.paymentRequirements?.scheme ?? "unknown"} ` +
-                `for ${context.paymentRequirements?.maxAmountRequired ?? "?"} units`,
+            `  [treasurer] Payment requested for ${requirements.length} requirement(s)`,
         );
 
         try {
@@ -75,8 +80,7 @@ class HybridTreasurer implements X402Treasurer {
 
                 if (cents >= this.creditThresholdCents) {
                     console.log(
-                        `  [treasurer] Credits sufficient (>$${(this.creditThresholdCents / 100).toFixed(2)}) — ` +
-                            "switching overage method to credits",
+                        `  [treasurer] Credits sufficient — switching overage method to credits`,
                     );
 
                     await fetch(`${BASE_URL}/v1/billing/overage-method`, {
@@ -88,14 +92,15 @@ class HybridTreasurer implements X402Treasurer {
                         body: JSON.stringify({ method: "credits" }),
                     });
 
+                    const payment = await this.wallet.createPayment(requirements[0]);
                     return {
-                        approved: true,
-                        reason: `Using 1Claw credits ($${(cents / 100).toFixed(2)} available)`,
+                        payment: payment as Authorization["payment"],
+                        authorizationId: crypto.randomUUID(),
                     };
                 }
 
                 console.log(
-                    `  [treasurer] Credits below threshold — falling through to x402 payment`,
+                    `  [treasurer] Credits below threshold — using x402 payment`,
                 );
             }
         } catch (err) {
@@ -104,31 +109,28 @@ class HybridTreasurer implements X402Treasurer {
             );
         }
 
-        console.log(
-            "  [treasurer] Authorizing on-chain x402 payment via wallet",
-        );
+        console.log("  [treasurer] Authorizing on-chain x402 payment via wallet");
+        const payment = await this.wallet.createPayment(requirements[0]);
         return {
-            approved: true,
-            reason: "Approved for on-chain x402 payment",
+            payment: payment as Authorization["payment"],
+            authorizationId: crypto.randomUUID(),
         };
     }
+
+    async onStatus(
+        _status: PaymentStatus,
+        _authorization: Authorization,
+        _context?: PaymentContext,
+    ): Promise<void> {}
 }
 
-// ── Set up hybrid payment client ────────────────────────────────────
-
-console.log("=== 1Claw + Ampersend Hybrid Billing ===\n");
-
-const wallet = new AccountWallet(PRIVATE_KEY as `0x${string}`);
+const wallet = AccountWallet.fromPrivateKey(PRIVATE_KEY);
 const treasurer = new HybridTreasurer(wallet, 100);
+const client = new x402Client();
+wrapWithAmpersend(client, treasurer, ["base"]);
+const paymentFetch = wrapFetchWithPayment(fetch, client);
 
-const paymentFetch = wrapWithAmpersend(fetch, {
-    wallet,
-    treasurer,
-});
-
-// ── Demo: make API calls ────────────────────────────────────────────
-
-console.log("1. Checking current credit balance...");
+console.log("\n1. Checking current credit balance...");
 const balRes = await fetch(`${BASE_URL}/v1/billing/credits/balance`, {
     headers: { Authorization: `Bearer ${API_KEY}` },
 });
@@ -171,8 +173,4 @@ if (ovRes.ok) {
 console.log(
     "\nDone. The HybridTreasurer checked credits before authorizing " +
         "on-chain payment.",
-);
-console.log(
-    "In production, configure a daily/monthly budget using " +
-        "createAmpersendTreasurer().",
 );
