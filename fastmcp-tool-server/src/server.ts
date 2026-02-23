@@ -227,7 +227,7 @@ server.addResource({
 if (TRANSPORT === "httpStream") {
     server.start({
         transportType: "httpStream",
-        httpStream: { port, host: "0.0.0.0" },
+        httpStream: { port: PORT, host: "0.0.0.0" },
     });
     console.log(`1claw-devops MCP server on port ${PORT} (HTTP streaming)`);
 } else {

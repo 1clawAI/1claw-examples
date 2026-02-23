@@ -13,6 +13,7 @@
         "@1claw/sdk": "file:../../packages/sdk"
     },
     "devDependencies": {
+        "@types/node": "^22.0.0",
         "tsx": "^4.0.0",
         "typescript": "^5.0.0"
     }
