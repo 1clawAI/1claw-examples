@@ -1,15 +1,14 @@
 /**
  * 1Claw + Ampersend — Hybrid billing (credits-first, x402 fallback).
  *
- * The HybridTreasurer checks 1Claw's credit balance before authorizing
- * on-chain payment. When credits are sufficient it switches the org's
- * overage method to "credits" (no gas cost). When credits run out, it
- * falls back to signing an on-chain x402 USDC transfer.
+ * HybridTreasurer checks 1Claw's credit balance first. When sufficient it
+ * switches the org's overage to credits. Payment authorization and signing
+ * are delegated to AmpersendTreasurer (Smart Account), so limits and
+ * reporting go through the Ampersend API.
  */
 
 import {
-    SmartAccountWallet,
-    AccountWallet,
+    createAmpersendTreasurer,
     wrapWithAmpersend,
     type Authorization,
     type PaymentContext,
@@ -27,9 +26,14 @@ const AGENT_ID = process.env.ONECLAW_AGENT_ID;
 const VAULT_ID = process.env.ONECLAW_VAULT_ID;
 const SMART_ACCOUNT = process.env.SMART_ACCOUNT_ADDRESS;
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const AMPERSEND_API_URL = process.env.AMPERSEND_API_URL;
 
 if (!API_KEY || !VAULT_ID) {
     console.error("Required: ONECLAW_API_KEY, ONECLAW_VAULT_ID");
+    process.exit(1);
+}
+if (!SMART_ACCOUNT) {
+    console.error("Required: SMART_ACCOUNT_ADDRESS (AmpersendTreasurer uses Smart Account)");
     process.exit(1);
 }
 
@@ -52,21 +56,26 @@ const PRIVATE_KEY = await resolveBuyerKey({
     agentId: AGENT_ID,
 });
 
-type PayableWallet = { createPayment(req: PaymentRequirements): Promise<{ payload: unknown }> };
+const ampersendTreasurer = createAmpersendTreasurer({
+    smartAccountAddress: SMART_ACCOUNT as `0x${string}`,
+    sessionKeyPrivateKey: PRIVATE_KEY,
+    chainId: 8453,
+    ...(AMPERSEND_API_URL && { apiUrl: AMPERSEND_API_URL }),
+});
 
 /**
- * Checks 1Claw credits before authorizing on-chain payment.
- * Prefers off-chain credits when balance exceeds `creditThresholdCents`.
+ * Checks 1Claw credits first, then delegates to AmpersendTreasurer for
+ * payment authorization and signing (Smart Account, limits, reporting).
  */
 class HybridTreasurer implements X402Treasurer {
     constructor(
-        private wallet: PayableWallet,
+        private delegate: X402Treasurer,
         private creditThresholdCents = 100,
     ) {}
 
     async onPaymentRequired(
         requirements: ReadonlyArray<PaymentRequirements>,
-        _context?: PaymentContext,
+        context?: PaymentContext,
     ): Promise<Authorization | null> {
         if (requirements.length === 0) return null;
 
@@ -89,42 +98,27 @@ class HybridTreasurer implements X402Treasurer {
                         headers: { Authorization: `Bearer ${JWT}`, "Content-Type": "application/json" },
                         body: JSON.stringify({ method: "credits" }),
                     });
-                    return this.signPayment(requirements[0]);
                 }
 
-                console.log(`  [treasurer] Credits below threshold — using x402 payment`);
+                console.log(`  [treasurer] Delegating to AmpersendTreasurer for authorization`);
             }
         } catch (err) {
-            console.log(`  [treasurer] Credit check failed, using x402: ${err}`);
+            console.log(`  [treasurer] Credit check failed: ${err}`);
         }
 
-        console.log("  [treasurer] Authorizing on-chain x402 payment");
-        return this.signPayment(requirements[0]);
+        return this.delegate.onPaymentRequired(requirements, context);
     }
 
     async onStatus(
-        _status: PaymentStatus,
-        _authorization: Authorization,
-        _context?: PaymentContext,
-    ): Promise<void> {}
-
-    private async signPayment(req: PaymentRequirements): Promise<Authorization> {
-        const payment = await this.wallet.createPayment(req);
-        return {
-            payment: payment as Authorization["payment"],
-            authorizationId: crypto.randomUUID(),
-        };
+        status: PaymentStatus,
+        authorization: Authorization,
+        context?: PaymentContext,
+    ): Promise<void> {
+        return this.delegate.onStatus(status, authorization, context);
     }
 }
 
-const wallet: PayableWallet = SMART_ACCOUNT
-    ? new SmartAccountWallet({
-          smartAccountAddress: SMART_ACCOUNT as `0x${string}`,
-          sessionKeyPrivateKey: PRIVATE_KEY,
-          chainId: 8453,
-      })
-    : AccountWallet.fromPrivateKey(PRIVATE_KEY);
-const treasurer = new HybridTreasurer(wallet, 100);
+const treasurer = new HybridTreasurer(ampersendTreasurer, 100);
 const client = new x402Client();
 wrapWithAmpersend(client, treasurer, ["base"]);
 const paymentFetch = wrapFetchWithPayment(fetch, client);

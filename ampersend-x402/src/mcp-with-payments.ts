@@ -1,22 +1,13 @@
 /**
  * 1Claw + Ampersend — MCP client with x402 payments.
  *
- * Connects to the 1Claw MCP server over Streamable HTTP transport.
- * The buyer key can come from BUYER_PRIVATE_KEY env or from a 1Claw vault.
- * The MCP auth token is obtained automatically from ONECLAW_API_KEY +
- * ONECLAW_AGENT_ID (no pre-baked JWT needed).
+ * Uses AmpersendTreasurer with SmartAccountWallet. Connects to the 1Claw
+ * MCP server over Streamable HTTP transport. The buyer key can come from
+ * BUYER_PRIVATE_KEY (Option A) or from a 1Claw vault (Option B). The MCP
+ * auth token is obtained from ONECLAW_API_KEY + ONECLAW_AGENT_ID.
  */
 
-import {
-    SmartAccountWallet,
-    AccountWallet,
-    Client,
-    type Authorization,
-    type PaymentContext,
-    type PaymentStatus,
-    type X402Treasurer,
-} from "@ampersend_ai/ampersend-sdk";
-import type { PaymentRequirements } from "x402/types";
+import { createAmpersendTreasurer, Client } from "@ampersend_ai/ampersend-sdk";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { resolveBuyerKey } from "./resolve-buyer-key.js";
 
@@ -26,9 +17,14 @@ const VAULT_ID = process.env.ONECLAW_VAULT_ID;
 const SMART_ACCOUNT = process.env.SMART_ACCOUNT_ADDRESS;
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 const MCP_URL = "https://mcp.1claw.xyz/mcp";
+const AMPERSEND_API_URL = process.env.AMPERSEND_API_URL;
 
 if (!API_KEY || !AGENT_ID || !VAULT_ID) {
     console.error("Required: ONECLAW_API_KEY, ONECLAW_AGENT_ID, ONECLAW_VAULT_ID");
+    process.exit(1);
+}
+if (!SMART_ACCOUNT) {
+    console.error("Required: SMART_ACCOUNT_ADDRESS (AmpersendTreasurer uses Smart Account)");
     process.exit(1);
 }
 
@@ -54,34 +50,12 @@ const PRIVATE_KEY = await resolveBuyerKey({
     agentId: AGENT_ID,
 });
 
-class NaiveTreasurer implements X402Treasurer {
-    constructor(private wallet: { createPayment(req: PaymentRequirements): Promise<{ payload: unknown }> }) {}
-    async onPaymentRequired(
-        requirements: ReadonlyArray<PaymentRequirements>,
-        _context?: PaymentContext,
-    ): Promise<Authorization | null> {
-        if (requirements.length === 0) return null;
-        const payment = await this.wallet.createPayment(requirements[0]);
-        return {
-            payment: payment as Authorization["payment"],
-            authorizationId: crypto.randomUUID(),
-        };
-    }
-    async onStatus(
-        _status: PaymentStatus,
-        _authorization: Authorization,
-        _context?: PaymentContext,
-    ): Promise<void> {}
-}
-
-const wallet = SMART_ACCOUNT
-    ? new SmartAccountWallet({
-          smartAccountAddress: SMART_ACCOUNT as `0x${string}`,
-          sessionKeyPrivateKey: PRIVATE_KEY,
-          chainId: 8453,
-      })
-    : AccountWallet.fromPrivateKey(PRIVATE_KEY);
-const treasurer = new NaiveTreasurer(wallet);
+const treasurer = createAmpersendTreasurer({
+    smartAccountAddress: SMART_ACCOUNT as `0x${string}`,
+    sessionKeyPrivateKey: PRIVATE_KEY,
+    chainId: 8453,
+    ...(AMPERSEND_API_URL && { apiUrl: AMPERSEND_API_URL }),
+});
 
 console.log("Connecting to 1Claw MCP server...");
 

@@ -71,29 +71,30 @@ src/
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `BUYER_PRIVATE_KEY` | Yes* | Session key for x402 payments (`0x...`). *Or store in vault — see Option B.* |
-| `SMART_ACCOUNT_ADDRESS` | No | Smart account address if buyer key is a session key signer |
+| `SMART_ACCOUNT_ADDRESS` | Yes* | Smart account address (AmpersendTreasurer uses SmartAccountWallet). *Required for HTTP, MCP, hybrid; optional for x402-client. |
 | `ONECLAW_API_KEY` | Yes | 1Claw API key (`ocv_...`) |
 | `ONECLAW_VAULT_ID` | Yes | Vault UUID |
 | `ONECLAW_AGENT_ID` | MCP | Agent UUID (required for MCP, optional otherwise) |
 | `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
+| `AMPERSEND_API_URL` | No | Ampersend API URL (default: production) |
 | `CDP_API_KEY_ID` | Server | Coinbase CDP API key ID (for x402 server demo) |
 | `CDP_API_KEY_SECRET` | Server | Coinbase CDP API key secret |
 | `X402_PAY_TO_ADDRESS` | Server | Address to receive x402 payments |
 
 ## Key patterns demonstrated
 
-- **x402 payment wrapping** — `wrapFetchWithPayment()` intercepts 402 responses, signs payment, retries
-- **Smart account signing** — ERC-1271 signatures via `@rhinestone/module-sdk` OwnableValidator
-- **Hybrid billing** — Check off-chain credits before authorizing on-chain payment
-- **Key bootstrapping** — Fetch session key from 1Claw vault instead of env vars
-- **CDP facilitator auth** — Ed25519 JWT signing for Coinbase x402 facilitator
+- **AmpersendTreasurer** — Payment authorization and limits via the [Ampersend API](https://docs.ampersend.ai/sdk/sdk-architecture-primitives); supports Smart Account only
+- **SmartAccountWallet** — ERC-1271 signing via session key (Rhinestone OwnableValidator)
+- **x402 payment wrapping** — `wrapFetchWithPayment()` intercepts 402, treasurer approves, retries with signed payment
+- **Hybrid billing** — `HybridTreasurer` checks 1Claw credits first, then delegates to AmpersendTreasurer for on-chain payment
+- **Key bootstrapping** — Session key from env (Option A) or 1Claw vault (Option B)
+- **CDP facilitator** — Coinbase x402 for the paywall server demo
 
 ## Wallet safety
 
 - **Use a session key** — never put your main wallet's private key in env vars
 - **Fund minimally** — only load enough USDC for testing
-- **NaiveTreasurer** approves all payments — use spend-limited logic in production
-- The `HybridTreasurer` shows how to add custom authorization logic
+- **AmpersendTreasurer** enforces spending limits and reports to the Ampersend Platform when your agent is registered there
 
 ## See also
 
