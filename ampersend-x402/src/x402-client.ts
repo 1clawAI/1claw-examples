@@ -2,7 +2,7 @@
  * x402 client — pays $0.001 USDC on Base to access the paywall server.
  *
  * Uses a smart account (ERC-1271) with a session key for signing.
- * Compatible with the x402 v2 protocol via @x402/evm/exact/client.
+ * Session key: BUYER_PRIVATE_KEY in env, or fetched from 1Claw (Option B).
  *
  * Run:  npm run client
  * (start x402-server.ts first with `npm run server`)
@@ -21,15 +21,32 @@ import {
     getOwnableValidatorSignature,
 } from "@rhinestone/module-sdk";
 import { OWNABLE_VALIDATOR } from "@ampersend_ai/ampersend-sdk/smart-account";
+import { resolveBuyerKey } from "./resolve-buyer-key.js";
 
-const SESSION_KEY = process.env.BUYER_PRIVATE_KEY as `0x${string}`;
 const SMART_ACCOUNT = process.env.SMART_ACCOUNT_ADDRESS as `0x${string}`;
 const SERVER_URL = process.env.X402_SERVER_URL ?? "http://localhost:4021";
 
-if (!SESSION_KEY || !SMART_ACCOUNT) {
-    console.error("Required: BUYER_PRIVATE_KEY, SMART_ACCOUNT_ADDRESS");
+if (!SMART_ACCOUNT) {
+    console.error("Required: SMART_ACCOUNT_ADDRESS");
     process.exit(1);
 }
+
+const API_KEY = process.env.ONECLAW_API_KEY;
+const VAULT_ID = process.env.ONECLAW_VAULT_ID;
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const AGENT_ID = process.env.ONECLAW_AGENT_ID;
+
+if (!API_KEY || !VAULT_ID) {
+    console.error("Required: ONECLAW_API_KEY, ONECLAW_VAULT_ID (for key bootstrap or Option B)");
+    process.exit(1);
+}
+
+const SESSION_KEY = (await resolveBuyerKey({
+    apiKey: API_KEY,
+    vaultId: VAULT_ID,
+    baseUrl: BASE_URL,
+    agentId: AGENT_ID,
+})) as `0x${string}`;
 
 const sessionKeyAccount = privateKeyToAccount(SESSION_KEY);
 
