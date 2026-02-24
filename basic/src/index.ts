@@ -16,6 +16,7 @@ import { createClient } from "@1claw/sdk";
 
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 const API_KEY = process.env.ONECLAW_API_KEY;
+const AGENT_ID = process.env.ONECLAW_AGENT_ID;
 
 if (!API_KEY) {
     console.error("Set ONECLAW_API_KEY in your environment or .env file");
@@ -23,12 +24,16 @@ if (!API_KEY) {
 }
 
 async function main() {
-    // ── 1. Create client (auto-authenticates with API key) ─────────
+    // ── 1. Create client and authenticate ───────────────────────────
     console.log("Creating client...");
-    const client = createClient({ baseUrl: BASE_URL, apiKey: API_KEY });
-
-    // Give auto-auth a moment to resolve
-    await new Promise((r) => setTimeout(r, 1000));
+    const client = createClient({ baseUrl: BASE_URL });
+    const authRes = AGENT_ID
+        ? await client.auth.agentToken({ api_key: API_KEY, agent_id: AGENT_ID })
+        : await client.auth.apiKeyToken({ api_key: API_KEY });
+    if (authRes.error) {
+        console.error("Auth failed:", authRes.error.message);
+        return;
+    }
 
     // ── 2. Create a vault ──────────────────────────────────────────
     console.log("\n--- Creating vault ---");
