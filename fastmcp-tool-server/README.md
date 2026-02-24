@@ -45,7 +45,7 @@ graph LR
 ## Prerequisites
 
 1. A [1Claw account](https://1claw.xyz) with a vault and agent
-2. An agent JWT (from `POST /v1/auth/agent-token`)
+2. Either an agent JWT (`ONECLAW_AGENT_TOKEN`) or API key + agent ID (`ONECLAW_API_KEY`, `ONECLAW_AGENT_ID`) — the server fetches a JWT at startup when the latter are set
 3. Node.js 20+
 
 ## Quick start
@@ -56,13 +56,14 @@ graph LR
 cd examples/fastmcp-tool-server
 npm install
 cp .env.example .env
-# Fill in ONECLAW_AGENT_TOKEN and ONECLAW_VAULT_ID
+# Option A: Fill in ONECLAW_AGENT_TOKEN and ONECLAW_VAULT_ID
+# Option B: Fill in ONECLAW_API_KEY, ONECLAW_AGENT_ID, and ONECLAW_VAULT_ID (server fetches JWT at startup)
 npm start
 ```
 
 ### Add to Claude Desktop / Cursor
 
-Copy `mcp-config.json` into your MCP settings, replacing the env var placeholders:
+Copy `mcp-config.json` into your MCP settings, replacing the env var placeholders. Use either `ONECLAW_AGENT_TOKEN` or `ONECLAW_API_KEY` + `ONECLAW_AGENT_ID`:
 
 ```json
 {
@@ -84,18 +85,20 @@ Copy `mcp-config.json` into your MCP settings, replacing the env var placeholder
 
 ```bash
 MCP_TRANSPORT=httpStream PORT=3001 npm start
-# Server listens at http://localhost:3001
+# Server listens at http://localhost:3001/mcp
 ```
 
 ## Environment variables
 
-| Variable              | Required | Description                                    |
-| --------------------- | -------- | ---------------------------------------------- |
-| `ONECLAW_AGENT_TOKEN` | Yes      | Agent JWT for 1Claw API auth                   |
-| `ONECLAW_VAULT_ID`    | Yes      | UUID of the vault to operate on                |
-| `ONECLAW_BASE_URL`    | No       | API URL (default: `https://api.1claw.xyz`)     |
-| `MCP_TRANSPORT`       | No       | `stdio` (default) or `httpStream`              |
-| `PORT`                | No       | HTTP port for streaming mode (default: `3001`) |
+| Variable              | Required | Description                                                                 |
+| --------------------- | -------- | --------------------------------------------------------------------------- |
+| `ONECLAW_VAULT_ID`    | Yes      | UUID of the vault to operate on                                             |
+| `ONECLAW_AGENT_TOKEN` | Yes*     | Agent JWT. *Omit if using ONECLAW_API_KEY + ONECLAW_AGENT_ID (server fetches JWT at startup).* |
+| `ONECLAW_API_KEY`     | Yes*     | API key (`ocv_...`). *Use with ONECLAW_AGENT_ID to fetch JWT at startup.*   |
+| `ONECLAW_AGENT_ID`    | No       | Agent UUID. When set with ONECLAW_API_KEY, server calls auth.agentToken() at startup. |
+| `ONECLAW_BASE_URL`    | No       | API URL (default: `https://api.1claw.xyz`)                                   |
+| `MCP_TRANSPORT`       | No       | `stdio` (default) or `httpStream`                                           |
+| `PORT`                | No       | HTTP port for streaming mode (default: `3001`)                              |
 
 ## How it works
 

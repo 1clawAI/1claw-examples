@@ -13,13 +13,33 @@ import { z } from "zod";
 import { createClient, type OneclawClient } from "@1claw/sdk";
 
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
-const TOKEN = process.env.ONECLAW_AGENT_TOKEN;
+let TOKEN = process.env.ONECLAW_AGENT_TOKEN;
 const VAULT_ID = process.env.ONECLAW_VAULT_ID;
+const API_KEY = process.env.ONECLAW_API_KEY;
+const AGENT_ID = process.env.ONECLAW_AGENT_ID;
 const TRANSPORT = process.env.MCP_TRANSPORT ?? "stdio";
 const PORT = parseInt(process.env.PORT ?? "3001", 10);
 
-if (!TOKEN || !VAULT_ID) {
-    console.error("Required: ONECLAW_AGENT_TOKEN, ONECLAW_VAULT_ID");
+if (!VAULT_ID) {
+    console.error("Required: ONECLAW_VAULT_ID");
+    process.exit(1);
+}
+
+if (!TOKEN && API_KEY && AGENT_ID) {
+    const authClient = createClient({ baseUrl: BASE_URL });
+    const authRes = await authClient.auth.agentToken({
+        api_key: API_KEY,
+        agent_id: AGENT_ID,
+    });
+    if (authRes.error) {
+        console.error("Auth failed:", authRes.error.message);
+        process.exit(1);
+    }
+    TOKEN = authRes.data!.access_token;
+}
+
+if (!TOKEN) {
+    console.error("Required: ONECLAW_AGENT_TOKEN or (ONECLAW_API_KEY + ONECLAW_AGENT_ID)");
     process.exit(1);
 }
 
