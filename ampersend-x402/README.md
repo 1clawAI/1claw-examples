@@ -57,36 +57,34 @@ When your agent calls the 1Claw API (or MCP) and is over quota, the following fl
        │ ─────────────────────────────────►                                    │
        │ ◄───────────────────────────────── JWT                                │
        │                                   │                                    │
-       │  2. (Option B) GET /v1/vaults/{id}/secrets/keys/x402-session-key       │
-       │     Authorization: Bearer JWT                                           │
+       │  2. (Option B) GET secret at path keys/x402-session-key (SDK: secrets.get)
+       │     Authorization: Bearer JWT     │                                    │
        │ ─────────────────────────────────►                                    │
        │ ◄───────────────────────────────── session key (value)                │
        │                                   │                                    │
        │  3. GET /v1/vaults/{id}/secrets   │                                    │
        │     Authorization: Bearer JWT     │                                    │
        │ ─────────────────────────────────►                                    │
-       │ ◄───────────────────────────────── 402 Payment Required                │
+       │ ◄───────────────────────────────── 402 Payment Required               │
        │     X-Payment-Required: {...}      │                                    │
        │                                   │                                    │
-       │  4. onPaymentRequired(requirements)                                   │
+       │  4. SDK calls treasurer.onPaymentRequired(requirements)                │
        │ ────────────────────────────────────────────────────────────────────►  │
-       │     (Ampersend API: authorize? limits? …)                              │
+       │     (A) Ampersend API: authorize? limits? …                             │
+       │     (B) If OK → wallet.createPayment() (Smart Account signs)           │
        │ ◄────────────────────────────────────────────────────────────────────  │
-       │     Authorization { payment, id }  │                                    │
+       │     Authorization { payment, id } (signed payload)                     │
        │                                   │                                    │
-       │  5. Wallet signs payload (Smart Account + session key)                   │
-       │     → signed payment                                                    │
-       │                                   │                                    │
-       │  6. GET /v1/vaults/{id}/secrets   │                                    │
+       │  5. GET /v1/vaults/{id}/secrets   │                                    │
        │     Authorization: Bearer JWT     │                                    │
        │     X-Payment: <signed payload>    │                                    │
        │ ─────────────────────────────────►                                    │
        │     (1Claw or facilitator verifies/settles on-chain)                    │
-       │ ◄───────────────────────────────── 200 OK + body                       │
+       │ ◄───────────────────────────────── 200 OK + body                      │
        │                                   │                                    │
 ```
 
-Steps 4–5 are handled inside the Ampersend SDK (`AmpersendTreasurer` + `SmartAccountWallet`); your code uses a payment-wrapped `fetch` and the retry happens automatically.
+Steps 4–5: The Ampersend SDK calls `AmpersendTreasurer.onPaymentRequired`; the treasurer asks the Ampersend API to authorize, then (if authorized) has `SmartAccountWallet` sign the payment and returns the `Authorization` to the SDK. Your code uses a payment-wrapped `fetch`; the retry with `X-Payment` happens automatically.
 
 ---
 
