@@ -29,13 +29,13 @@ Go to **API Keys** in the 1Claw dashboard and create a new key.
 cp .env.local.example .env.local
 ```
 
-Fill in:
+Fill in (all required for the chat agent):
 
-| Variable | Description |
-|----------|-------------|
-| `ONECLAW_API_KEY` | Your 1Claw API key (`ocv_...`) |
-| `ONECLAW_BASE_URL` | API URL (default: `https://api.1claw.xyz`) |
-| `ANTHROPIC_API_KEY` | Your Anthropic API key for Claude |
+| Variable            | Description                                |
+| ------------------- | ------------------------------------------ |
+| `ONECLAW_API_KEY`   | Your 1Claw API key (`ocv_...`)             |
+| `ONECLAW_BASE_URL`  | API URL (default: `https://api.1claw.xyz`) |
+| `ANTHROPIC_API_KEY` | Your Anthropic API key for Claude          |
 
 ### 4. Install and run
 
@@ -44,7 +44,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Try asking: *"List my vaults and then get the first secret's path and type only."*
 
 ## How It Works
 
@@ -66,10 +66,10 @@ When the free tier is exhausted, the SDK returns a `PaymentRequiredError` with t
 
 ```typescript
 const client = createClient({
-  baseUrl: "https://api.1claw.xyz",
-  apiKey: "ocv_...",
-  x402Signer: myWalletSigner,
-  maxAutoPayUsd: 0.01,
+    baseUrl: "https://api.1claw.xyz",
+    apiKey: "ocv_...",
+    x402Signer: myWalletSigner,
+    maxAutoPayUsd: 0.01,
 });
 ```
 
