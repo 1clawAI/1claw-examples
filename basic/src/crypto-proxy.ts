@@ -113,11 +113,11 @@ async function main() {
         console.error("Simulation failed:", simRes.error.message);
     } else {
         const sim = simRes.data!;
-        console.log(`  Success: ${sim.success}`);
+        console.log(`  Status: ${sim.status}`);
         console.log(`  Gas used: ${sim.gas_used}`);
         console.log(`  Balance changes: ${sim.balance_changes?.length ?? 0}`);
-        if (sim.simulation_url) {
-            console.log(`  Tenderly: ${sim.simulation_url}`);
+        if (sim.tenderly_dashboard_url) {
+            console.log(`  Tenderly: ${sim.tenderly_dashboard_url}`);
         }
     }
 

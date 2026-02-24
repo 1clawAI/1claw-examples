@@ -28,8 +28,8 @@ async function main() {
     console.log("Creating client...");
     const client = createClient({ baseUrl: BASE_URL });
     const authRes = AGENT_ID
-        ? await client.auth.agentToken({ api_key: API_KEY, agent_id: AGENT_ID })
-        : await client.auth.apiKeyToken({ api_key: API_KEY });
+        ? await client.auth.agentToken({ api_key: API_KEY!, agent_id: AGENT_ID })
+        : await client.auth.apiKeyToken({ api_key: API_KEY! });
     if (authRes.error) {
         console.error("Auth failed:", authRes.error.message);
         return;
