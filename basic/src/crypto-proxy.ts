@@ -91,10 +91,9 @@ async function main() {
         );
     }
 
-    // ── 5. Submit a transaction intent via the proxy ────────────────
-    console.log("\n--- Submitting transaction ---");
+    // ── 5. Simulate a transaction (Tenderly) ──────────────────────
+    console.log("\n--- Simulating transaction (Tenderly) ---");
 
-    // Authenticate as the agent to call the proxy endpoint
     const agentClient = createClient({
         baseUrl: BASE_URL,
         apiKey: agent.api_key,
@@ -102,10 +101,34 @@ async function main() {
     });
     await new Promise((r) => setTimeout(r, 500));
 
+    const simRes = await agentClient.agents.simulateTransaction(
+        agent.agent.id,
+        {
+            to: "0x000000000000000000000000000000000000dEaD",
+            value: "0.001",
+            chain: "base",
+        },
+    );
+    if (simRes.error) {
+        console.error("Simulation failed:", simRes.error.message);
+    } else {
+        const sim = simRes.data!;
+        console.log(`  Success: ${sim.success}`);
+        console.log(`  Gas used: ${sim.gas_used}`);
+        console.log(`  Balance changes: ${sim.balance_changes?.length ?? 0}`);
+        if (sim.simulation_url) {
+            console.log(`  Tenderly: ${sim.simulation_url}`);
+        }
+    }
+
+    // ── 6. Submit with simulate_first (simulate-then-sign) ──────────
+    console.log("\n--- Submitting transaction (simulate_first) ---");
+
     const txRes = await agentClient.agents.submitTransaction(agent.agent.id, {
         to: "0x000000000000000000000000000000000000dEaD",
         value: "0.001",
         chain: "base",
+        simulate_first: true,
     });
     if (txRes.error) {
         console.error("Tx failed:", txRes.error.message);
@@ -116,6 +139,9 @@ async function main() {
         console.log(
             `  Signed tx: ${tx.signed_tx ? tx.signed_tx.slice(0, 30) + "..." : "n/a"}`,
         );
+        if (tx.simulation_id) {
+            console.log(`  Simulation ID: ${tx.simulation_id}`);
+        }
     }
 
     // ── 6. Verify agent status ─────────────────────────────────────
