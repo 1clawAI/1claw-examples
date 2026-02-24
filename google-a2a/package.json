@@ -7,7 +7,14 @@
     "scripts": {
         "worker": "npx tsx src/worker-agent.ts",
         "coordinator": "npx tsx src/coordinator.ts",
-        "start": "npx tsx src/start-all.ts"
+        "start": "npx tsx src/start-all.ts",
+        "ecdh:alice": "npx tsx src/ecdh-worker.ts",
+        "ecdh:bob": "AGENT_NAME=Bob PORT=4101 npx tsx src/ecdh-worker.ts",
+        "ecdh:coordinator": "npx tsx src/ecdh-coordinator.ts",
+        "ecdh": "npx tsx src/start-ecdh-demo.ts",
+        "ecdh:bootstrap": "npx tsx scripts/bootstrap-ecdh-keys.ts",
+        "ecdh:cleanup": "npx tsx scripts/cleanup-ecdh-keys.ts",
+        "ecdh:test": "npx tsx scripts/test-ecdh-with-1claw.ts"
     },
     "dependencies": {
         "@1claw/sdk": "file:../../packages/sdk",
