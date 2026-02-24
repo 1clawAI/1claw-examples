@@ -18,17 +18,17 @@ Simple TypeScript examples demonstrating the core `@1claw/sdk` workflows.
 # Install dependencies
 npm install
 
-# Copy and fill in your API key
+# Copy and fill in your API key (and optionally ONECLAW_AGENT_ID for npm start)
 cp .env.example .env
 ```
 
 ## Run
 
 ```bash
-# Core vault + secrets flow
+# Core vault + secrets flow (authenticates with API key, or agent token if ONECLAW_AGENT_ID set)
 npm start
 
-# Signup and email-sharing flow
+# Signup and email-sharing flow (no API key needed)
 npm run signup
 
 # Crypto transaction proxy flow
@@ -37,10 +37,11 @@ npm run crypto-proxy
 
 ## Environment Variables
 
-| Variable           | Required | Description                                                  |
-| ------------------ | -------- | ------------------------------------------------------------ |
-| `ONECLAW_BASE_URL` | No       | API URL (default: `https://api.1claw.xyz`)                   |
-| `ONECLAW_API_KEY`  | Yes\*    | Your API key (`ocv_...`) — not needed for the signup example |
+| Variable            | Required | Description                                                                 |
+| ------------------- | -------- | --------------------------------------------------------------------------- |
+| `ONECLAW_BASE_URL`  | No       | API URL (default: `https://api.1claw.xyz`)                                  |
+| `ONECLAW_API_KEY`   | Yes\*    | Your API key (`ocv_...`). User or agent key. Not needed for the signup example. |
+| `ONECLAW_AGENT_ID`  | No       | Agent UUID. When set, `npm start` uses `auth.agentToken()`; otherwise `auth.apiKeyToken()`. Use with an agent API key. |
 
 ## What You'll See
 
@@ -66,8 +67,8 @@ Secret: OPENAI_KEY
 
 --- Billing usage ---
   Tier: free
-  Free limit: 1000/month
-  Used this month: 5
+  Free limit: (per your tier)/month
+  Used this month: N
 
 --- Cleaning up ---
 Vault and secret deleted.
