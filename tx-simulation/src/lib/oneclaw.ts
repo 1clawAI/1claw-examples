@@ -110,6 +110,8 @@ interface TransactionResult {
   created_at: string;
   signed_at?: string;
   simulation_status?: string;
+  /** When the tx was run with simulate_first, URL to view the simulation in Tenderly. */
+  tenderly_dashboard_url?: string;
 }
 
 export async function submitTransaction(params: {

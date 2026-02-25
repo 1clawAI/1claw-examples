@@ -31,15 +31,19 @@ interface TxEvent {
   result?: Record<string, unknown>;
 }
 
+const TX_TOOLS = new Set([
+  "submit_transaction",
+  "simulate_transaction",
+  "resolve_ens",
+  "encode_token_transfer",
+]);
+
 function extractTxEvents(messages: Message[]): TxEvent[] {
   const events: TxEvent[] = [];
   for (const msg of messages) {
     if (msg.role !== "assistant" || !msg.toolInvocations) continue;
     for (const inv of msg.toolInvocations) {
-      if (
-        inv.toolName === "submit_transaction" ||
-        inv.toolName === "simulate_transaction"
-      ) {
+      if (TX_TOOLS.has(inv.toolName)) {
         events.push({
           id: inv.toolCallId,
           tool: inv.toolName,
@@ -56,15 +60,25 @@ function extractTxEvents(messages: Message[]): TxEvent[] {
 const SUGGESTED_PROMPTS = [
   { label: "Check my restrictions", text: "What transaction restrictions do I have?" },
   { label: "Try a blocked tx", text: "Send 1 ETH to 0x0000000000000000000000000000000000000001 on ethereum" },
-  { label: "Send a valid tx", text: "Send 0.000001 ETH to the burn address on base" },
+  { label: "Tenderly: failing sim", text: "Simulate sending 1 million USDC to vitalik.eth on base — show me the Tenderly link when it reverts" },
+  { label: "Send to ENS name", text: "Send vitalik.eth 0.0001 ETH on base" },
+  { label: "Send USDC", text: "Send 0.01 USDC to vitalik.eth on base" },
+  { label: "Send a valid tx", text: "Send 0.0001 ETH to the burn address on base" },
 ];
+
+const TOOL_LOADING_LABELS: Record<string, string> = {
+  simulate_transaction: "Simulating…",
+  submit_transaction: "Submitting…",
+  resolve_ens: "Resolving ENS name…",
+  encode_token_transfer: "Encoding token transfer…",
+};
 
 function ToolResultCard({ inv }: { inv: TxEvent }) {
   if (!inv.result) {
     return (
       <div className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-2 text-xs text-zinc-400">
         <Loader2 className="h-3.5 w-3.5 animate-spin" />
-        {inv.tool === "simulate_transaction" ? "Simulating…" : "Submitting…"}
+        {TOOL_LOADING_LABELS[inv.tool] || "Processing…"}
       </div>
     );
   }
@@ -104,12 +118,61 @@ function ToolResultCard({ inv }: { inv: TxEvent }) {
     );
   }
 
-  if (inv.tool === "simulate_transaction" && r.simulation) {
-    const sim = r.simulation as Record<string, unknown>;
-    const simResult = sim.result as string;
+  if (inv.tool === "resolve_ens") {
+    const resolved = status === "ok";
     return (
       <div className={cn(
         "animate-slide-in rounded-lg border p-3 space-y-1",
+        resolved ? "border-purple-500/30 bg-purple-500/5" : "border-red-500/30 bg-red-500/5",
+      )}>
+        <div className="flex items-center gap-2">
+          <span className="text-sm">{resolved ? "🔗" : "❌"}</span>
+          <span className={cn("text-sm font-medium", resolved ? "text-purple-400" : "text-red-400")}>
+            {resolved ? "ENS Resolved" : "ENS Resolution Failed"}
+          </span>
+        </div>
+        <p className="text-xs text-zinc-400">
+          {resolved
+            ? <><span className="font-mono">{inv.args.name as string}</span> → <span className="font-mono">{truncateAddress(r.address as string)}</span></>
+            : String(r.error)
+          }
+        </p>
+      </div>
+    );
+  }
+
+  if (inv.tool === "encode_token_transfer") {
+    const encoded = status === "ok";
+    return (
+      <div className={cn(
+        "animate-slide-in rounded-lg border p-3 space-y-1",
+        encoded ? "border-cyan-500/30 bg-cyan-500/5" : "border-red-500/30 bg-red-500/5",
+      )}>
+        <div className="flex items-center gap-2">
+          <span className="text-sm">{encoded ? "🪙" : "❌"}</span>
+          <span className={cn("text-sm font-medium", encoded ? "text-cyan-400" : "text-red-400")}>
+            {encoded ? `${r.token_symbol as string} Transfer Encoded` : "Token Encoding Failed"}
+          </span>
+          {encoded && <Badge variant="info" className="text-[10px]">ERC-20</Badge>}
+        </div>
+        <p className="text-xs text-zinc-400">
+          {encoded
+            ? `${inv.args.amount as string} ${(inv.args.token as string).toUpperCase()} → ${truncateAddress(inv.args.to as string)}`
+            : String(r.error)
+          }
+        </p>
+      </div>
+    );
+  }
+
+  if (inv.tool === "simulate_transaction" && r.simulation) {
+    const sim = r.simulation as Record<string, unknown>;
+    const simResult = sim.result as string;
+    const tenderlyUrl = sim.tenderly_url as string | undefined;
+    const revertReason = (sim.revert_reason as string) || (sim.error as string);
+    return (
+      <div className={cn(
+        "animate-slide-in rounded-lg border p-3 space-y-2",
         simResult === "success"
           ? "border-emerald-500/30 bg-emerald-500/5"
           : "border-red-500/30 bg-red-500/5",
@@ -127,14 +190,26 @@ function ToolResultCard({ inv }: { inv: TxEvent }) {
         </div>
         <div className="text-xs text-zinc-400 space-y-0.5">
           <p>Gas: {String(sim.gas_used)} ({sim.gas_cost_usd ? `$${String(sim.gas_cost_usd)}` : "estimate unavailable"})</p>
-          {sim.error ? <p className="text-red-400">Error: {String(sim.error)}</p> : null}
+          {revertReason ? <p className="text-red-400">Revert: {revertReason}</p> : null}
         </div>
+        {tenderlyUrl ? (
+          <a
+            href={tenderlyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md bg-zinc-800 px-2.5 py-1.5 text-xs font-medium text-amber-400 hover:bg-zinc-700 hover:text-amber-300 border border-amber-500/20"
+          >
+            <ExternalLink className="h-3 w-3" />
+            View simulation in Tenderly
+          </a>
+        ) : null}
       </div>
     );
   }
 
   if (inv.tool === "submit_transaction" && r.transaction) {
     const tx = r.transaction as Record<string, unknown>;
+    const tenderlyUrl = tx.tenderly_dashboard_url as string | undefined;
     return (
       <div className="animate-slide-in rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3 space-y-2">
         <div className="flex items-center gap-2">
@@ -147,17 +222,30 @@ function ToolResultCard({ inv }: { inv: TxEvent }) {
         <div className="text-xs text-zinc-400 space-y-0.5">
           <p className="font-mono">To: {truncateAddress(tx.to as string)}</p>
           <p>Value: {(Number(tx.value_wei as string) / 1e18).toFixed(8)} ETH</p>
-          {tx.tx_hash ? (
-            <a
-              href={tx.explorer_url as string}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 mt-1"
-            >
-              <ExternalLink className="h-3 w-3" />
-              View on block explorer
-            </a>
-          ) : null}
+          <div className="flex flex-wrap gap-2 mt-1.5">
+            {tx.tx_hash ? (
+              <a
+                href={tx.explorer_url as string}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300"
+              >
+                <ExternalLink className="h-3 w-3" />
+                View on block explorer
+              </a>
+            ) : null}
+            {tenderlyUrl ? (
+              <a
+                href={tenderlyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-amber-400 hover:text-amber-300"
+              >
+                <ExternalLink className="h-3 w-3" />
+                View simulation in Tenderly
+              </a>
+            ) : null}
+          </div>
         </div>
       </div>
     );
@@ -266,11 +354,7 @@ export default function Page() {
 
                 if (msg.role === "assistant") {
                   const toolInvs = msg.toolInvocations || [];
-                  const txInvs = toolInvs.filter(
-                    (i) =>
-                      i.toolName === "submit_transaction" ||
-                      i.toolName === "simulate_transaction",
-                  );
+                  const txInvs = toolInvs.filter((i) => TX_TOOLS.has(i.toolName));
 
                   return (
                     <div key={msg.id} className="flex justify-start animate-slide-in">
@@ -355,9 +439,9 @@ export default function Page() {
                 any transaction is signed.
               </p>
               <GuardrailRow label="Chains" value="base" />
-              <GuardrailRow label="Max / tx" value="0.00005 ETH" />
-              <GuardrailRow label="Daily limit" value="0.0001 ETH" />
-              <GuardrailRow label="Destinations" value="0x…dEaD only" />
+              <GuardrailRow label="Max / tx" value="0.001 ETH" />
+              <GuardrailRow label="Daily limit" value="0.005 ETH" />
+              <GuardrailRow label="Destinations" value="0x…dEaD, 0x…90F4" />
             </CardContent>
           </Card>
 
@@ -454,6 +538,7 @@ function TxLogEntry({ event }: { event: TxEvent }) {
 
   if (status === "ok" && event.tool === "submit_transaction") {
     const tx = r.transaction as Record<string, unknown>;
+    const tenderlyUrl = tx?.tenderly_dashboard_url as string | undefined;
     return (
       <div className="animate-slide-in flex items-start gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-2">
         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 mt-0.5 shrink-0" />
@@ -464,17 +549,30 @@ function TxLogEntry({ event }: { event: TxEvent }) {
           <p className="text-[10px] text-zinc-500 truncate">
             {tx?.chain as string} → {truncateAddress(tx?.to as string || "")}
           </p>
-          {tx?.tx_hash ? (
-            <a
-              href={tx.explorer_url as string}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[10px] text-blue-400 hover:underline inline-flex items-center gap-0.5 mt-0.5"
-            >
-              <ExternalLink className="h-2.5 w-2.5" />
-              {String(tx.tx_hash).slice(0, 16)}…
-            </a>
-          ) : null}
+          <div className="flex flex-wrap gap-x-2 gap-y-0.5 mt-0.5">
+            {tx?.tx_hash ? (
+              <a
+                href={tx.explorer_url as string}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[10px] text-blue-400 hover:underline inline-flex items-center gap-0.5"
+              >
+                <ExternalLink className="h-2.5 w-2.5" />
+                {String(tx.tx_hash).slice(0, 16)}…
+              </a>
+            ) : null}
+            {tenderlyUrl ? (
+              <a
+                href={tenderlyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[10px] text-amber-400 hover:text-amber-300 inline-flex items-center gap-0.5"
+              >
+                <ExternalLink className="h-2.5 w-2.5" />
+                View in Tenderly
+              </a>
+            ) : null}
+          </div>
         </div>
       </div>
     );
@@ -483,17 +581,74 @@ function TxLogEntry({ event }: { event: TxEvent }) {
   if (status === "ok" && event.tool === "simulate_transaction") {
     const sim = r.simulation as Record<string, unknown>;
     const passed = (sim?.result as string) === "success";
+    const tenderlyUrl = sim?.tenderly_url as string | undefined;
+    return (
+      <div className={cn(
+        "animate-slide-in flex flex-col gap-1 rounded-lg border px-2.5 py-2",
+        passed ? "border-blue-500/20 bg-blue-500/5" : "border-red-500/20 bg-red-500/5",
+      )}>
+        <div className="flex items-start gap-2">
+          <Zap className={cn("h-3.5 w-3.5 mt-0.5 shrink-0", passed ? "text-blue-400" : "text-red-400")} />
+          <div className="min-w-0">
+            <p className={cn("text-[11px] font-medium", passed ? "text-blue-400" : "text-red-400")}>
+              Sim {passed ? "passed" : "reverted"}
+            </p>
+            <p className="text-[10px] text-zinc-500">Gas: {String(sim?.gas_used)}</p>
+          </div>
+        </div>
+        {tenderlyUrl ? (
+          <a
+            href={tenderlyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-amber-400 hover:text-amber-300 inline-flex items-center gap-0.5"
+          >
+            <ExternalLink className="h-2.5 w-2.5" />
+            View in Tenderly
+          </a>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (event.tool === "resolve_ens") {
+    const resolved = status === "ok";
     return (
       <div className={cn(
         "animate-slide-in flex items-start gap-2 rounded-lg border px-2.5 py-2",
-        passed ? "border-blue-500/20 bg-blue-500/5" : "border-red-500/20 bg-red-500/5",
+        resolved ? "border-purple-500/20 bg-purple-500/5" : "border-red-500/20 bg-red-500/5",
       )}>
-        <Zap className={cn("h-3.5 w-3.5 mt-0.5 shrink-0", passed ? "text-blue-400" : "text-red-400")} />
+        <span className="text-[13px] mt-0.5 shrink-0">{resolved ? "🔗" : "❌"}</span>
         <div className="min-w-0">
-          <p className={cn("text-[11px] font-medium", passed ? "text-blue-400" : "text-red-400")}>
-            Sim {passed ? "passed" : "reverted"}
+          <p className={cn("text-[11px] font-medium", resolved ? "text-purple-400" : "text-red-400")}>
+            {resolved ? "ENS Resolved" : "ENS Failed"}
           </p>
-          <p className="text-[10px] text-zinc-500">Gas: {String(sim?.gas_used)}</p>
+          <p className="text-[10px] text-zinc-500 truncate">
+            {event.args.name as string} → {resolved ? truncateAddress(r.address as string) : (r.error as string)}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (event.tool === "encode_token_transfer") {
+    const encoded = status === "ok";
+    return (
+      <div className={cn(
+        "animate-slide-in flex items-start gap-2 rounded-lg border px-2.5 py-2",
+        encoded ? "border-cyan-500/20 bg-cyan-500/5" : "border-red-500/20 bg-red-500/5",
+      )}>
+        <span className="text-[13px] mt-0.5 shrink-0">{encoded ? "🪙" : "❌"}</span>
+        <div className="min-w-0">
+          <p className={cn("text-[11px] font-medium", encoded ? "text-cyan-400" : "text-red-400")}>
+            {encoded ? `${r.token_symbol as string} Transfer` : "Encode Failed"}
+          </p>
+          <p className="text-[10px] text-zinc-500 truncate">
+            {encoded
+              ? `${event.args.amount as string} ${(event.args.token as string).toUpperCase()} → ${truncateAddress(event.args.to as string)}`
+              : (r.error as string)
+            }
+          </p>
         </div>
       </div>
     );
