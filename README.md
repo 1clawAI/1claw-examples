@@ -14,6 +14,7 @@ Example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and 
 | [nextjs-agent-secret](./nextjs-agent-secret/) | ![Intermediate](https://img.shields.io/badge/-Intermediate-blue) | AI agent (Claude + Vercel AI SDK) accesses vault secrets with human approval gates |
 | [fastmcp-tool-server](./fastmcp-tool-server/) | ![Intermediate](https://img.shields.io/badge/-Intermediate-blue) | Custom FastMCP server that composes 1Claw SDK into domain-specific tools (rotate keys, deploy services, parse env configs) |
 | [google-a2a](./google-a2a/) | ![Intermediate](https://img.shields.io/badge/-Intermediate-blue) | Two agents communicating via Google's A2A protocol, with 1Claw as the secure credential layer |
+| [tx-simulation](./tx-simulation/) | ![Intermediate](https://img.shields.io/badge/-Intermediate-blue) | Transaction simulation with Tenderly — preview gas costs, balance changes, and revert reasons before signing |
 | [ampersend-x402](./ampersend-x402/) | ![Advanced](https://img.shields.io/badge/-Advanced-red) | x402 micropayments via Ampersend SDK — MCP/HTTP clients, hybrid billing, smart account paywall server + client |
 
 ## Testing all examples
