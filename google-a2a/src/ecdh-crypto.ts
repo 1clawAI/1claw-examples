@@ -15,6 +15,8 @@ import {
     createPrivateKey,
     generateKeyPairSync,
     randomBytes,
+    sign as cryptoSign,
+    verify as cryptoVerify,
     type KeyObject,
 } from "crypto";
 
@@ -147,9 +149,8 @@ export function decrypt(
  */
 export function sign(payload: string, keys: AgentKeys): string {
     if (keys.signKeyType === "ed25519" && keys.signPrivateKeyEd25519) {
-        const s = createSign("Ed25519");
-        s.update(payload, "utf8");
-        return s.sign(keys.signPrivateKeyEd25519).toString("base64");
+        const sig = cryptoSign(null, Buffer.from(payload, "utf8"), keys.signPrivateKeyEd25519);
+        return sig.toString("base64");
     }
     if (keys.signPrivateKey) {
         const s = createSign("SHA256");
@@ -171,9 +172,7 @@ export function verify(
 ): boolean {
     if (senderSignKeyType === "ed25519") {
         const pubKey = importSignPublicBase64Ed25519(senderSignPublicB64);
-        const v = createVerify("Ed25519");
-        v.update(payload, "utf8");
-        return v.verify(pubKey, Buffer.from(signatureBase64, "base64"));
+        return cryptoVerify(null, Buffer.from(payload, "utf8"), pubKey, Buffer.from(signatureBase64, "base64"));
     }
     const pubKey = importSignPublicBase64(senderSignPublicB64);
     const v = createVerify("SHA256");

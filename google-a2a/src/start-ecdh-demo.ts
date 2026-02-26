@@ -35,13 +35,23 @@ const bobEnv = {
         : {}),
 };
 
+async function waitForAgent(url: string, name: string, maxWaitMs = 30000) {
+    const start = Date.now();
+    while (Date.now() - start < maxWaitMs) {
+        try {
+            const res = await fetch(`${url}/.well-known/agent.json`);
+            if (res.ok) return;
+        } catch {}
+        await new Promise((r) => setTimeout(r, 500));
+    }
+    throw new Error(`${name} did not start within ${maxWaitMs / 1000}s`);
+}
+
 console.log("Starting Alice (port 4100)...");
 const alice = spawn("npx", ["tsx", "src/ecdh-worker.ts"], {
     stdio: "inherit",
     env: aliceEnv,
 });
-
-await new Promise((r) => setTimeout(r, 800));
 
 console.log("Starting Bob (port 4101)...");
 const bob = spawn("npx", ["tsx", "src/ecdh-worker.ts"], {
@@ -49,7 +59,10 @@ const bob = spawn("npx", ["tsx", "src/ecdh-worker.ts"], {
     env: bobEnv,
 });
 
-await new Promise((r) => setTimeout(r, 1500));
+await Promise.all([
+    waitForAgent("http://localhost:4100", "Alice"),
+    waitForAgent("http://localhost:4101", "Bob"),
+]);
 
 console.log("\nStarting ECDH coordinator...\n");
 const coordinator = spawn("npx", ["tsx", "src/ecdh-coordinator.ts"], {
