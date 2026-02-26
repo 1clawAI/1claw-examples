@@ -146,34 +146,25 @@ curl http://localhost:4200/.well-known/agent.json
 
 ## Demo 3: ECDH Key Exchange (10 min)
 
-Two agents (Alice and Bob) perform an ECDH key agreement. Each generates an ephemeral key pair, exchanges public keys via A2A, and derives a shared secret. Keys can optionally be stored in 1Claw vaults.
+Two agents (Alice and Bob) perform an ECDH key agreement. Each agent uses **platform-generated keys**: Ed25519 for signing and P-256 ECDH for key agreement. Public keys are exchanged via A2A Agent Cards; the derived shared secret encrypts and signs messages.
 
-### Step 1 — Run with in-memory keys (no extra config)
+### Option A — Create 1Claw agents (recommended)
 
-```bash
-ONECLAW_VAULT_ID= ONECLAW_API_KEY= npm run ecdh
-```
-
-This launches Alice (port 4100), Bob (port 4101), and the ECDH coordinator. Keys are generated in memory.
-
-### Step 2 — (Optional) Run with 1Claw-stored keys
-
-Set in `.env`:
-
-```env
-ONECLAW_ALICE_VAULT_ID=vault-for-alice
-ONECLAW_ALICE_API_KEY=ocv_alice_key
-ONECLAW_BOB_VAULT_ID=vault-for-bob
-ONECLAW_BOB_API_KEY=ocv_bob_key
-```
-
-Then bootstrap and run:
+Creates two agents. 1Claw auto-generates all keys (API key + Ed25519 + P-256 ECDH). The setup script just grants each agent read access to its own keys.
 
 ```bash
-npm run ecdh:bootstrap   # Generate and store keys in 1Claw
-npm run ecdh             # Run the demo with vault-stored keys
-npm run ecdh:cleanup     # Remove keys from vaults
+ONECLAW_API_KEY=ocv_your_user_key npm run ecdh:setup-agents
+cp .env.ecdh .env
+npm run ecdh
 ```
+
+### Option B — Run with in-memory keys (no 1Claw)
+
+```bash
+npm run ecdh
+```
+
+Launches Alice (4100), Bob (4101), and the coordinator. Keys are generated in memory.
 
 ---
 
@@ -194,6 +185,11 @@ src/
 ├── ecdh-coordinator.ts   # ECDH coordinator (orchestrates Alice ↔ Bob)
 ├── ecdh-crypto.ts        # Node.js crypto ECDH helpers
 └── start-ecdh-demo.ts    # Launcher for Demo 3 (Alice + Bob + coordinator)
+scripts/
+├── setup-ecdh-agents.ts  # Create two 1Claw agents, grant key access, write .env.ecdh
+├── bootstrap-ecdh-keys.ts  # (legacy) Manual key bootstrap for two-vault setup
+├── cleanup-ecdh-keys.ts
+└── test-ecdh-with-1claw.ts
 ```
 
 ## Environment variables
@@ -203,6 +199,8 @@ src/
 | `ONECLAW_API_KEY` | Yes | Your 1Claw API key (`ocv_...`) |
 | `ONECLAW_VAULT_ID` | Yes | UUID of the vault with secrets |
 | `ONECLAW_AGENT_ID` | No | Agent UUID (enables agent-level policies) |
+| `ONECLAW_ALICE_AGENT_ID` / `ONECLAW_BOB_AGENT_ID` | ECDH | Agent UUIDs (from `ecdh:setup-agents`) |
+| `ONECLAW_ALICE_API_KEY` / `ONECLAW_BOB_API_KEY` | ECDH | Agent API keys (from `ecdh:setup-agents`) |
 | `GEMINI_API_KEY` | ADK demo | Google Gemini API key |
 | `OPENAI_API_KEY` | No | Optional — coordinator can summarize with OpenAI |
 | `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |

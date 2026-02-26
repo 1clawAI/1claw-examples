@@ -2,10 +2,11 @@
  * Start both ECDH demo agents (Alice, Bob) and the coordinator.
  * Alice on 4100, Bob on 4101.
  *
- * For 1Claw-backed keys, set in env (or .env):
- *   ONECLAW_ALICE_VAULT_ID, ONECLAW_ALICE_API_KEY
- *   ONECLAW_BOB_VAULT_ID,   ONECLAW_BOB_API_KEY
- * These are mapped to each worker's ONECLAW_VAULT_ID / ONECLAW_API_KEY.
+ * For 1Claw-backed keys (recommended), set in env (or .env):
+ *   ONECLAW_ALICE_AGENT_ID, ONECLAW_ALICE_API_KEY
+ *   ONECLAW_BOB_AGENT_ID,   ONECLAW_BOB_API_KEY
+ * These are mapped to each worker's ONECLAW_AGENT_ID / ONECLAW_API_KEY.
+ * No VAULT_ID needed — keys come from the platform __agent-keys vault.
  */
 
 import { spawn } from "child_process";
@@ -14,11 +15,10 @@ const aliceEnv = {
     ...process.env,
     AGENT_NAME: "Alice",
     PORT: "4100",
-    ...(process.env.ONECLAW_ALICE_VAULT_ID && process.env.ONECLAW_ALICE_API_KEY
+    ...(process.env.ONECLAW_ALICE_AGENT_ID && process.env.ONECLAW_ALICE_API_KEY
         ? {
-              ONECLAW_VAULT_ID: process.env.ONECLAW_ALICE_VAULT_ID,
+              ONECLAW_AGENT_ID: process.env.ONECLAW_ALICE_AGENT_ID,
               ONECLAW_API_KEY: process.env.ONECLAW_ALICE_API_KEY,
-              ONECLAW_AGENT_ID: process.env.ONECLAW_ALICE_AGENT_ID ?? "",
           }
         : {}),
 };
@@ -27,11 +27,10 @@ const bobEnv = {
     ...process.env,
     AGENT_NAME: "Bob",
     PORT: "4101",
-    ...(process.env.ONECLAW_BOB_VAULT_ID && process.env.ONECLAW_BOB_API_KEY
+    ...(process.env.ONECLAW_BOB_AGENT_ID && process.env.ONECLAW_BOB_API_KEY
         ? {
-              ONECLAW_VAULT_ID: process.env.ONECLAW_BOB_VAULT_ID,
+              ONECLAW_AGENT_ID: process.env.ONECLAW_BOB_AGENT_ID,
               ONECLAW_API_KEY: process.env.ONECLAW_BOB_API_KEY,
-              ONECLAW_AGENT_ID: process.env.ONECLAW_BOB_AGENT_ID ?? "",
           }
         : {}),
 };

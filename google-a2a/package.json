@@ -16,6 +16,7 @@
         "ecdh": "npx tsx src/start-ecdh-demo.ts",
         "ecdh:bootstrap": "npx tsx scripts/bootstrap-ecdh-keys.ts",
         "ecdh:cleanup": "npx tsx scripts/cleanup-ecdh-keys.ts",
+        "ecdh:setup-agents": "npx tsx scripts/setup-ecdh-agents.ts",
         "ecdh:test": "npx tsx scripts/test-ecdh-with-1claw.ts"
     },
     "dependencies": {

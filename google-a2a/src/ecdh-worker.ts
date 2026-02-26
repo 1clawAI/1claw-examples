@@ -1,12 +1,14 @@
 /**
  * ECDH demo worker — one of two agents (Alice or Bob) that exchange
- * ECDH-encrypted, ECDSA-signed messages via A2A.
+ * ECDH-encrypted, signed messages via A2A.
  *
- * Keys can be loaded from 1Claw (two accounts: one vault per agent) or
- * generated in-memory if 1Claw is not configured.
+ * When configured with a 1Claw agent (ONECLAW_AGENT_ID + ONECLAW_API_KEY):
+ * uses the agent's platform-generated keys — P-256 ECDH and Ed25519 signing —
+ * loaded from the __agent-keys vault. No manual key generation needed.
+ *
+ * Otherwise: generates in-memory ECDH + ECDSA keys for a quick local demo.
  *
  * Set AGENT_NAME (e.g. "Alice", "Bob") and PORT (e.g. 4100, 4101).
- * For 1Claw: ONECLAW_VAULT_ID, ONECLAW_API_KEY (and optionally ONECLAW_AGENT_ID).
  */
 
 import express from "express";
@@ -21,62 +23,87 @@ import type {
 } from "./a2a-types.js";
 import {
     generateAgentKeys,
-    agentKeysFromStoredPrivates,
+    agentKeysFromStoredEcdhAndEd25519,
     deriveSharedSecret,
     encrypt,
     decrypt,
     sign,
     verify,
     exportEcdhPublicBase64,
-    exportSignPublicBase64,
+    exportSignPublicBase64FromKeys,
     importEcdhPublicBase64,
-    importSignPublicBase64,
     type AgentKeys,
+    type SignKeyType,
 } from "./ecdh-crypto.js";
 
 const AGENT_NAME = process.env.AGENT_NAME ?? "Alice";
 const PORT = parseInt(process.env.PORT ?? "4100", 10);
-const VAULT_ID = process.env.ONECLAW_VAULT_ID;
 const API_KEY = process.env.ONECLAW_API_KEY;
+const AGENT_ID = process.env.ONECLAW_AGENT_ID;
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 
-const ECDH_SECRET_PATH = "keys/ecdh";
-const SIGNING_SECRET_PATH = "keys/signing";
+const AGENT_KEYS_VAULT_NAME = "__agent-keys";
 
 async function loadKeys(): Promise<AgentKeys> {
-    if (VAULT_ID && API_KEY) {
-        const sdk = createClient({
-            baseUrl: BASE_URL,
-            apiKey: API_KEY,
-            agentId: process.env.ONECLAW_AGENT_ID || undefined,
-        });
-        const ecdhRes = await sdk.secrets.get(VAULT_ID, ECDH_SECRET_PATH);
-        const signRes = await sdk.secrets.get(VAULT_ID, SIGNING_SECRET_PATH);
-        if (ecdhRes.error || signRes.error) {
-            throw new Error(
-                `Failed to load keys from 1Claw: ${ecdhRes.error?.message ?? signRes.error?.message}. ` +
-                    "Run the bootstrap script first (see README).",
-            );
-        }
-        console.log(`[${AGENT_NAME}] Loaded ECDH and signing keys from 1Claw vault ${VAULT_ID.slice(0, 8)}...`);
-        return agentKeysFromStoredPrivates(
-            ecdhRes.data!.value,
-            signRes.data!.value,
-        );
+    if (!AGENT_ID || !API_KEY) {
+        console.log(`[${AGENT_NAME}] No 1Claw agent config; using in-memory keys.`);
+        return generateAgentKeys();
     }
-    console.log(`[${AGENT_NAME}] No 1Claw config (ONECLAW_VAULT_ID/ONECLAW_API_KEY); using in-memory keys.`);
-    return generateAgentKeys();
+
+    const sdk = createClient({
+        baseUrl: BASE_URL,
+        apiKey: API_KEY,
+        agentId: AGENT_ID,
+    });
+
+    // Get agent profile (public keys)
+    const selfRes = await sdk.agents.getSelf();
+    if (selfRes.error || !selfRes.data) {
+        throw new Error(`GET /v1/agents/me failed: ${selfRes.error?.message}`);
+    }
+    const { ssh_public_key: sshPubB64, ecdh_public_key: _ecdhPubB64 } = selfRes.data as {
+        ssh_public_key?: string;
+        ecdh_public_key?: string;
+    };
+    if (!sshPubB64) throw new Error("Agent has no ssh_public_key on record.");
+
+    // Find the __agent-keys vault
+    const vaultsRes = await sdk.vaults.list();
+    if (vaultsRes.error) throw new Error(`Failed to list vaults: ${vaultsRes.error.message}`);
+    const agentKeysVault = vaultsRes.data?.vaults?.find((v) => v.name === AGENT_KEYS_VAULT_NAME);
+    if (!agentKeysVault) throw new Error("__agent-keys vault not found. Agent may not have access.");
+
+    // Load private keys from __agent-keys vault
+    const sshPrivRes = await sdk.secrets.get(agentKeysVault.id, `agents/${AGENT_ID}/ssh/private_key`);
+    const ecdhPrivRes = await sdk.secrets.get(agentKeysVault.id, `agents/${AGENT_ID}/ecdh/private_key`);
+    if (sshPrivRes.error || !sshPrivRes.data?.value) {
+        throw new Error(`Failed to load SSH private key: ${sshPrivRes.error?.message}. Grant agent read on __agent-keys.`);
+    }
+    if (ecdhPrivRes.error || !ecdhPrivRes.data?.value) {
+        throw new Error(`Failed to load ECDH private key: ${ecdhPrivRes.error?.message}. Agent may pre-date ECDH support.`);
+    }
+
+    console.log(`[${AGENT_NAME}] Loaded platform keys (Ed25519 + P-256 ECDH) from __agent-keys`);
+    return agentKeysFromStoredEcdhAndEd25519(
+        ecdhPrivRes.data.value,
+        sshPrivRes.data.value,
+        sshPubB64,
+    );
 }
 
 const keys: AgentKeys = await loadKeys();
 const ecdhPublicB64 = exportEcdhPublicBase64(keys.ecdhPublic);
-const signPublicB64 = exportSignPublicBase64(keys.signPublicKey);
+const { value: signPublicB64, signKeyType } = exportSignPublicBase64FromKeys(keys);
 
 const app = express();
 app.use(express.json());
 
-// Agent Card includes public keys so coordinator can use them without a separate task
-const agentCard: AgentCard & { publicKeyEcdh?: string; publicKeySign?: string } = {
+// Agent Card includes public keys and sign key type so coordinator can verify correctly
+const agentCard: AgentCard & {
+    publicKeyEcdh?: string;
+    publicKeySign?: string;
+    signKeyType?: SignKeyType;
+} = {
     name: `${AGENT_NAME} (ECDH demo)`,
     description: `Agent that can exchange ECDH-encrypted, ECDSA-signed messages with another agent.`,
     url: `http://localhost:${PORT}`,
@@ -110,6 +137,7 @@ const agentCard: AgentCard & { publicKeyEcdh?: string; publicKeySign?: string } 
     ],
     publicKeyEcdh: ecdhPublicB64,
     publicKeySign: signPublicB64,
+    signKeyType,
 };
 
 app.get("/.well-known/agent.json", (_req, res) => {
@@ -159,7 +187,7 @@ app.post("/", (req, res) => {
         if (/get|public|key|identity/i.test(userText) && !/send|receive/.test(userText)) {
             artifacts.push({
                 name: "public-keys",
-                description: `${AGENT_NAME} ECDH and ECDSA public keys`,
+                description: `${AGENT_NAME} ECDH and signing public keys`,
                 parts: [
                     {
                         type: "data",
@@ -167,6 +195,7 @@ app.post("/", (req, res) => {
                             agent: AGENT_NAME,
                             publicKeyEcdh: ecdhPublicB64,
                             publicKeySign: signPublicB64,
+                            signKeyType,
                         },
                     },
                 ],
@@ -181,7 +210,7 @@ app.post("/", (req, res) => {
             const sharedSecret = deriveSharedSecret(keys.ecdhPrivate, theirEcdhPublic);
             const { ciphertext, iv, authTag } = encrypt(plaintext, sharedSecret);
             const payload = Buffer.concat([ciphertext, iv, authTag]).toString("base64");
-            const signature = sign(payload, keys.signPrivateKey);
+            const signature = sign(payload, keys);
             artifacts.push({
                 name: "encrypted-message",
                 description: `Encrypted and signed message from ${AGENT_NAME}`,
@@ -194,6 +223,7 @@ app.post("/", (req, res) => {
                             authTag: authTag.toString("base64"),
                             senderEcdhPublic: ecdhPublicB64,
                             senderSignPublic: signPublicB64,
+                            senderSignKeyType: signKeyType,
                             signature,
                         },
                     },
@@ -209,15 +239,16 @@ app.post("/", (req, res) => {
                 authTag: string;
                 senderEcdhPublic: string;
                 senderSignPublic: string;
+                senderSignKeyType?: SignKeyType;
                 signature: string;
             };
             const ciphertext = Buffer.from(msg.ciphertext, "base64");
             const iv = Buffer.from(msg.iv, "base64");
             const authTag = Buffer.from(msg.authTag, "base64");
             const senderEcdhPublic = importEcdhPublicBase64(msg.senderEcdhPublic);
-            const senderSignPublic = importSignPublicBase64(msg.senderSignPublic);
             const payload = Buffer.concat([ciphertext, iv, authTag]).toString("base64");
-            if (!verify(payload, msg.signature, senderSignPublic)) {
+            const senderSignKeyType: SignKeyType = msg.senderSignKeyType ?? "ecdsa";
+            if (!verify(payload, msg.signature, keys, msg.senderSignPublic, senderSignKeyType)) {
                 artifacts.push({
                     name: "receive-result",
                     parts: [{ type: "data", data: { error: "Signature verification failed" } }],
