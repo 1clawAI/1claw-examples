@@ -30,7 +30,20 @@ async function main() {
         process.exit(1);
     }
 
-    const client = createClient({ baseUrl: BASE_URL, apiKey: USER_API_KEY });
+    // Exchange API key for JWT first, then create client with the token.
+    // This avoids the race between background auto-auth and the first request.
+    const tokenRes = await fetch(`${BASE_URL}/v1/auth/api-key-token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ api_key: USER_API_KEY }),
+    });
+    if (!tokenRes.ok) {
+        const err = await tokenRes.text();
+        console.error(`API key auth failed (${tokenRes.status}): ${err}`);
+        process.exit(1);
+    }
+    const { access_token } = (await tokenRes.json()) as { access_token: string };
+    const client = createClient({ baseUrl: BASE_URL, token: access_token });
 
     console.log("Creating two agents (Alice and Bob)...");
     console.log("  (1Claw auto-generates Ed25519 + P-256 ECDH keys for each)\n");
@@ -65,7 +78,7 @@ async function main() {
     console.log(`    ecdh_public_key: ${(bobAgent as Record<string, unknown>).ecdh_public_key?.toString().slice(0, 24)}...`);
 
     // Find __agent-keys vault and grant each agent read to its own keys
-    const vaultsRes = await client.vaults.list();
+    const vaultsRes = await client.vault.list();
     if (vaultsRes.error) {
         console.error("Failed to list vaults:", vaultsRes.error.message);
         process.exit(1);

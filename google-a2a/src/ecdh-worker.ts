@@ -68,7 +68,7 @@ async function loadKeys(): Promise<AgentKeys> {
     if (!sshPubB64) throw new Error("Agent has no ssh_public_key on record.");
 
     // Find the __agent-keys vault
-    const vaultsRes = await sdk.vaults.list();
+    const vaultsRes = await sdk.vault.list();
     if (vaultsRes.error) throw new Error(`Failed to list vaults: ${vaultsRes.error.message}`);
     const agentKeysVault = vaultsRes.data?.vaults?.find((v) => v.name === AGENT_KEYS_VAULT_NAME);
     if (!agentKeysVault) throw new Error("__agent-keys vault not found. Agent may not have access.");
