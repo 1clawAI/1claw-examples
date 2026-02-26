@@ -1,196 +1,245 @@
-# 1Claw + Google Agent-to-Agent (A2A)
+# 1Claw + Google A2A (Agent-to-Agent)
 
-> **Warning — Not for production use.** This example is for reference and learning only. Review and adapt for your own security requirements before using in production.
+> **Reference only** — not for production use. Review and adapt for your own security requirements.
 
-**Difficulty: Intermediate**
+Three demos showing AI agents communicating via [Google's A2A protocol](https://google.github.io/A2A/), using 1Claw as the secure credential layer. A coordinator agent discovers a worker agent, sends it tasks, and the worker fetches secrets from a 1Claw vault to complete them.
 
-Two agents communicating via Google's [Agent-to-Agent (A2A) protocol](https://google.github.io/A2A/). This repo includes:
+## What you'll learn
 
-1. **Vault demo** — Coordinator + worker; the worker uses 1Claw to list/fetch vault secrets.
-2. **ECDH demo** — Two agents (Alice & Bob) with different public keys exchange ECDH-encrypted, ECDSA-signed messages over A2A. Keys can be **stored in 1Claw** (two vaults/accounts) or generated in-memory.
+- Implement the A2A protocol (Agent Card discovery, JSON-RPC task handling)
+- Build a worker agent backed by the `@1claw/sdk` for vault operations
+- Use Google ADK (Agent Development Kit) with Gemini to reason about tasks via LLM
+- Coordinate two agents doing ECDH key exchange with vault-stored keys
 
-## ECDH signed-message demo (recommended)
+## Three demos
 
-Two agents, each with a P-256 key pair (ECDH for encryption, ECDSA for signing), exchange a message: Alice encrypts and signs, Bob decrypts and verifies. Showcases A2A as the transport for agent-to-agent crypto.
-
-### Option A: In-memory keys (no 1Claw)
-
-```bash
-cd examples/google-a2a
-npm install
-npm run ecdh
-```
-
-### Option B: Keys in 1Claw (two accounts)
-
-Use two 1Claw vaults (or two accounts). Each agent loads its private keys from its vault at startup — more compelling for production-like identity and secret management.
-
-1. **Create two vaults** (e.g. one per account or two vaults in one org).
-2. **Bootstrap keys** into both vaults (generates ECDH + ECDSA key pairs and stores them):
-
-   ```bash
-   export ONECLAW_ALICE_VAULT_ID=<alice-vault-uuid>
-   export ONECLAW_ALICE_API_KEY=<alice-api-key>
-   export ONECLAW_BOB_VAULT_ID=<bob-vault-uuid>
-   export ONECLAW_BOB_API_KEY=<bob-api-key>
-   npm run ecdh:bootstrap
-   ```
-
-   This writes `keys/ecdh` and `keys/signing` (base64 private key material) into each vault.
-
-3. **Run the demo** with the same env vars (or put them in `.env`). The start script maps Alice/Bob vault and API key to each worker:
-
-   ```bash
-   npm run ecdh
-   ```
-
-Or run workers manually: Terminal 1 `ONECLAW_VAULT_ID=<alice-vault> ONECLAW_API_KEY=<alice-key> npm run ecdh:alice`, Terminal 2 with Bob's vars, Terminal 3 `npm run ecdh:coordinator`.
-
-| File                          | Description |
-| ----------------------------- | ----------- |
-| `src/ecdh-crypto.ts`          | ECDH shared secret, AES-GCM, ECDSA sign/verify; load keys from stored privates |
-| `src/ecdh-worker.ts`         | Single worker (Alice or Bob); loads keys from 1Claw if `ONECLAW_VAULT_ID` + `ONECLAW_API_KEY` set |
-| `src/ecdh-coordinator.ts`     | Discovers both agents, gets public keys, orchestrates one send/receive |
-| `src/start-ecdh-demo.ts`      | Starts Alice (4100), Bob (4101), then coordinator; maps ALICE/BOB env to each worker |
-| `scripts/bootstrap-ecdh-keys.ts` | Generates key pairs and stores them in two vaults (run once per two-account setup) |
-| `scripts/cleanup-ecdh-keys.ts`   | Deletes `keys/ecdh` and `keys/signing` from both vaults |
-| `scripts/test-ecdh-with-1claw.ts` | End-to-end test: bootstrap → demo → cleanup |
-
-## Vault demo architecture
-
-```mermaid
-sequenceDiagram
-    participant Coord as Coordinator
-    participant Worker as Worker Agent
-    participant Vault as 1Claw Vault
-
-    Coord->>Worker: GET /.well-known/agent.json
-    Worker-->>Coord: AgentCard (name, skills, url)
-
-    Coord->>Worker: tasks/send "List vault secrets"
-    Worker->>Vault: sdk.secrets.list()
-    Vault-->>Worker: [secret1, secret2, ...]
-    Worker-->>Coord: Task(completed, artifacts)
-
-    Coord->>Worker: tasks/send "Fetch first credential"
-    Worker->>Vault: sdk.secrets.get(path)
-    Vault-->>Worker: { path, type, version }
-    Worker-->>Coord: Task(completed, metadata artifact)
-
-    Note over Coord: Optional: LLM summarizes results
-```
-
-## Files
-
-| File                     | Description                                                                        |
-| ------------------------ | ---------------------------------------------------------------------------------- |
-| `src/a2a-types.ts`       | Minimal A2A protocol type definitions (AgentCard, Task, Message, Artifact)         |
-| `src/worker-agent.ts`   | Vault demo: A2A server using 1Claw SDK for list/fetch secrets                       |
-| `src/coordinator.ts`    | Vault demo: discovers worker, sends list/fetch tasks                                |
-| `src/start-all.ts`      | Starts vault demo worker + coordinator                                             |
-| `src/ecdh-crypto.ts`    | ECDH demo: P-256 key agreement, AES-GCM, ECDSA sign/verify                         |
-| `src/ecdh-worker.ts`    | ECDH demo: one agent (Alice or Bob); skills: get key, send message, receive message |
-| `src/ecdh-coordinator.ts` | ECDH demo: discovers Alice & Bob, orchestrates one encrypted signed message        |
-| `src/start-ecdh-demo.ts`  | Starts Alice, Bob, then ECDH coordinator                                             |
-| `scripts/bootstrap-ecdh-keys.ts` | ECDH + 1Claw: generates keys and stores in two vaults                              |
-| `scripts/cleanup-ecdh-keys.ts`   | ECDH + 1Claw: removes demo secrets from both vaults                                |
-| `scripts/test-ecdh-with-1claw.ts` | ECDH + 1Claw: bootstrap → run demo → cleanup (full test)                           |
+| Demo | Command | Description |
+|------|---------|-------------|
+| **Vault Worker** | `npm start` | Regex-based worker lists/fetches secrets; coordinator sends tasks via A2A |
+| **ADK Agent** | `npm run adk` | Gemini-powered worker uses ADK `FunctionTool`s to reason about vault tasks |
+| **ECDH Key Exchange** | `npm run ecdh` | Two agents (Alice, Bob) perform ECDH key agreement — keys optionally stored in 1Claw |
 
 ## Prerequisites
 
-1. A [1Claw account](https://1claw.xyz) with a vault containing at least one secret
-2. Node.js 20+
-3. (Optional) OpenAI API key for the coordinator's LLM reasoning step
+- Node.js 20+
+- A [1Claw account](https://1claw.xyz) with a vault containing at least one secret
+- For the ADK demo: a [Gemini API key](https://aistudio.google.com/apikey)
+- Build the SDK first: `cd packages/sdk && npm run build && cd ../..`
 
-## Quick start
+---
 
-### Run both together
+## Demo 1: Vault Worker (5 min)
+
+The simplest demo — a worker agent with regex-based task routing.
+
+### Step 1 — Install and configure
 
 ```bash
 cd examples/google-a2a
 npm install
 cp .env.example .env
-# Fill in ONECLAW_API_KEY, ONECLAW_VAULT_ID (and optionally ONECLAW_AGENT_ID for agent-level policies)
+```
+
+Open `.env` and fill in:
+
+```env
+ONECLAW_API_KEY=ocv_your_key_here
+ONECLAW_VAULT_ID=your-vault-uuid
+```
+
+### Step 2 — Run the demo
+
+```bash
 npm start
 ```
 
-You can also run with another example's env (e.g. same vault and API key):
+This launches both the worker (port 4100) and the coordinator. The coordinator:
 
-```bash
-npx tsx --env-file=../ampersend-x402/.env src/start-all.ts
-```
+1. **Discovers** the worker via `GET /.well-known/agent.json` (Agent Card)
+2. **Sends a task:** *"List all available secrets in the vault"*
+3. The worker calls `sdk.secrets.list()` and returns the results as A2A artifacts
+4. **Sends a follow-up:** *"Retrieve the credential for the first secret"*
+5. The worker fetches the secret and returns its metadata
 
-### Run separately (for debugging)
-
-**Terminal 1 — Worker:**
-
-```bash
-npm run worker
-# Worker listens at http://localhost:4100
-```
-
-**Terminal 2 — Coordinator:**
-
-```bash
-npm run coordinator
-```
-
-## Environment variables
-
-| Variable           | Required | Description                                                                 |
-| ------------------ | -------- | --------------------------------------------------------------------------- |
-| `ONECLAW_API_KEY`  | Yes      | 1Claw API key (user or agent key) for vault access                          |
-| `ONECLAW_VAULT_ID` | Yes      | UUID of the vault the worker reads from                                     |
-| `ONECLAW_AGENT_ID` | No       | Agent UUID; when set, worker uses agent token for agent-level policies     |
-| `OPENAI_API_KEY`   | No       | Enables LLM summary in the coordinator                                      |
-| `WORKER_PORT`      | No       | Worker port (default: `4100`)                                               |
-| `WORKER_URL`       | No       | Worker URL for coordinator (default: `http://localhost:4100`)               |
-| `ONECLAW_BASE_URL` | No       | API URL (default: `https://api.1claw.xyz`)                                  |
-
-## What you'll see
+**Expected output:**
 
 ```
 Starting worker agent...
 [worker] 1Claw Vault Worker agent listening on port 4100
-[worker] Agent Card: http://localhost:4100/.well-known/agent.json
 
 Starting coordinator...
 
 [coordinator] Starting A2A coordinator...
 [coordinator] Discovering worker at http://localhost:4100...
-[coordinator] Found: "1Claw Vault Worker" — A worker agent that retrieves...
+[coordinator] Found: "1Claw Vault Worker" — A worker agent that retrieves credentials...
 [coordinator] Skills: Fetch Secret, List Vault Secrets
 
 [coordinator] Sending task: "List all available secrets in the vault"
-[worker] Task <id>: "List all available secrets in the vault"
-[coordinator] Task <id> — state: completed
-[coordinator] Agent says: Task completed with 1 artifact(s).
-
+[worker] Task abc123: "List all available secrets in the vault"
+[coordinator] Task abc123 — state: completed
 [coordinator] Received 1 artifact(s):
   - secret-list:
-    Found N secret(s):
-    - <path> (<type>, v<n>)
-    ...
+    Found 2 secret(s):
+    - demo/api-key (api_key, v1)
+    - demo/greeting (note, v1)
 
 [coordinator] Sending follow-up: fetch a specific credential...
-[coordinator] Follow-up state: completed | failed
+[coordinator] Follow-up state: completed
+[coordinator] Secret metadata: { path: "demo/api-key", type: "api_key", version: 1 }
+
 [coordinator] Done.
 ```
 
-The list-secrets task always completes with an artifact. The follow-up (fetch first credential) may complete or fail depending on vault contents and task wording.
+---
+
+## Demo 2: ADK Agent with Gemini (10 min)
+
+A Gemini-powered worker uses Google ADK `FunctionTool`s — the LLM decides which 1Claw tools to call based on natural language.
+
+### Step 1 — Add a Gemini key
+
+In your `.env`:
+
+```env
+GEMINI_API_KEY=your-gemini-api-key
+```
+
+### Step 2 — Run the ADK demo
+
+```bash
+npm run adk
+```
+
+This launches the ADK worker (port 4200) and the coordinator. The coordinator sends the same tasks, but the ADK worker uses **Gemini 2.5 Flash** to reason about which tools to call.
+
+**Key difference from Demo 1:** The ADK worker doesn't use regex matching. Instead, Gemini reads the task description and decides to call `list_secrets`, `get_secret`, or `put_secret` as needed. This handles complex or ambiguous requests like *"Store a new API key at path config/stripe and set its type to api_key"*.
+
+**Expected output:**
+
+```
+Starting ADK vault agent (port 4200)...
+[adk-worker] 1Claw ADK Vault Agent listening on port 4200
+[adk-worker] Powered by Google ADK + Gemini 2.5 Flash
+
+Starting coordinator → ADK worker...
+
+[coordinator] Found: "1Claw ADK Vault Agent"
+[coordinator] Sending task: "List all available secrets in the vault"
+[adk-worker] Task abc123: "List all available secrets in the vault"
+[coordinator] Task abc123 — state: completed
+[coordinator] Received 1 artifact(s):
+  - adk-response:
+    Here are the secrets in the vault:
+    1. **demo/api-key** (api_key, v1)
+    2. **demo/greeting** (note, v1)
+```
+
+### Run just the ADK worker (for manual testing)
+
+```bash
+npm run adk:worker
+# Then in another terminal:
+curl http://localhost:4200/.well-known/agent.json
+```
+
+---
+
+## Demo 3: ECDH Key Exchange (10 min)
+
+Two agents (Alice and Bob) perform an ECDH key agreement. Each generates an ephemeral key pair, exchanges public keys via A2A, and derives a shared secret. Keys can optionally be stored in 1Claw vaults.
+
+### Step 1 — Run with in-memory keys (no extra config)
+
+```bash
+ONECLAW_VAULT_ID= ONECLAW_API_KEY= npm run ecdh
+```
+
+This launches Alice (port 4100), Bob (port 4101), and the ECDH coordinator. Keys are generated in memory.
+
+### Step 2 — (Optional) Run with 1Claw-stored keys
+
+Set in `.env`:
+
+```env
+ONECLAW_ALICE_VAULT_ID=vault-for-alice
+ONECLAW_ALICE_API_KEY=ocv_alice_key
+ONECLAW_BOB_VAULT_ID=vault-for-bob
+ONECLAW_BOB_API_KEY=ocv_bob_key
+```
+
+Then bootstrap and run:
+
+```bash
+npm run ecdh:bootstrap   # Generate and store keys in 1Claw
+npm run ecdh             # Run the demo with vault-stored keys
+npm run ecdh:cleanup     # Remove keys from vaults
+```
+
+---
+
+## Files
+
+```
+src/
+├── worker-agent.ts       # Demo 1: Regex-based A2A worker with 1Claw SDK
+├── coordinator.ts        # A2A client that discovers and tasks workers
+├── start-all.ts          # Launcher for Demo 1 (worker + coordinator)
+├── a2a-types.ts          # TypeScript types for A2A protocol
+│
+├── adk-agent.ts          # Demo 2: Google ADK agent with FunctionTools
+├── adk-a2a-server.ts     # Express server wrapping ADK agent in A2A
+├── start-adk-demo.ts     # Launcher for Demo 2 (ADK worker + coordinator)
+│
+├── ecdh-worker.ts        # Demo 3: ECDH agent (key gen, exchange, derive)
+├── ecdh-coordinator.ts   # ECDH coordinator (orchestrates Alice ↔ Bob)
+├── ecdh-crypto.ts        # Node.js crypto ECDH helpers
+└── start-ecdh-demo.ts    # Launcher for Demo 3 (Alice + Bob + coordinator)
+```
+
+## Environment variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `ONECLAW_API_KEY` | Yes | Your 1Claw API key (`ocv_...`) |
+| `ONECLAW_VAULT_ID` | Yes | UUID of the vault with secrets |
+| `ONECLAW_AGENT_ID` | No | Agent UUID (enables agent-level policies) |
+| `GEMINI_API_KEY` | ADK demo | Google Gemini API key |
+| `OPENAI_API_KEY` | No | Optional — coordinator can summarize with OpenAI |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
 
 ## How it works
 
-1. **Agent Card discovery** — The coordinator fetches `/.well-known/agent.json` to learn the worker's name, capabilities, and skills (per A2A spec).
-2. **JSON-RPC tasks** — The coordinator sends tasks using the `tasks/send` method. The worker processes them synchronously and returns results with artifacts.
-3. **1Claw integration** — The worker uses `@1claw/sdk` to list and fetch secrets. Credential values are never included in A2A artifacts — only metadata (path, type, version, value length).
-4. **LLM reasoning** — If `OPENAI_API_KEY` is set, the coordinator uses GPT-4o-mini to summarize the worker's response.
+### A2A Protocol flow
 
-**What you'll see (ECDH demo):** Coordinator discovers Alice and Bob, gets their public keys from Agent Cards, asks Alice to send an encrypted+signed message to Bob, then asks Bob to decrypt and verify. Final line: Bob's decrypted plaintext and a success note.
+```
+Coordinator                              Worker (1Claw-backed)
+    │                                         │
+    │  GET /.well-known/agent.json            │
+    │ ───────────────────────────────────────► │  Agent Card (name, skills)
+    │ ◄─────────────────────────────────────── │
+    │                                         │
+    │  POST / (JSON-RPC: tasks/send)          │
+    │  { "List secrets in the vault" }        │
+    │ ───────────────────────────────────────► │
+    │                                         │  sdk.secrets.list(VAULT_ID)
+    │                                         │      ↓
+    │                                         │  1Claw API → vault data
+    │ ◄─────────────────────────────────────── │
+    │  Task completed + artifacts              │
+```
+
+### ADK variant
+
+Same A2A flow, but the worker uses **Google ADK** with **Gemini 2.5 Flash** to reason about which tool to call:
+
+```
+ADK Worker receives task → Gemini reads prompt → calls FunctionTool(list_secrets)
+    → @1claw/sdk → 1Claw API → results → Gemini formats response → A2A artifact
+```
 
 ## Next steps
 
-- [LangChain example](../langchain-agent/) — Simpler agent pattern
-- [FastMCP example](../fastmcp-tool-server/) — Build a custom MCP server
-- [Ampersend x402 example](../ampersend-x402/) — Add payment controls
-- [A2A Specification](https://google.github.io/A2A/) — Full protocol docs
+- [FastMCP Tool Server](../fastmcp-tool-server/) — Build a custom MCP server with domain tools
+- [LangChain Agent](../langchain-agent/) — LangChain + 1Claw with tool calling
+- [Transaction Simulation](../tx-simulation/) — AI agent with on-chain transactions
+- [1Claw Docs](https://docs.1claw.xyz)

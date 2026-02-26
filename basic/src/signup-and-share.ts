@@ -2,34 +2,60 @@
  * 1Claw SDK — Signup & Share Example
  *
  * Demonstrates the invite-by-email flow:
- * 1. Sign up a new user via the API
+ * 1. Sign up a new user via the API (requires email verification in production)
  * 2. Create a vault and store a secret
  * 3. Share the secret with someone by email
  * 4. The recipient will see the shared secret when they log in
+ *
+ * NOTE: In production, signup returns a verification email instead of a JWT.
+ * This example falls back to ONECLAW_API_KEY for authentication when signup
+ * doesn't return a token (the typical production case).
  */
 
 import { createClient } from "@1claw/sdk";
 
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const API_KEY = process.env.ONECLAW_API_KEY;
+const AGENT_ID = process.env.ONECLAW_AGENT_ID;
 
 async function main() {
-    // ── 1. Sign up a new account ───────────────────────────────────
-    console.log("--- Signing up ---");
     const client = createClient({ baseUrl: BASE_URL });
 
+    // ── 1. Sign up or authenticate ──────────────────────────────────
+    console.log("--- Signing up ---");
     const signupRes = await client.auth.signup({
         email: `demo-${Date.now()}@example.com`,
-        password: "secure-password-123",
+        password: "D3mo!Passw0rd#x7",
         display_name: "Demo User",
     });
-    if (signupRes.error) {
+
+    if (signupRes.data?.access_token) {
+        console.log("Account created with immediate JWT (dev mode).");
+    } else if (signupRes.error) {
         console.error("Signup failed:", signupRes.error.message);
-        return;
+        if (!API_KEY) return;
+        console.log("Falling back to ONECLAW_API_KEY for the rest of the demo.");
+    } else {
+        console.log("Signup succeeded — verification email sent (production mode).");
+        if (!API_KEY) {
+            console.log("Set ONECLAW_API_KEY to continue the demo without email verification.");
+            return;
+        }
+        console.log("Using ONECLAW_API_KEY for the rest of the demo.\n");
     }
-    console.log("Account created! JWT received.");
+
+    if (!signupRes.data?.access_token && API_KEY) {
+        const authRes = AGENT_ID
+            ? await client.auth.agentToken({ api_key: API_KEY, agent_id: AGENT_ID })
+            : await client.auth.apiKeyToken({ api_key: API_KEY });
+        if (authRes.error) {
+            console.error("Auth failed:", authRes.error.message);
+            return;
+        }
+    }
 
     // ── 2. Create a vault and store a secret ───────────────────────
-    console.log("\n--- Creating vault + secret ---");
+    console.log("--- Creating vault + secret ---");
     const vaultRes = await client.vault.create({
         name: "shared-vault",
         description: "Vault with secrets to share",
@@ -69,21 +95,28 @@ async function main() {
     });
     if (shareRes.error) {
         console.error("Share failed:", shareRes.error.message);
-        return;
+    } else {
+        const share = shareRes.data!;
+        console.log(`Shared!`);
+        console.log(`  Share ID: ${share.id}`);
+        console.log(`  Recipient: ${share.recipient_email}`);
+        console.log(`  Expires: ${share.expires_at}`);
+        console.log(`  Max accesses: ${share.max_access_count}`);
+        console.log(`  URL: ${share.share_url}`);
+
+        console.log(
+            "\nWhen colleague@example.com signs up or logs in, " +
+                "they will automatically see this shared secret.",
+        );
     }
 
-    const share = shareRes.data!;
-    console.log(`Shared!`);
-    console.log(`  Share ID: ${share.id}`);
-    console.log(`  Recipient: ${share.recipient_email}`);
-    console.log(`  Expires: ${share.expires_at}`);
-    console.log(`  Max accesses: ${share.max_access_count}`);
-    console.log(`  URL: ${share.share_url}`);
+    // ── 4. Clean up ────────────────────────────────────────────────
+    console.log("\n--- Cleaning up ---");
+    await client.secrets.delete(vault.id, "DATABASE_URL");
+    await client.vault.delete(vault.id);
+    console.log("Vault and secret deleted.");
 
-    console.log(
-        "\nWhen colleague@example.com signs up or logs in, " +
-            "they will automatically see this shared secret.",
-    );
+    console.log("\nDone!");
 }
 
 main().catch(console.error);

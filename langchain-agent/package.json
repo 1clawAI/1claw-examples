@@ -12,6 +12,7 @@
         "@1claw/sdk": "file:../../packages/sdk",
         "@langchain/core": "~0.3.0",
         "@langchain/google-genai": "^0.2.18",
+        "@langchain/langgraph": "^1.1.5",
         "@langchain/mcp-adapters": "^1.1.0",
         "@langchain/openai": "~0.4.0",
         "langchain": "~0.3.0"

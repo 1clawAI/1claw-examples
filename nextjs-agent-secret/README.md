@@ -1,76 +1,157 @@
 # 1Claw Agent Secret Demo
 
-> **Warning — Not for production use.** This example is for reference and learning only. Review and adapt for your own security requirements before using in production.
+> **Reference only** — not for production use. Review and adapt for your own security requirements.
 
-**1Claw** is an HSM-backed secrets manager for AI agents and humans, featuring encrypted vaults, access policies, human-in-the-loop approvals, and x402 micropayments.
+A Next.js chat app where an AI agent (Claude via Vercel AI SDK) accesses secrets stored in a 1Claw vault. Secrets are fetched server-side and **never exposed to the browser or the model's response stream**. Gated secrets trigger a human approval flow.
 
-This demo shows an AI agent (Claude) using the `@1claw/sdk` to securely access secrets stored in a 1Claw vault, with human approval gates and server-side-only secret handling.
+## What you'll learn
 
-## What This Demonstrates
+- Integrate the `@1claw/sdk` with the Vercel AI SDK as server-side tools
+- Keep decrypted secrets out of the client — cache them server-side only
+- Handle `approval_required` and `payment_required` responses gracefully
+- Build a chat UI that interacts with a secure vault
 
-1. **AI agent accesses vault secrets** — Claude calls 1Claw tools to list vaults, list keys, and fetch secrets
-2. **Human-in-the-loop approval** — gated secrets trigger an approval request; a banner appears in the UI for the human to approve/deny
-3. **Server-side secret handling** — decrypted secrets are never sent to the client or included in model responses
-4. **x402 payment awareness** — when free tier is exhausted, the agent reports that payment is required
+## Prerequisites
 
-## Setup
+- Node.js 20+
+- A [1Claw account](https://1claw.xyz) with a vault and at least one secret
+- An [Anthropic API key](https://console.anthropic.com/) for Claude
+- Build the SDK first: `cd packages/sdk && npm run build && cd ../..`
 
-### 1. Create a vault and add secrets
+## Demo walkthrough (5 min)
 
-Log in at [1claw.xyz](https://1claw.xyz), create a vault, and add a secret (e.g. `OPENAI_KEY`).
-
-### 2. Get an API key
-
-Go to **API Keys** in the 1Claw dashboard and create a new key.
-
-### 3. Configure environment
+### Step 1 — Install and configure
 
 ```bash
+cd examples/nextjs-agent-secret
+npm install
 cp .env.local.example .env.local
 ```
 
-Fill in (all required for the chat agent):
+Open `.env.local` and fill in your credentials:
 
-| Variable            | Description                                |
-| ------------------- | ------------------------------------------ |
-| `ONECLAW_API_KEY`   | Your 1Claw API key (`ocv_...`)             |
-| `ONECLAW_BASE_URL`  | API URL (default: `https://api.1claw.xyz`) |
-| `ANTHROPIC_API_KEY` | Your Anthropic API key for Claude          |
+```env
+ONECLAW_API_KEY=ocv_your_key_here
+ONECLAW_BASE_URL=https://api.1claw.xyz
+ANTHROPIC_API_KEY=sk-ant-your-key-here
+```
 
-### 4. Install and run
+### Step 2 — Make sure you have a secret
+
+Create a test secret via the [dashboard](https://1claw.xyz) or CLI:
 
 ```bash
-npm install
+1claw secret put demo/greeting --vault YOUR_VAULT_ID --value "Hello from 1Claw!" --type note
+```
+
+### Step 3 — Start the app
+
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Try asking: *"List my vaults and then get the first secret's path and type only."*
+Open [http://localhost:3000](http://localhost:3000).
 
-## How It Works
+### Step 4 — Chat with the agent
+
+Try these prompts in order:
+
+1. **"List my vaults"** — The agent calls `listVaults` and shows your vault names and IDs.
+
+2. **"List the secrets in vault `<paste-vault-id>`"** — The agent calls `listSecretKeys` and shows paths, types, and versions (never values).
+
+3. **"Fetch the secret `demo/greeting` from vault `<paste-vault-id>`"** — The agent calls `getSecret`. The decrypted value is cached server-side. The model responds with something like: *"I've retrieved the secret demo/greeting (type: note). It's available server-side for use."*
+
+4. **"What's the raw value?"** — Claude will refuse. The system prompt instructs it to never reveal secret values.
+
+### What you'll see
+
+The chat UI shows Claude's reasoning with tool call indicators:
 
 ```
-User → Chat UI → /api/chat (streaming)
-                    │
-                    ├─ Claude decides to call 1claw tools
-                    ├─ getSecret → @1claw/sdk → 1Claw API
-                    │     ├─ 200: secret cached server-side
-                    │     ├─ 402: "payment required" returned to model
-                    │     └─ 403 (approval): "pending_approval" returned
-                    │
-                    └─ Model responds (never sees raw secret values)
+You: List my vaults
+Claude: [calls listVaults] You have 2 vaults:
+  • Production (a1b2c3d4-...)
+  • Demo (e5f6g7h8-...)
+
+You: List secrets in vault e5f6g7h8-...
+Claude: [calls listSecretKeys] Found 1 secret:
+  • demo/greeting (note, v1)
+
+You: Fetch demo/greeting from vault e5f6g7h8-...
+Claude: [calls getSecret] I've retrieved the secret "demo/greeting" successfully.
+  It's available server-side for use. I won't display the actual value.
 ```
 
-## x402 Extension
+## How it works
 
-When the free tier is exhausted, the SDK returns a `PaymentRequiredError` with the full x402 payment requirement. To enable auto-pay, configure an `x402Signer` on the client:
+```
+Browser (Chat UI)
+    │  useChat() — Vercel AI SDK
+    ▼
+/api/chat (POST, streaming)
+    │
+    ├── Claude decides to call tools
+    │
+    ├── listVaults     →  sdk.vault.list()       →  1Claw API
+    ├── listSecretKeys →  sdk.secrets.list()      →  1Claw API
+    └── getSecret      →  sdk.secrets.get()       →  1Claw API
+          │
+          ├── 200: value cached in server-side Map (never sent to client)
+          ├── 402: returns "payment_required" to model
+          └── 403: returns "pending_approval" to model
+```
+
+The `getSecret` tool stores the decrypted value in a server-side `Map` keyed by `vaultId:secretPath`. The model only sees a status string like `"available"` — the raw value never enters the response stream.
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `lib/oneclaw.ts` | Singleton `@1claw/sdk` client (server-side only) |
+| `lib/tools.ts` | AI SDK tool definitions wrapping 1Claw: `getSecret`, `listVaults`, `listSecretKeys` |
+| `app/api/chat/route.ts` | Streaming chat route with Claude + 1Claw tools |
+| `app/page.tsx` | Chat UI component |
+| `components/Chat.tsx` | `useChat()` hook, message rendering |
+
+## Environment variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `ONECLAW_API_KEY` | Yes | Your 1Claw API key (`ocv_...`) |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
+| `ANTHROPIC_API_KEY` | Yes | Anthropic API key for Claude |
+
+## Key code pattern
 
 ```typescript
-const client = createClient({
-    baseUrl: "https://api.1claw.xyz",
-    apiKey: "ocv_...",
-    x402Signer: myWalletSigner,
-    maxAutoPayUsd: 0.01,
-});
+// lib/tools.ts — AI SDK tool that wraps 1Claw
+import { tool } from "ai";
+import { z } from "zod";
+import { oneclaw } from "./oneclaw";
+
+const secretCache = new Map<string, string>();
+
+export const oneclawTools = {
+  getSecret: tool({
+    description: "Fetch a secret from the 1Claw vault.",
+    parameters: z.object({
+      vaultId: z.string(),
+      key: z.string(),
+      reason: z.string(),
+    }),
+    execute: async ({ vaultId, key, reason }) => {
+      const res = await oneclaw.secrets.get(vaultId, key, { reason });
+      if (res.error) return { status: "error", message: res.error.message };
+      secretCache.set(`${vaultId}:${key}`, res.data.value);
+      return { status: "available", hint: `Secret "${key}" retrieved.` };
+    },
+  }),
+};
 ```
 
-The SDK will automatically sign and submit USDC payments on Base when a 402 is received.
+## Next steps
+
+- [LangChain Agent](../langchain-agent/) — Same pattern with LangChain instead of Vercel AI SDK
+- [Transaction Simulation](../tx-simulation/) — AI agent with on-chain transactions and guardrails
+- [1Claw Docs](https://docs.1claw.xyz)

@@ -8,6 +8,8 @@
         "worker": "npx tsx src/worker-agent.ts",
         "coordinator": "npx tsx src/coordinator.ts",
         "start": "npx tsx src/start-all.ts",
+        "adk": "npx tsx src/start-adk-demo.ts",
+        "adk:worker": "npx tsx src/adk-a2a-server.ts",
         "ecdh:alice": "npx tsx src/ecdh-worker.ts",
         "ecdh:bob": "AGENT_NAME=Bob PORT=4101 npx tsx src/ecdh-worker.ts",
         "ecdh:coordinator": "npx tsx src/ecdh-coordinator.ts",
@@ -18,6 +20,8 @@
     },
     "dependencies": {
         "@1claw/sdk": "file:../../packages/sdk",
+        "@google/adk": "^0.3.0",
+        "@google/genai": "^1.0.0",
         "express": "^5.0.0",
         "openai": "^4.0.0"
     },

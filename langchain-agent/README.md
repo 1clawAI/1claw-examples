@@ -1,81 +1,67 @@
 # 1Claw + LangChain Agent
 
-> **Warning — Not for production use.** This example is for reference and learning only. Review and adapt for your own security requirements before using in production.
+> **Reference only** — not for production use. Review and adapt for your own security requirements.
 
-**Difficulty: Beginner**
+A LangChain agent that fetches secrets from a 1Claw vault on demand. The LLM decides when to call vault tools — listing secrets and retrieving them just-in-time. Supports **OpenAI** or **Gemini** (free tier).
 
-LangChain agent that uses 1Claw to list vault secrets and retrieve the first one (reporting path and type only, never the value). Demonstrates just-in-time secret access: the agent calls 1Claw when it needs to list or fetch.
+## What you'll learn
 
-## Architecture
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Agent as LangChain Agent
-    participant Vault as 1Claw Vault
-
-    User->>Agent: "List secrets, then fetch first and report path/type"
-    Agent->>Vault: list_secrets()
-    Vault-->>Agent: [keys/x402-session-key, ...]
-    Agent->>Vault: get_secret("keys/x402-session-key")
-    Vault-->>Agent: { path, type, value }
-    Agent->>User: "Path: keys/x402-session-key, type: ssh_key (value not shown)"
-```
-
-## Two approaches
-
-| Script                | What it does                                                                                        |
-| --------------------- | --------------------------------------------------------------------------------------------------- |
-| `src/tool-calling.ts` | Defines custom LangChain tools that wrap the `@1claw/sdk`. You control which tools the agent has.   |
-| `src/mcp-client.ts`   | Connects LangChain to the hosted 1Claw MCP server. The agent gets all 11 vault tools automatically. |
+- Define custom LangChain tools that wrap the `@1claw/sdk`
+- Let an LLM agent decide when to list and fetch vault secrets
+- Connect LangChain to the hosted 1Claw MCP server (all 11 tools, zero config)
 
 ## Prerequisites
 
-1. A [1Claw account](https://1claw.xyz) with a vault
-2. One LLM key: OpenAI (`OPENAI_API_KEY`) or Gemini free tier (`GOOGLE_API_KEY` from [aistudio.google.com/apikey](https://aistudio.google.com/apikey))
-3. Node.js 20+
+- Node.js 20+
+- A [1Claw account](https://1claw.xyz) with a vault containing at least one secret
+- An LLM API key: **OpenAI** (`OPENAI_API_KEY`) or **Gemini free tier** ([aistudio.google.com/apikey](https://aistudio.google.com/apikey))
+- Build the SDK first: `cd packages/sdk && npm run build && cd ../..`
 
-## Quick start
+## Demo walkthrough (5 min)
 
-1. **Have at least one secret in your vault** (any path). The agent will list secrets, then fetch the first one and report its path and type (it will not display the secret value).
-
-2. **Run the agent:**
+### Step 1 — Install and configure
 
 ```bash
 cd examples/langchain-agent
-npm install
-# If you see peer dependency conflicts, use: npm install --legacy-peer-deps
+npm install --legacy-peer-deps
 cp .env.example .env
-# Fill in ONECLAW_API_KEY, ONECLAW_VAULT_ID, and one of OPENAI_API_KEY or GOOGLE_API_KEY
-npm start          # Custom tool calling (lists vault, fetches first secret, reports path/type)
-npm run mcp        # MCP client approach
 ```
 
-You can reuse another example's 1Claw env and only add an LLM key:
+Open `.env` and fill in your credentials:
+
+```env
+ONECLAW_API_KEY=ocv_your_key_here
+ONECLAW_VAULT_ID=your-vault-uuid
+GOOGLE_API_KEY=your-gemini-key     # or OPENAI_API_KEY=sk-...
+```
+
+> **Tip:** You can reuse another example's `.env` and just add the LLM key:
+> ```bash
+> GOOGLE_API_KEY=... npx tsx --env-file=../ampersend-x402/.env src/tool-calling.ts
+> ```
+
+### Step 2 — Make sure you have a secret in your vault
+
+If your vault is empty, create a quick test secret via the [1Claw dashboard](https://1claw.xyz) or CLI:
 
 ```bash
-# With OpenAI
-OPENAI_API_KEY=sk-... npx tsx --env-file=../ampersend-x402/.env src/tool-calling.ts
-
-# With Gemini free tier (get key at https://aistudio.google.com/apikey)
-GOOGLE_API_KEY=... npx tsx --env-file=../ampersend-x402/.env src/tool-calling.ts
+# Using the CLI
+1claw secret put demo/hello-world --vault YOUR_VAULT_ID --value "Hello from 1Claw!" --type note
 ```
 
-## Environment variables
+### Step 3 — Run the tool-calling agent
 
-| Variable              | Required           | Description                                |
-| --------------------- | ------------------ | ------------------------------------------ |
-| `OPENAI_API_KEY`      | One required       | OpenAI API key for the LLM                 |
-| `GOOGLE_API_KEY`      | One required       | Gemini free tier (get at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)) |
-| `ONECLAW_API_KEY`     | Yes (tool-calling) | Your 1Claw API key (`ocv_...`)             |
-| `ONECLAW_VAULT_ID`    | Yes                | UUID of the vault to read from             |
-| `ONECLAW_AGENT_ID`    | No                 | Agent UUID (omit to auth as human)         |
-| `ONECLAW_AGENT_TOKEN` | Yes (mcp)          | Agent JWT for MCP server auth              |
-| `ONECLAW_BASE_URL`    | No                 | API URL (default: `https://api.1claw.xyz`) |
+```bash
+npm start
+```
 
-## What you'll see
+The agent will:
 
-**`npm start`** (tool-calling):
+1. Call `list_vault_secrets` to see what's in the vault
+2. Call `get_secret` on the first secret it finds
+3. Report the path and type — **never the raw value**
+
+**Expected output:**
 
 ```
 === 1Claw + LangChain Agent ===
@@ -85,22 +71,85 @@ LLM: Gemini (GOOGLE_API_KEY)
 Asking: list vault secrets, then fetch the first secret and report its path and type (not the value).
 
   Invoking: list_vault_secrets
-  Found 1 secret(s): keys/x402-session-key (ssh_key, v3)
+  Found 1 secret(s): demo/hello-world (note, v1)
 
-  Invoking: get_secret with { path: "keys/x402-session-key" }
+  Invoking: get_secret with { path: "demo/hello-world" }
 
 --- Agent Response ---
-I listed your vault and fetched the first secret. Path: keys/x402-session-key, type: ssh_key. I'm not displaying the value.
+I found 1 secret in your vault. The first secret has path: demo/hello-world, type: note.
+I've retrieved it but I'm not displaying the value as instructed.
 ```
+
+### Step 4 — (Optional) Run the MCP client approach
+
+```bash
+npm run mcp
+```
+
+This connects LangChain to the hosted 1Claw MCP server at `mcp.1claw.xyz`. The agent automatically gets all 11 vault tools (list_secrets, get_secret, put_secret, etc.) without defining them manually.
+
+> **Requires:** `ONECLAW_AGENT_TOKEN` (a pre-set JWT) and `OPENAI_API_KEY`.
+
+## Two approaches
+
+| Script | How it works | LLM support |
+|--------|-------------|-------------|
+| `src/tool-calling.ts` | Custom LangChain tools wrapping `@1claw/sdk` — you control which tools the agent has | OpenAI or Gemini |
+| `src/mcp-client.ts` | Connects to the hosted 1Claw MCP server — all 11 tools loaded automatically | OpenAI only |
+
+## Environment variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `ONECLAW_API_KEY` | Yes (tool-calling) | Your 1Claw API key (`ocv_...`) |
+| `ONECLAW_VAULT_ID` | Yes | UUID of the vault to read from |
+| `ONECLAW_AGENT_ID` | No | Agent UUID (enables agent-level policies) |
+| `OPENAI_API_KEY` | One LLM required | OpenAI API key |
+| `GOOGLE_API_KEY` | One LLM required | Gemini free tier key |
+| `ONECLAW_AGENT_TOKEN` | MCP only | Agent JWT for MCP server auth |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
 
 ## How it works
 
-1. **1Claw SDK** — The agent uses `client.secrets.list()` and `client.secrets.get()` via two LangChain tools.
-2. **Tools** — `list_vault_secrets` (no args) and `get_secret(path)` wrap the SDK; the LLM chooses when to call them.
-3. **Flow** — The agent lists secrets, then fetches the first secret in the list and reports only its path and type (never the value).
+```
+User prompt
+    │
+    ▼
+LangChain Agent (Gemini or OpenAI)
+    │
+    ├── list_vault_secrets()  →  @1claw/sdk  →  1Claw API
+    │       returns paths, types, versions (never values)
+    │
+    └── get_secret(path)      →  @1claw/sdk  →  1Claw API
+            returns { path, type, value, version }
+            (agent reports path/type only)
+```
+
+The LLM receives the tool results and decides how to respond. The system prompt instructs it to never reveal raw secret values.
+
+## Key code pattern
+
+```typescript
+import { DynamicStructuredTool } from "@langchain/core/tools";
+import { createClient } from "@1claw/sdk";
+import { z } from "zod";
+
+const client = createClient({ baseUrl: BASE_URL, apiKey: API_KEY });
+
+const listSecretsTool = new DynamicStructuredTool({
+  name: "list_vault_secrets",
+  description: "List all secrets in the vault (metadata only, never values).",
+  schema: z.object({}),
+  func: async () => {
+    const res = await client.secrets.list(VAULT_ID);
+    return res.data.secrets.map(s => `${s.path} (${s.type})`).join("\n");
+  },
+});
+```
 
 ## Next steps
 
-- [1Claw Docs](https://docs.1claw.xyz) — Full API reference
-- [FastMCP example](../fastmcp-tool-server/) — Build a custom MCP server with 1Claw
-- [Ampersend x402 example](../ampersend-x402/) — Add payment controls
+- [FastMCP Tool Server](../fastmcp-tool-server/) — Build your own MCP server with domain-specific tools
+- [Google A2A](../google-a2a/) — Agent-to-Agent communication with 1Claw
+- [Next.js Agent Secret](../nextjs-agent-secret/) — AI chat app with vault access and approval gates
+- [1Claw Docs](https://docs.1claw.xyz)
