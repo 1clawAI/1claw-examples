@@ -24,17 +24,40 @@ const PORT = parseInt(process.env.WORKER_PORT ?? "4100", 10);
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 const API_KEY = process.env.ONECLAW_API_KEY;
 const VAULT_ID = process.env.ONECLAW_VAULT_ID;
+// Only use agent token when ONECLAW_AGENT_ID is set; otherwise use user API key auth.
+const AGENT_ID = process.env.ONECLAW_AGENT_ID?.trim() || undefined;
 
 if (!API_KEY || !VAULT_ID) {
     console.error("Required: ONECLAW_API_KEY, ONECLAW_VAULT_ID");
     process.exit(1);
 }
 
-const sdk = createClient({
+let sdk = createClient({
     baseUrl: BASE_URL,
     apiKey: API_KEY,
-    agentId: process.env.ONECLAW_AGENT_ID || undefined,
+    agentId: AGENT_ID,
 });
+
+async function ensureVaultAccess(): Promise<void> {
+    try {
+        const list = await sdk.secrets.list(VAULT_ID!);
+        if (list.error) throw new Error(list.error.message);
+    } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (msg.includes("401") && AGENT_ID) {
+            console.error(
+                "[worker] Agent token failed (401). Falling back to user API key (leave ONECLAW_AGENT_ID unset to use user key).",
+            );
+            sdk = createClient({ baseUrl: BASE_URL, apiKey: API_KEY });
+            const authRes = await sdk.auth.apiKeyToken({ api_key: API_KEY! });
+            if (authRes.error) throw new Error(authRes.error.message);
+            const retry = await sdk.secrets.list(VAULT_ID!);
+            if (retry.error) throw new Error(retry.error.message);
+        } else {
+            throw err;
+        }
+    }
+}
 
 const app = express();
 app.use(express.json());
@@ -229,9 +252,18 @@ app.post("/", async (req, res) => {
     res.json(response);
 });
 
-app.listen(PORT, () => {
-    console.log(`[worker] 1Claw Vault Worker agent listening on port ${PORT}`);
-    console.log(
-        `[worker] Agent Card: http://localhost:${PORT}/.well-known/agent.json`,
-    );
-});
+ensureVaultAccess()
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(
+                `[worker] 1Claw Vault Worker agent listening on port ${PORT}`,
+            );
+            console.log(
+                `[worker] Agent Card: http://localhost:${PORT}/.well-known/agent.json`,
+            );
+        });
+    })
+    .catch((err) => {
+        console.error("[worker] Failed to reach vault:", err);
+        process.exit(1);
+    });

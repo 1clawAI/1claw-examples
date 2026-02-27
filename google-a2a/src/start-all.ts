@@ -7,18 +7,20 @@ import { spawn } from "child_process";
 
 console.log("Starting worker agent...");
 
-const worker = spawn("npx", ["tsx", "src/worker-agent.ts"], {
+const worker = spawn("npx", ["tsx", "--env-file=.env", "src/worker-agent.ts"], {
     stdio: "inherit",
     env: { ...process.env },
+    cwd: process.cwd(),
 });
 
 await new Promise((r) => setTimeout(r, 2000));
 
 console.log("\nStarting coordinator...\n");
 
-const coordinator = spawn("npx", ["tsx", "src/coordinator.ts"], {
+const coordinator = spawn("npx", ["tsx", "--env-file=.env", "src/coordinator.ts"], {
     stdio: "inherit",
     env: { ...process.env },
+    cwd: process.cwd(),
 });
 
 coordinator.on("exit", (code) => {

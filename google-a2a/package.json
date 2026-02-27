@@ -5,9 +5,9 @@
     "license": "MIT",
     "type": "module",
     "scripts": {
-        "worker": "npx tsx src/worker-agent.ts",
-        "coordinator": "npx tsx src/coordinator.ts",
-        "start": "npx tsx src/start-all.ts",
+        "worker": "npx tsx --env-file=.env src/worker-agent.ts",
+        "coordinator": "npx tsx --env-file=.env src/coordinator.ts",
+        "start": "npx tsx --env-file=.env src/start-all.ts",
         "adk": "npx tsx src/start-adk-demo.ts",
         "adk:worker": "npx tsx src/adk-a2a-server.ts",
         "ecdh:alice": "npx tsx src/ecdh-worker.ts",

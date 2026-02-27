@@ -18,6 +18,30 @@ Seven example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API
 
 ## Getting started
 
+### Option A — Seeded demo accounts (recommended for demos)
+
+Use one org + user per example (no signup or email verification). Seed the DB once, then create vaults and credentials per demo (e.g. via the 1Claw dashboard or API) and set each example's `.env` with `ONECLAW_BASE_URL`, `ONECLAW_VAULT_ID`, `ONECLAW_API_KEY`, and `ONECLAW_AGENT_ID` for agent-based examples.
+
+**1. Seed demo accounts** (run once, via Supabase MCP or psql against your 1Claw DB):
+
+- Open `scripts/seed-demo-accounts.sql` and run its `INSERT` statements (e.g. in Supabase SQL Editor or via MCP). This creates 7 organizations and 7 users (`demo-basic@1claw.xyz`, `demo-langchain@1claw.xyz`, …). Shared password: `Demo1claw!seed`.
+
+**2. Per demo:** Log in as that user, create a vault (and optionally an agent and API keys), then set that example's `.env` (or `.env.local` for nextjs-agent-secret) with the vault ID and API key.
+
+Then from any example:
+
+```bash
+cd examples/<name>
+npm install
+npm start
+```
+
+Add `GOOGLE_API_KEY` or `OPENAI_API_KEY` for langchain-agent, `ANTHROPIC_API_KEY` for nextjs-agent-secret, and `SMART_ACCOUNT_ADDRESS` (and optional wallet key) for ampersend-x402 as needed.
+
+**Cleanup:** To delete all secrets in demo accounts (except ampersend-x402, so `keys/x402-session-key` is kept), run `./scripts/cleanup-demo-secrets.sh` from the repo root.
+
+### Option B — Manual setup
+
 Every example follows the same pattern:
 
 ```bash

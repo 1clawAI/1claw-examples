@@ -17,6 +17,7 @@ import { createClient } from "@1claw/sdk";
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 const API_KEY = process.env.ONECLAW_API_KEY;
 const AGENT_ID = process.env.ONECLAW_AGENT_ID;
+const VAULT_ID = process.env.ONECLAW_VAULT_ID;
 
 if (!API_KEY) {
     console.error("Set ONECLAW_API_KEY in your environment or .env file");
@@ -35,18 +36,46 @@ async function main() {
         return;
     }
 
-    // ── 2. Create a vault ──────────────────────────────────────────
+    // ── 2. Create or use existing vault ───────────────────────────
     console.log("\n--- Creating vault ---");
-    const vaultRes = await client.vault.create({
-        name: "demo-vault",
-        description: "Created by the basic SDK example",
-    });
-    if (vaultRes.error) {
-        console.error("Failed to create vault:", vaultRes.error.message);
-        return;
+    let vault: { id: string; name: string };
+    let vaultCreated = false;
+    if (VAULT_ID) {
+        const listRes = await client.vault.list();
+        const existing = listRes.data?.vaults?.find((v) => v.id === VAULT_ID);
+        if (existing) {
+            vault = existing;
+            console.log(`Using existing vault from ONECLAW_VAULT_ID: ${vault.name} (${vault.id})`);
+        } else {
+            console.error("ONECLAW_VAULT_ID set but vault not found.");
+            return;
+        }
+    } else {
+        const vaultRes = await client.vault.create({
+            name: "demo-vault",
+            description: "Created by the basic SDK example",
+        });
+        if (vaultRes.error) {
+            if (vaultRes.error.message?.includes("Vault limit")) {
+                const listRes = await client.vault.list();
+                const first = listRes.data?.vaults?.[0];
+                if (first) {
+                    vault = first;
+                    console.log(`Vault limit reached; using existing: ${vault.name} (${vault.id})`);
+                } else {
+                    console.error("Failed to create vault:", vaultRes.error.message);
+                    return;
+                }
+            } else {
+                console.error("Failed to create vault:", vaultRes.error.message);
+                return;
+            }
+        } else {
+            vault = vaultRes.data!;
+            vaultCreated = true;
+            console.log(`Vault created: ${vault.name} (${vault.id})`);
+        }
     }
-    const vault = vaultRes.data!;
-    console.log(`Vault created: ${vault.name} (${vault.id})`);
 
     // ── 3. Store a secret ──────────────────────────────────────────
     console.log("\n--- Storing secret ---");
@@ -105,9 +134,20 @@ async function main() {
 
     // ── 7. Clean up ────────────────────────────────────────────────
     console.log("\n--- Cleaning up ---");
-    await client.secrets.delete(vault.id, "OPENAI_KEY");
-    await client.vault.delete(vault.id);
-    console.log("Vault and secret deleted.");
+    if (putRes.data) {
+        const delRes = await client.secrets.delete(vault.id, "OPENAI_KEY");
+        if (!delRes.error) console.log("Secret OPENAI_KEY deleted.");
+    }
+    if (vaultCreated) {
+        const vaultDelRes = await client.vault.delete(vault.id);
+        if (vaultDelRes.error) {
+            console.error("Failed to delete vault:", vaultDelRes.error.message);
+        } else {
+            console.log("Vault deleted.");
+        }
+    } else {
+        console.log("Left existing vault in place.");
+    }
 
     console.log("\nDone!");
 }

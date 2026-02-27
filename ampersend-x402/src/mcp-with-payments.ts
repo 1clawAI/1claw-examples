@@ -98,5 +98,12 @@ const putResult = await client.callTool({
 });
 console.log("   Result:", JSON.stringify(putResult, null, 2));
 
+console.log("\n4. Cleaning up: delete test secret...");
+await client.callTool({
+    name: "delete_secret",
+    arguments: { path: "test/ampersend-demo" },
+});
+console.log("   Deleted test/ampersend-demo");
+
 await client.close();
 console.log("\nDone.");

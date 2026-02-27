@@ -17,6 +17,7 @@ import { createClient } from "@1claw/sdk";
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 const API_KEY = process.env.ONECLAW_API_KEY;
 const AGENT_ID = process.env.ONECLAW_AGENT_ID;
+const VAULT_ID = process.env.ONECLAW_VAULT_ID;
 
 async function main() {
     const client = createClient({ baseUrl: BASE_URL });
@@ -54,18 +55,46 @@ async function main() {
         }
     }
 
-    // ── 2. Create a vault and store a secret ───────────────────────
+    // ── 2. Create or use existing vault and store a secret ─────────
     console.log("--- Creating vault + secret ---");
-    const vaultRes = await client.vault.create({
-        name: "shared-vault",
-        description: "Vault with secrets to share",
-    });
-    if (vaultRes.error) {
-        console.error("Failed:", vaultRes.error.message);
-        return;
+    let vault: { id: string; name: string };
+    let vaultCreated = false;
+    if (VAULT_ID) {
+        const listRes = await client.vault.list();
+        const existing = listRes.data?.vaults?.find((v) => v.id === VAULT_ID);
+        if (existing) {
+            vault = existing;
+            console.log(`Using existing vault: ${vault.name} (${vault.id})`);
+        } else {
+            console.error("ONECLAW_VAULT_ID set but vault not found.");
+            return;
+        }
+    } else {
+        const vaultRes = await client.vault.create({
+            name: "shared-vault",
+            description: "Vault with secrets to share",
+        });
+        if (vaultRes.error) {
+            if (vaultRes.error.message?.includes("Vault limit")) {
+                const listRes = await client.vault.list();
+                const first = listRes.data?.vaults?.[0];
+                if (first) {
+                    vault = first;
+                    console.log(`Vault limit; using existing: ${vault.name} (${vault.id})`);
+                } else {
+                    console.error("Failed:", vaultRes.error.message);
+                    return;
+                }
+            } else {
+                console.error("Failed:", vaultRes.error.message);
+                return;
+            }
+        } else {
+            vault = vaultRes.data!;
+            vaultCreated = true;
+            console.log(`Vault: ${vault.name} (${vault.id})`);
+        }
     }
-    const vault = vaultRes.data!;
-    console.log(`Vault: ${vault.name} (${vault.id})`);
 
     const putRes = await client.secrets.set(
         vault.id,
@@ -77,9 +106,10 @@ async function main() {
     );
     if (putRes.error) {
         console.error("Failed:", putRes.error.message);
-        return;
+        // Fall through to cleanup: we still have a vault to delete
+    } else {
+        console.log(`Secret stored: ${putRes.data!.path}`);
     }
-    console.log(`Secret stored: ${putRes.data!.path}`);
 
     // ── 3. Share the secret by email ───────────────────────────────
     console.log("\n--- Sharing secret by email ---");
@@ -112,9 +142,20 @@ async function main() {
 
     // ── 4. Clean up ────────────────────────────────────────────────
     console.log("\n--- Cleaning up ---");
-    await client.secrets.delete(vault.id, "DATABASE_URL");
-    await client.vault.delete(vault.id);
-    console.log("Vault and secret deleted.");
+    if (putRes.data) {
+        const delRes = await client.secrets.delete(vault.id, "DATABASE_URL");
+        if (!delRes.error) console.log("Secret DATABASE_URL deleted.");
+    }
+    if (vaultCreated) {
+        const vaultDelRes = await client.vault.delete(vault.id);
+        if (vaultDelRes.error) {
+            console.error("Failed to delete vault:", vaultDelRes.error.message);
+        } else {
+            console.log("Vault deleted.");
+        }
+    } else {
+        console.log("Left existing vault in place.");
+    }
 
     console.log("\nDone!");
 }

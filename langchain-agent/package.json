@@ -5,8 +5,8 @@
     "license": "MIT",
     "type": "module",
     "scripts": {
-        "start": "npx tsx src/tool-calling.ts",
-        "mcp": "npx tsx src/mcp-client.ts"
+        "start": "npx tsx --env-file=.env src/tool-calling.ts",
+        "mcp": "npx tsx --env-file=.env src/mcp-client.ts"
     },
     "dependencies": {
         "@1claw/sdk": "file:../../packages/sdk",
