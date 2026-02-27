@@ -94,7 +94,7 @@ class HybridTreasurer implements X402Treasurer {
                 if (cents >= this.creditThresholdCents) {
                     console.log(`  [treasurer] Credits sufficient — switching overage to credits`);
                     await fetch(`${BASE_URL}/v1/billing/overage-method`, {
-                        method: "PUT",
+                        method: "PATCH",
                         headers: { Authorization: `Bearer ${JWT}`, "Content-Type": "application/json" },
                         body: JSON.stringify({ method: "credits" }),
                     });
