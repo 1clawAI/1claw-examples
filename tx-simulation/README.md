@@ -1,8 +1,8 @@
-# 1Claw Transaction Proxy Demo
+# 1Claw Intents API Demo
 
 > **Reference only** — not for production use. Review and adapt for your own security requirements.
 
-An interactive AI chat app showcasing **1Claw's crypto transaction proxy with guardrails**. A Gemini-powered agent can sign and broadcast real on-chain transactions — but only within security boundaries configured by a human. Transactions can be simulated via Tenderly before committing real funds.
+An interactive AI chat app showcasing **1Claw's Intents API with guardrails**. A Gemini-powered agent can sign and broadcast real on-chain transactions — but only within security boundaries configured by a human. Transactions can be simulated via Tenderly before committing real funds.
 
 ## What you'll learn
 
@@ -15,7 +15,7 @@ An interactive AI chat app showcasing **1Claw's crypto transaction proxy with gu
 
 - Node.js 20+
 - A [1Claw account](https://1claw.xyz) with an agent that has:
-  - `crypto_proxy_enabled: true`
+  - `intents_api_enabled: true`
   - Transaction guardrails configured (allowed chains, value limits, address allowlist)
   - A signing key stored in a vault at `keys/{chain}-signer`
   - An access policy granting the agent `read` on `keys/**`
@@ -47,7 +47,7 @@ Using the [1Claw CLI](https://www.npmjs.com/package/@1claw/cli):
 ```bash
 # Create an agent with guardrails
 1claw agent create tx-demo-agent \
-  --crypto-proxy \
+  --intents-api \
   --tx-allowed-chains base \
   --tx-max-value 0.001 \
   --tx-daily-limit 0.005 \
@@ -116,7 +116,7 @@ The agent calls `submit_transaction`. 1Claw validates the guardrails, signs the 
 
 > Send 0.01 USDC to vitalik.eth on base
 
-The agent resolves `vitalik.eth` via ENS, encodes the ERC-20 `transfer()` calldata, and submits via the transaction proxy.
+The agent resolves `vitalik.eth` via ENS, encodes the ERC-20 `transfer()` calldata, and submits via the Intents API.
 
 ## Tools
 
@@ -135,7 +135,7 @@ The agent resolves `vitalik.eth` via ENS, encodes the ERC-20 `transfer()` callda
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `ONECLAW_API_URL` | No | 1Claw API URL (default: `https://api.1claw.xyz`) |
-| `ONECLAW_AGENT_ID` | Yes | UUID of the agent with crypto proxy enabled |
+| `ONECLAW_AGENT_ID` | Yes | UUID of the agent with Intents API enabled |
 | `ONECLAW_AGENT_API_KEY` | Yes | Agent API key (`ocv_...`) |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | Yes | Google Gemini API key |
 
@@ -171,7 +171,7 @@ The right sidebar shows **Agent Guardrails** (static config) and a **Transaction
 - [Vercel AI SDK](https://sdk.vercel.ai/) with [Google Gemini](https://ai.google.dev/)
 - [viem](https://viem.sh/) for ENS resolution and ERC-20 encoding
 - [shadcn/ui](https://ui.shadcn.com/) components
-- [1Claw](https://1claw.xyz) transaction proxy API
+- [1Claw](https://1claw.xyz) Intents API
 
 ## Next steps
 

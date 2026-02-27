@@ -55,7 +55,7 @@ export function getAgentId() {
 interface AgentInfo {
   id: string;
   name: string;
-  crypto_proxy_enabled: boolean;
+  intents_api_enabled: boolean;
   tx_to_allowlist?: string[];
   tx_max_value_eth?: string;
   tx_daily_limit_eth?: string;

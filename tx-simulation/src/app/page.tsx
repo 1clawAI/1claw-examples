@@ -287,7 +287,7 @@ export default function Page() {
             <Shield className="h-4 w-4 text-amber-400" />
           </div>
           <div>
-            <h1 className="text-sm font-semibold">1Claw Transaction Proxy</h1>
+            <h1 className="text-sm font-semibold">1Claw Intents API</h1>
             <p className="text-xs text-zinc-500">AI Agent Demo — Guardrails & Simulation</p>
           </div>
         </div>
@@ -314,9 +314,9 @@ export default function Page() {
                     <Bot className="h-8 w-8 text-zinc-400" />
                   </div>
                   <div className="text-center space-y-2">
-                    <h2 className="text-lg font-medium">Transaction Proxy Agent</h2>
+                    <h2 className="text-lg font-medium">Intents API Agent</h2>
                     <p className="text-sm text-zinc-500 max-w-md">
-                      I can sign and broadcast on-chain transactions through 1Claw&apos;s secure proxy.
+                      I can sign and broadcast on-chain transactions through 1Claw&apos;s Intents API.
                       My wallet is protected by guardrails — try asking me to send a transaction.
                     </p>
                   </div>

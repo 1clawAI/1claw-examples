@@ -1,10 +1,10 @@
 /**
- * 1Claw SDK — Crypto Transaction Proxy Example
+ * 1Claw SDK — Intents API Example
  *
- * Demonstrates registering an agent with the crypto transaction proxy
- * enabled, granting it vault access, and checking its proxy status.
+ * Demonstrates registering an agent with the Intents API
+ * enabled, granting it vault access, and checking its status.
  *
- * The crypto proxy lets agents submit on-chain transaction intents
+ * The Intents API lets agents submit on-chain transaction intents
  * through a signing proxy — private keys never leave the HSM.
  *
  * Prerequisites:
@@ -56,15 +56,15 @@ async function main() {
     }
     console.log(`Key stored: ${putRes.data!.path} (v${putRes.data!.version})`);
 
-    // ── 3. Register an agent WITH crypto proxy enabled ─────────────
-    console.log("\n--- Registering agent with crypto proxy ---");
+    // ── 3. Register an agent WITH Intents API enabled ───────────────
+    console.log("\n--- Registering agent with Intents API ---");
     const agentRes = await client.agents.create({
         name: "defi-bot",
         description:
             "Automated DeFi agent that submits transactions via the signing proxy",
         auth_method: "api_key",
         scopes: ["vault:read", "tx:sign"],
-        crypto_proxy_enabled: true,
+        intents_api_enabled: true,
     });
     if (agentRes.error) {
         console.error("Failed:", agentRes.error.message);
@@ -72,7 +72,7 @@ async function main() {
     }
     const agent = agentRes.data!;
     console.log(`Agent: ${agent.agent.name} (${agent.agent.id})`);
-    console.log(`  crypto_proxy_enabled: ${agent.agent.crypto_proxy_enabled}`);
+    console.log(`  intents_api_enabled: ${agent.agent.intents_api_enabled}`);
     console.log(`  API key: ${agent.api_key.slice(0, 12)}...`);
 
     // ── 4. Grant the agent read access to the signing keys vault ───
@@ -153,20 +153,20 @@ async function main() {
         const a = getRes.data!;
         console.log(`  Name: ${a.name}`);
         console.log(`  Active: ${a.is_active}`);
-        console.log(`  Crypto proxy: ${a.crypto_proxy_enabled}`);
+        console.log(`  Intents API: ${a.intents_api_enabled}`);
         console.log(`  Scopes: [${a.scopes.join(", ")}]`);
     }
 
-    // ── 8. Toggle proxy off ────────────────────────────────────────
-    console.log("\n--- Disabling crypto proxy ---");
+    // ── 8. Toggle Intents API off ───────────────────────────────────
+    console.log("\n--- Disabling Intents API ---");
     const updateRes = await client.agents.update(agent.agent.id, {
-        crypto_proxy_enabled: false,
+        intents_api_enabled: false,
     });
     if (updateRes.error) {
         console.error("Failed:", updateRes.error.message);
     } else {
         console.log(
-            `  crypto_proxy_enabled: ${updateRes.data!.crypto_proxy_enabled}`,
+            `  intents_api_enabled: ${updateRes.data!.intents_api_enabled}`,
         );
     }
 

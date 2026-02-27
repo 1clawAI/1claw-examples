@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "1Claw — Transaction Proxy Demo",
+  title: "1Claw — Intents API Demo",
   description: "AI agent transaction simulation with guardrails",
 };
 

@@ -66,7 +66,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: google("gemini-2.0-flash"),
-    system: `You are a demo AI agent showcasing 1Claw's crypto transaction proxy with guardrails.
+    system: `You are a demo AI agent showcasing 1Claw's Intents API with guardrails.
 
 You have a crypto wallet managed through 1Claw. Your signing keys are stored in an HSM-backed vault — you never see the private key. Instead, you submit transaction intents and 1Claw signs them server-side.
 
@@ -167,7 +167,7 @@ Keep responses concise. Use the tools proactively.`,
             return {
               status: "ok",
               guardrails: {
-                crypto_proxy_enabled: info.crypto_proxy_enabled,
+                intents_api_enabled: info.intents_api_enabled,
                 allowed_chains: info.tx_allowed_chains ?? [],
                 allowed_destinations: info.tx_to_allowlist ?? [],
                 max_value_per_tx_eth: info.tx_max_value_eth ?? "unlimited",

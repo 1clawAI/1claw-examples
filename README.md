@@ -8,7 +8,7 @@ Seven example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API
 
 | Example | Difficulty | Time | What you'll build |
 |---------|-----------|------|-------------------|
-| [basic](./basic/) | Beginner | 5 min | TypeScript scripts: vault CRUD, secrets, billing, signup, sharing, crypto proxy |
+| [basic](./basic/) | Beginner | 5 min | TypeScript scripts: vault CRUD, secrets, billing, signup, sharing, Intents API |
 | [langchain-agent](./langchain-agent/) | Beginner | 5 min | LangChain agent fetches secrets just-in-time (OpenAI or Gemini) |
 | [fastmcp-tool-server](./fastmcp-tool-server/) | Intermediate | 5 min | Custom MCP server with domain tools (rotate keys, deploy, parse env configs) |
 | [nextjs-agent-secret](./nextjs-agent-secret/) | Intermediate | 5 min | AI chat app (Claude) accesses vault secrets with approval gates |
@@ -59,7 +59,7 @@ If you're new to 1Claw, walk through the examples in this order:
 
 ## About 1Claw
 
-1Claw is an HSM-backed secrets manager for AI agents and humans. It provides encrypted vaults, granular access policies, a crypto transaction proxy with guardrails, human-in-the-loop approvals, subscription billing with prepaid credits, and x402 micropayments.
+1Claw is an HSM-backed secrets manager for AI agents and humans. It provides encrypted vaults, granular access policies, an Intents API with guardrails, human-in-the-loop approvals, subscription billing with prepaid credits, and x402 micropayments.
 
 - **SDK**: [@1claw/sdk](https://www.npmjs.com/package/@1claw/sdk)
 - **MCP**: [@1claw/mcp](https://mcp.1claw.xyz) — 11 tools for vault operations

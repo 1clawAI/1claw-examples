@@ -2,7 +2,7 @@
 
 > **Reference only** — not for production use. Review and adapt for your own security requirements.
 
-Three TypeScript scripts that walk through the core 1Claw workflows: vault CRUD, secrets management, billing, user signup with sharing, and the crypto transaction proxy.
+Three TypeScript scripts that walk through the core 1Claw workflows: vault CRUD, secrets management, billing, user signup with sharing, and the Intents API.
 
 ## What you'll learn
 
@@ -10,7 +10,7 @@ Three TypeScript scripts that walk through the core 1Claw workflows: vault CRUD,
 - Create a vault, store a secret, retrieve it, and list vault contents
 - Check your billing usage
 - Sign up a new user and share a secret by email
-- Register an agent with the crypto transaction proxy, submit a signed transaction, and verify guardrails
+- Register an agent with the Intents API, submit a signed transaction, and verify guardrails
 
 ## Prerequisites
 
@@ -96,20 +96,20 @@ This runs `src/signup-and-share.ts`, which:
 
 > **Note:** On production, signup sends a verification email instead of returning a JWT immediately. The script falls back to API key auth if available.
 
-### Step 4 — Run the crypto proxy flow (optional)
+### Step 4 — Run the Intents API flow (optional)
 
 ```bash
-npm run crypto-proxy
+npm run intents-api
 ```
 
-This runs `src/crypto-proxy.ts`, which:
+This runs `src/intents-api.ts`, which:
 
 1. Creates a vault and stores a signing key at `keys/base-signer`
-2. Registers an agent with `crypto_proxy_enabled: true`
+2. Registers an agent with `intents_api_enabled: true`
 3. Grants the agent a read policy on `keys/**`
 4. Submits a transaction (signed server-side — the agent never sees the private key)
 5. Verifies the agent's configuration
-6. Disables the crypto proxy and cleans up
+6. Disables the Intents API and cleans up
 
 ## Scripts
 
@@ -117,7 +117,7 @@ This runs `src/crypto-proxy.ts`, which:
 |---------|--------|-------------|
 | `npm start` | `src/index.ts` | Vault CRUD, secrets, billing |
 | `npm run signup` | `src/signup-and-share.ts` | User signup, create vault, share by email |
-| `npm run crypto-proxy` | `src/crypto-proxy.ts` | Agent with crypto proxy, transaction signing |
+| `npm run intents-api` | `src/intents-api.ts` | Agent with Intents API, transaction signing |
 
 ## Environment variables
 
