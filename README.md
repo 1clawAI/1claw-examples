@@ -86,7 +86,7 @@ If you're new to 1Claw, walk through the examples in this order:
 1Claw is an HSM-backed secrets manager for AI agents and humans. It provides encrypted vaults, granular access policies, an Intents API with guardrails, human-in-the-loop approvals, subscription billing with prepaid credits, and x402 micropayments.
 
 - **SDK**: [@1claw/sdk](https://www.npmjs.com/package/@1claw/sdk)
-- **MCP**: [@1claw/mcp](https://mcp.1claw.xyz) — 11 tools for vault operations
+- **MCP**: [@1claw/mcp](https://mcp.1claw.xyz) — vault, secrets, sharing, simulate/submit transaction tools
 - **CLI**: [@1claw/cli](https://www.npmjs.com/package/@1claw/cli)
 - **Docs**: [docs.1claw.xyz](https://docs.1claw.xyz)
 - **Dashboard**: [1claw.xyz](https://1claw.xyz)
