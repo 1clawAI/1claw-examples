@@ -87,6 +87,15 @@ async function main() {
                     console.log(`    ${JSON.stringify(part.data, null, 2)}`);
             }
         }
+        const emptyVault = task.artifacts.some((a) =>
+            a.parts?.some((p) => {
+                if (p.type !== "text" || typeof p.text !== "string") return false;
+                return /Found 0 secret/.test(p.text);
+            }),
+        );
+        if (emptyVault) {
+            console.log("    (Vault is empty — normal for a fresh demo.)");
+        }
     }
 
     // ── Step 3: (Optional) Reason about the result with an LLM ─────
@@ -126,52 +135,73 @@ async function main() {
         );
     }
 
-    // ── Step 4: Send a follow-up task ───────────────────────────────
+    // ── Step 4: Send a follow-up task (only if we have secrets) ─────
 
-    console.log(
-        "\n[coordinator] Sending follow-up: fetch a specific credential...",
-    );
+    const hasSecrets =
+        task.artifacts?.some((a) =>
+            a.parts?.some(
+                (p) =>
+                    p.type === "text" &&
+                    typeof p.text === "string" &&
+                    /Found \d+ secret/.test(p.text) &&
+                    !/Found 0 secret/.test(p.text),
+            ),
+        ) ?? false;
 
-    const followUp: SendTaskRequest = {
-        jsonrpc: "2.0",
-        id: 2,
-        method: "tasks/send",
-        params: {
-            id: randomUUID(),
-            sessionId: task.sessionId,
-            message: {
-                role: "user",
-                parts: [
-                    {
-                        type: "text",
-                        text: "Retrieve the credential for the first secret in the vault",
-                    },
-                ],
+    if (hasSecrets) {
+        console.log(
+            "\n[coordinator] Sending follow-up: fetch a specific credential...",
+        );
+
+        const followUp: SendTaskRequest = {
+            jsonrpc: "2.0",
+            id: 2,
+            method: "tasks/send",
+            params: {
+                id: randomUUID(),
+                sessionId: task.sessionId,
+                message: {
+                    role: "user",
+                    parts: [
+                        {
+                            type: "text",
+                            text: "Retrieve the credential for the first secret in the vault",
+                        },
+                    ],
+                },
             },
-        },
-    };
+        };
 
-    const followRes = await fetch(WORKER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(followUp),
-    });
+        const followRes = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(followUp),
+        });
 
-    const followRpc: SendTaskResponse = await followRes.json();
-    console.log(
-        `[coordinator] Follow-up state: ${followRpc.result.status.state}`,
-    );
-    if (followRpc.result.artifacts?.length) {
-        for (const a of followRpc.result.artifacts) {
-            for (const p of a.parts) {
-                if (p.type === "data") {
-                    console.log(`[coordinator] Secret metadata:`, p.data);
+        const followRpc: SendTaskResponse = await followRes.json();
+        console.log(
+            `[coordinator] Follow-up state: ${followRpc.result.status.state}`,
+        );
+        if (followRpc.result.artifacts?.length) {
+            for (const a of followRpc.result.artifacts) {
+                for (const p of a.parts) {
+                    if (p.type === "data") {
+                        console.log(`[coordinator] Secret metadata:`, p.data);
+                    }
                 }
             }
         }
+    } else {
+        console.log(
+            "\n[coordinator] Skipping follow-up (no secrets in vault).",
+        );
     }
 
     console.log("\n[coordinator] Done.");
+    process.exit(0);
 }
 
-main().catch(console.error);
+main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+});

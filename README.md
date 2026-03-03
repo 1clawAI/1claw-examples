@@ -2,7 +2,7 @@
 
 > **Reference only** — these examples are for educational and demo purposes. They are not production-ready and may contain hardcoded values, skip error handling, or use development-only configurations. Always review and adapt for your own security requirements.
 
-Eight example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
+Nine example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
 
 ## Quick reference
 
@@ -16,6 +16,7 @@ Eight example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API
 | [tx-simulation](./tx-simulation/) | Intermediate | 10 min | AI agent signs on-chain transactions with guardrails and Tenderly simulation |
 | [shroud-demo](./shroud-demo/) | Intermediate | 5 min | Shroud TEE proxy: health, agent auth, Intents API, LLM proxy (key from Vault or header) |
 | [ampersend-x402](./ampersend-x402/) | Advanced | 10 min | x402 micropayments via Ampersend — MCP/HTTP clients, hybrid billing, paywall server |
+| [x402-payments](./x402-payments/) | Advanced | 5 min | Real x402 payments for 1Claw endpoints — EOA key in .env, GET/PUT secrets, audit, simulate |
 
 ## Getting started
 
@@ -38,6 +39,8 @@ npm start
 ```
 
 Add `GOOGLE_API_KEY` or `OPENAI_API_KEY` for langchain-agent, `ANTHROPIC_API_KEY` for nextjs-agent-secret, and `SMART_ACCOUNT_ADDRESS` (and optional wallet key) for ampersend-x402 as needed.
+
+**Test all examples:** From the repo root, run `./examples/scripts/test-all-examples.sh`. This installs deps (unless `SKIP_INSTALL=1`), runs each example’s main script or build, and reports pass/fail. CLI-style examples are run to completion or stopped after a short delay; Next.js examples are build-only.
 
 **Cleanup:** To delete all secrets in demo accounts (except ampersend-x402, so `keys/x402-session-key` is kept), run `./scripts/cleanup-demo-secrets.sh` from the repo root.
 
@@ -68,6 +71,7 @@ If you're new to 1Claw, walk through the examples in this order:
 6. **[tx-simulation](./tx-simulation/)** — On-chain transactions with guardrails and simulation
 7. **[shroud-demo](./shroud-demo/)** — Shroud TEE proxy: health, Intents API, LLM proxy (no LLM key required if stored in Vault)
 8. **[ampersend-x402](./ampersend-x402/)** — Payments and billing integration
+9. **[x402-payments](./x402-payments/)** — Real x402 payments for all supported endpoints (EOA key in .env)
 
 ## What you need
 
@@ -80,6 +84,7 @@ If you're new to 1Claw, walk through the examples in this order:
 | OpenAI API key | [platform.openai.com](https://platform.openai.com) | langchain (alternative to Gemini); shroud-demo LLM proxy (optional if key in Vault) |
 | 1Claw agent (ID + API key) | [1claw.xyz](https://1claw.xyz) — create agent, enable Intents API | shroud-demo, tx-simulation |
 | Smart account + session key | [Ampersend docs](https://docs.ampersend.ai) | ampersend-x402 |
+| EOA private key (Base USDC) | Generate hex key, fund with USDC on Base | x402-payments |
 
 ## About 1Claw
 
