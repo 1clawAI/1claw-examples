@@ -89,7 +89,8 @@ async function main() {
         }
         const emptyVault = task.artifacts.some((a) =>
             a.parts?.some((p) => {
-                if (p.type !== "text" || typeof p.text !== "string") return false;
+                if (p.type !== "text" || typeof p.text !== "string")
+                    return false;
                 return /Found 0 secret/.test(p.text);
             }),
         );

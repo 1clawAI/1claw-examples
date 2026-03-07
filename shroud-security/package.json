@@ -1,0 +1,27 @@
+{
+  "name": "@1claw/example-shroud-security",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Demonstrate Shroud threat detection filters",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "npx tsx src/index.ts",
+    "setup": "npx tsx src/setup-env.ts",
+    "test-unicode": "npx tsx src/test-unicode.ts",
+    "test-injection": "npx tsx src/test-injection.ts",
+    "test-social": "npx tsx src/test-social.ts",
+    "test-encoding": "npx tsx src/test-encoding.ts",
+    "test-network": "npx tsx src/test-network.ts",
+    "test-filesystem": "npx tsx src/test-filesystem.ts"
+  },
+  "dependencies": {
+    "@1claw/sdk": "workspace:*",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

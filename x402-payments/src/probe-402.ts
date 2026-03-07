@@ -6,9 +6,15 @@
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 
 const endpoints: { name: string; url: string }[] = [
-    { name: "GET /v1/vaults/{id}/secrets/{path}", url: `${BASE_URL}/v1/vaults/00000000-0000-0000-0000-000000000000/secrets/test` },
+    {
+        name: "GET /v1/vaults/{id}/secrets/{path}",
+        url: `${BASE_URL}/v1/vaults/00000000-0000-0000-0000-000000000000/secrets/test`,
+    },
     { name: "GET /v1/audit/events", url: `${BASE_URL}/v1/audit/events` },
-    { name: "GET /v1/share/{id}", url: `${BASE_URL}/v1/share/00000000-0000-0000-0000-000000000000` },
+    {
+        name: "GET /v1/share/{id}",
+        url: `${BASE_URL}/v1/share/00000000-0000-0000-0000-000000000000`,
+    },
 ];
 
 console.log("=== 1Claw x402 probe (unauthenticated) ===\n");

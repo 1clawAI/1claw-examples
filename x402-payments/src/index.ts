@@ -34,7 +34,9 @@ if (!API_KEY || !VAULT_ID) {
     process.exit(1);
 }
 if (!X402_PRIVATE_KEY || !X402_PRIVATE_KEY.startsWith("0x")) {
-    console.error("Required: X402_PRIVATE_KEY (0x-prefixed hex). Generate and add to .env for real x402 payments.");
+    console.error(
+        "Required: X402_PRIVATE_KEY (0x-prefixed hex). Generate and add to .env for real x402 payments.",
+    );
     process.exit(1);
 }
 
@@ -66,10 +68,28 @@ async function main() {
         "Content-Type": "application/json",
     };
 
-    const endpoints: { name: string; url: string; method: string; body?: string }[] = [
-        { name: "GET secret (path: demo/x402)", method: "GET", url: `${BASE_URL}/v1/vaults/${VAULT_ID}/secrets/demo%2Fx402` },
-        { name: "PUT secret (path: demo/x402)", method: "PUT", url: `${BASE_URL}/v1/vaults/${VAULT_ID}/secrets/demo%2Fx402`, body: JSON.stringify({ value: "x402-demo-value", type: "generic" }) },
-        { name: "GET audit/events", method: "GET", url: `${BASE_URL}/v1/audit/events` },
+    const endpoints: {
+        name: string;
+        url: string;
+        method: string;
+        body?: string;
+    }[] = [
+        {
+            name: "GET secret (path: demo/x402)",
+            method: "GET",
+            url: `${BASE_URL}/v1/vaults/${VAULT_ID}/secrets/demo%2Fx402`,
+        },
+        {
+            name: "PUT secret (path: demo/x402)",
+            method: "PUT",
+            url: `${BASE_URL}/v1/vaults/${VAULT_ID}/secrets/demo%2Fx402`,
+            body: JSON.stringify({ value: "x402-demo-value", type: "generic" }),
+        },
+        {
+            name: "GET audit/events",
+            method: "GET",
+            url: `${BASE_URL}/v1/audit/events`,
+        },
     ];
 
     if (AGENT_ID) {
@@ -93,10 +113,13 @@ async function main() {
         process.stdout.write(`  ${ep.name} ... `);
         try {
             const init: RequestInit = { method: ep.method, headers };
-            if (ep.body && ep.method !== "GET") (init as Record<string, unknown>).body = ep.body;
+            if (ep.body && ep.method !== "GET")
+                (init as Record<string, unknown>).body = ep.body;
             const res = await paymentFetch(ep.url, init);
             if (res.status === 402) {
-                console.log("402 (payment required; ensure X402_PRIVATE_KEY wallet has USDC on Base to auto-pay)");
+                console.log(
+                    "402 (payment required; ensure X402_PRIVATE_KEY wallet has USDC on Base to auto-pay)",
+                );
             } else if (res.ok) {
                 console.log(`${res.status} OK`);
             } else {
@@ -107,7 +130,9 @@ async function main() {
         }
     }
 
-    console.log("\nDone. If you saw 200 OK, you're within quota. Over quota → 402 then auto-pay with X402_PRIVATE_KEY.");
+    console.log(
+        "\nDone. If you saw 200 OK, you're within quota. Over quota → 402 then auto-pay with X402_PRIVATE_KEY.",
+    );
 }
 
 main();
