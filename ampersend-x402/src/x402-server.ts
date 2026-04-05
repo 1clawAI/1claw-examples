@@ -14,7 +14,7 @@ import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { ExactEvmScheme } from "@x402/evm/exact/server";
 import { ExactEvmScheme as ExactEvmFacilitatorScheme } from "@x402/evm/exact/facilitator";
 import { x402Facilitator } from "@x402/core/facilitator";
-import { createWalletClient, createPublicClient, http } from "viem";
+import { createWalletClient, createPublicClient, http, formatEther } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { base } from "viem/chains";
 import { resolveBuyerKey } from "./resolve-buyer-key.js";
@@ -32,6 +32,10 @@ if (!PAY_TO) {
     process.exit(1);
 }
 
+const buyerKeyPath = process.env.BUYER_KEY_PATH?.trim() || "keys/x402-session-key";
+const baseRpcUrl = process.env.BASE_RPC_URL?.trim();
+const baseTransport = baseRpcUrl ? http(baseRpcUrl) : http();
+
 let facilitatorKey = process.env.X402_FACILITATOR_KEY as `0x${string}` | undefined;
 if (!facilitatorKey && API_KEY && VAULT_ID) {
     facilitatorKey = (await resolveBuyerKey({
@@ -39,7 +43,7 @@ if (!facilitatorKey && API_KEY && VAULT_ID) {
         vaultId: VAULT_ID,
         baseUrl: BASE_URL,
         agentId: AGENT_ID,
-        secretPath: "keys/x402-session-key",
+        secretPath: buyerKeyPath,
     })) as `0x${string}`;
     console.log("[server] Facilitator key fetched from 1Claw vault");
 }
@@ -53,12 +57,12 @@ const facilitatorAccount = privateKeyToAccount(facilitatorKey);
 const walletClient = createWalletClient({
     account: facilitatorAccount,
     chain: base,
-    transport: http(),
+    transport: baseTransport,
 });
 
 const publicClient = createPublicClient({
     chain: base,
-    transport: http(),
+    transport: baseTransport,
 });
 
 const evmSigner = {
@@ -123,6 +127,27 @@ app.get("/", (_req, res) => {
         endpoints: { "/joke": "$0.001 USDC on Base mainnet" },
     });
 });
+
+try {
+    const wei = await publicClient.getBalance({ address: facilitatorAccount.address });
+    if (wei === 0n) {
+        console.warn(
+            `\n⚠  Facilitator ${facilitatorAccount.address} has 0 ETH on Base.\n` +
+            `   Settlement will fail with "invalid_exact_evm_transaction_failed"\n` +
+            `   and an empty transaction hash.\n` +
+            `   → Fund this EOA with Base ETH for gas.\n` +
+            `   Note: USDC on the payer smart account does NOT pay facilitator gas.\n`,
+        );
+    } else if (wei < 20_000_000_000_000_000n) {
+        console.warn(
+            `\n⚠  Facilitator ${facilitatorAccount.address} has only ${formatEther(wei)} ETH on Base — may be too low for gas.\n`,
+        );
+    }
+} catch (err) {
+    console.warn(
+        `\n⚠  Could not read facilitator ETH balance (RPC error): ${err instanceof Error ? err.message : err}\n`,
+    );
+}
 
 app.listen(PORT, () => {
     console.log(`\nx402 paywall server running on http://localhost:${PORT}`);

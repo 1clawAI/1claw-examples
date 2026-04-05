@@ -149,6 +149,7 @@ x402-server.ts          x402-client.ts
 | `AMPERSEND_API_URL` | No | Ampersend API (default: `https://api.ampersend.ai`) |
 | `ONECLAW_BASE_URL` | No | 1Claw API URL (default: `https://api.1claw.xyz`) |
 | `X402_SERVER_PORT` | No | Paywall server port (default: `4021`) |
+| `BASE_RPC_URL` | No | Base RPC endpoint for balance checks and facilitator settle |
 | `X402_CLIENT_DEBUG` | No | Set to `1` for verbose x402 fetch logging |
 
 ## Debugging
@@ -158,6 +159,8 @@ Set `X402_CLIENT_DEBUG=1` to log every fetch, decode `PAYMENT-REQUIRED` and `pay
 ```bash
 X402_CLIENT_DEBUG=1 npm start
 ```
+
+If `PAYMENT-RESPONSE` shows `invalid_exact_evm_transaction_failed` with an empty `transaction` hash, the facilitator EOA (printed at server startup) has no Base ETH for gas. Fund it with a small amount of ETH — the payer smart-account USDC does **not** cover facilitator gas. The server warns at startup when facilitator ETH is zero or very low.
 
 ## Wallet safety
 
