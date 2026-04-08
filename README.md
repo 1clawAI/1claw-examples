@@ -15,9 +15,9 @@ Twelve example applications demonstrating the [1Claw](https://1claw.xyz) SDK, AP
 | [google-a2a](./google-a2a/)                   | Intermediate | 10 min | Two agents communicate via Google A2A protocol + 1Claw vaults (includes ADK demo)          |
 | [tx-simulation](./tx-simulation/)             | Intermediate | 10 min | AI agent signs on-chain transactions with guardrails and Tenderly simulation               |
 | [shroud-demo](./shroud-demo/)                 | Intermediate | 5 min  | Shroud TEE proxy: health, agent auth, Intents API, LLM proxy (key from Vault or header)    |
-| [shroud-llm](./shroud-llm/)                   | Intermediate | 5 min  | Shroud + **LLM Token Billing**: JWT claims + **OpenAI, Anthropic, Google** via Stripe (or direct keys if billing off) |
-| [local-inspect](./local-inspect/)             | Beginner     | 2 min  | Detect prompt injection, PII, and threats — no account needed, runs offline               |
-| [shroud-security](./shroud-security/)         | Intermediate | 5 min  | Shroud threat detection: Unicode, command injection, social engineering, encoding, network |
+| [shroud-llm](./shroud-llm/)                   | Intermediate | 5 min  | Shroud + **LLM Token Billing**: JWT claims + **OpenAI, Anthropic, Google** via Stripe (or direct keys if billing off) *(coming soon)* |
+| [local-inspect](./local-inspect/)             | Beginner     | 2 min  | Detect prompt injection, PII, and threats — no account needed, runs offline *(coming soon)* |
+| [shroud-security](./shroud-security/)         | Intermediate | 5 min  | Shroud threat detection: Unicode, command injection, social engineering, encoding, network *(coming soon)* |
 | [ampersend-x402](./ampersend-x402/)           | Advanced     | 10 min | x402 micropayments via Ampersend — MCP/HTTP clients, hybrid billing, paywall server        |
 | [x402-payments](./x402-payments/)             | Advanced     | 5 min  | Real x402 payments for 1Claw endpoints — EOA key in .env, GET/PUT secrets, audit, simulate |
 

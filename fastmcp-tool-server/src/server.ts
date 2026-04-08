@@ -59,8 +59,8 @@ server.addTool({
     parameters: z.object({
         prefix: z.string().optional().describe("Filter by path prefix"),
     }),
-    execute: async () => {
-        const res = await sdk.secrets.list(VAULT_ID!);
+    execute: async ({ prefix }) => {
+        const res = await sdk.secrets.list(VAULT_ID!, prefix);
         if (res.error) throw new UserError(res.error.message);
         return JSON.stringify(
             res.data!.secrets.map((s) => ({

@@ -51,7 +51,7 @@ async function main() {
     name: "shroud-demo-agent",
     description: "Created by examples/shroud-demo setup",
     intents_api_enabled: true,
-    scopes: ["vault.read"],
+    scopes: ["vault:read"],
   });
 
   if (createRes.error || !createRes.data) {

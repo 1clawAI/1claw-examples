@@ -7,9 +7,8 @@
  * 3. Store a secret
  * 4. Retrieve and read the secret
  * 5. List vault secrets (metadata only)
- * 6. Grant agent access
- * 7. Check billing usage
- * 8. Clean up
+ * 6. Check billing usage
+ * 7. Clean up
  */
 
 import { createClient } from "@1claw/sdk";
