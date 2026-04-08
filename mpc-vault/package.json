@@ -1,0 +1,21 @@
+{
+  "name": "1claw-mpc-vault-example",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "2of2": "npx tsx --env-file=.env src/2of2-client-custody.ts",
+    "2of3": "npx tsx --env-file=.env src/2of3-multi-hsm.ts",
+    "start": "npx tsx --env-file=.env src/run-all.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@1claw/sdk": "^0.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -2,13 +2,14 @@
 
 > **Reference only** — these examples are for educational and demo purposes. They are not production-ready and may contain hardcoded values, skip error handling, or use development-only configurations. Always review and adapt for your own security requirements.
 
-Twelve example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
+Thirteen example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
 
 ## Quick reference
 
 | Example                                       | Difficulty   | Time   | What you'll build                                                                          |
 | --------------------------------------------- | ------------ | ------ | ------------------------------------------------------------------------------------------ |
 | [basic](./basic/)                             | Beginner     | 5 min  | TypeScript scripts: vault CRUD, secrets, billing, signup, sharing, Intents API             |
+| [mpc-vault](./mpc-vault/)                     | Intermediate | 10 min | **MPC**: 2-of-2 client custody (`X-Client-Share`) and 2-of-3 multi-HSM vaults (tier-dependent) |
 | [langchain-agent](./langchain-agent/)         | Beginner     | 5 min  | LangChain agent fetches secrets just-in-time (OpenAI or Gemini)                            |
 | [fastmcp-tool-server](./fastmcp-tool-server/) | Intermediate | 5 min  | Custom MCP server with domain tools (rotate keys, deploy, parse env configs)               |
 | [nextjs-agent-secret](./nextjs-agent-secret/) | Intermediate | 5 min  | AI chat app (Claude) accesses vault secrets with approval gates                            |
@@ -45,7 +46,7 @@ npm start
 
 Add `GOOGLE_API_KEY` or `OPENAI_API_KEY` for langchain-agent, `ANTHROPIC_API_KEY` for nextjs-agent-secret, and `SMART_ACCOUNT_ADDRESS` (and optional wallet key) for ampersend-x402 as needed.
 
-**Test all examples:** From the repo root, run `./examples/scripts/test-all-examples.sh`. This installs deps (unless `SKIP_INSTALL=1`), runs each example’s main script or build, and reports pass/fail (12 examples). CLI-style examples are run to completion or stopped after a short delay; Next.js examples are build-only. **shroud-llm** skips unless `.env` has agent credentials; use an org with LLM Token Billing enabled for full JWT checks.
+**Test all examples:** From the repo root, run `./examples/scripts/test-all-examples.sh`. This installs deps (unless `SKIP_INSTALL=1`), runs each example’s main script or build, and reports pass/fail (13 examples). CLI-style examples are run to completion or stopped after a short delay; Next.js examples are build-only. **shroud-llm** skips unless `.env` has agent credentials; use an org with LLM Token Billing enabled for full JWT checks. **mpc-vault** is typecheck-only (live runs need Pro+ / Business+ and real `1ck_` keys).
 
 **Cleanup:** To delete all secrets in demo accounts (except ampersend-x402, so `keys/x402-session-key` is kept), run `./scripts/cleanup-demo-secrets.sh` from the repo root.
 
@@ -71,23 +72,24 @@ npm start
 If you're new to 1Claw, walk through the examples in this order:
 
 1. **[basic](./basic/)** — Learn the SDK fundamentals: auth, vaults, secrets, billing
-2. **[langchain-agent](./langchain-agent/)** — See how an LLM agent decides when to fetch secrets
-3. **[fastmcp-tool-server](./fastmcp-tool-server/)** — Build domain tools on top of the SDK
-4. **[nextjs-agent-secret](./nextjs-agent-secret/)** — Full chat app with server-side secret handling
-5. **[google-a2a](./google-a2a/)** — Multi-agent communication with vault credentials
-6. **[tx-simulation](./tx-simulation/)** — On-chain transactions with guardrails and simulation
-7. **[local-inspect](./local-inspect/)** — Detect threats in LLM output locally — no account, no network
-8. **[shroud-demo](./shroud-demo/)** — Shroud TEE proxy: health, Intents API, LLM proxy (no LLM key required if stored in Vault)
-9. **[shroud-llm](./shroud-llm/)** — Same Shroud LLM path, focused on orgs with **LLM Token Billing** (JWT claims + optional org API check)
-10. **[shroud-security](./shroud-security/)** — Shroud threat detection filters: Unicode, injection, social engineering
-11. **[ampersend-x402](./ampersend-x402/)** — Payments and billing integration
-12. **[x402-payments](./x402-payments/)** — Real x402 payments for all supported endpoints (EOA key in .env)
+2. **[mpc-vault](./mpc-vault/)** — Optional: MPC 2-of-2 and 2-of-3 vault flows (tier + infra dependent)
+3. **[langchain-agent](./langchain-agent/)** — See how an LLM agent decides when to fetch secrets
+4. **[fastmcp-tool-server](./fastmcp-tool-server/)** — Build domain tools on top of the SDK
+5. **[nextjs-agent-secret](./nextjs-agent-secret/)** — Full chat app with server-side secret handling
+6. **[google-a2a](./google-a2a/)** — Multi-agent communication with vault credentials
+7. **[tx-simulation](./tx-simulation/)** — On-chain transactions with guardrails and simulation
+8. **[local-inspect](./local-inspect/)** — Detect threats in LLM output locally — no account, no network
+9. **[shroud-demo](./shroud-demo/)** — Shroud TEE proxy: health, Intents API, LLM proxy (no LLM key required if stored in Vault)
+10. **[shroud-llm](./shroud-llm/)** — Same Shroud LLM path, focused on orgs with **LLM Token Billing** (JWT claims + optional org API check)
+11. **[shroud-security](./shroud-security/)** — Shroud threat detection filters: Unicode, injection, social engineering
+12. **[ampersend-x402](./ampersend-x402/)** — Payments and billing integration
+13. **[x402-payments](./x402-payments/)** — Real x402 payments for all supported endpoints (EOA key in .env)
 
 ## What you need
 
 | Credential                  | Where to get it                                                         | Which examples                                                                      |
 | --------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| 1Claw API key (`ocv_...`)   | [1claw.xyz/settings/api-keys](https://1claw.xyz/settings/api-keys)      | All except local-inspect                                                            |
+| 1Claw API key (`1ck_` / `ocv_`) | [1claw.xyz/settings/api-keys](https://1claw.xyz/settings/api-keys)   | Human `1ck_` for mpc-vault; agent `ocv_` for most agent demos; all except local-inspect |
 | 1Claw vault + secrets       | [1claw.xyz](https://1claw.xyz) dashboard                                | All except basic (creates its own)                                                  |
 | Gemini API key              | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) (free) | langchain, google-a2a, tx-simulation                                                |
 | Anthropic API key           | [console.anthropic.com](https://console.anthropic.com)                  | nextjs-agent-secret                                                                 |
