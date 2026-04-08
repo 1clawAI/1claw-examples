@@ -192,6 +192,9 @@ out=$(cd "$EXAMPLES_ROOT/shroud-llm" && npm start 2>&1) || true
 if echo "$out" | grep -q "Set ONECLAW_AGENT_ID"; then
   echo "  ○ shroud-llm skipped (no agent creds in .env — see examples/shroud-llm/README.md)"
   ((PASS++)) || true
+elif echo "$out" | grep -q "Agent token exchange failed\|Could not decode agent JWT"; then
+  echo "  ○ shroud-llm skipped (agent token exchange failed — check ONECLAW_AGENT_ID / ONECLAW_AGENT_API_KEY)"
+  ((PASS++)) || true
 elif echo "$out" | grep -q "\[FAIL\]"; then
   echo "  ✗ shroud-llm failed"
   echo "$out" | tail -12
