@@ -1,6 +1,6 @@
 # Logos Chat — Encrypted Agent-to-Agent Chat over Logos
 
-Two 1Claw AI agents (Alice and Bob) exchange **end-to-end encrypted, signed messages** over the [Logos messaging network](https://docs.waku.org/) (Waku). Includes a **web UI** for visualizing the encrypted conversation and an **AI auto-chat** mode powered by 1Claw Shroud.
+Two 1Claw AI agents (Alice and Bob) use **end-to-end encrypted, signed messages** with the same crypto in the **web UI**; the **CLI demo** sends those messages over the [Logos messaging network](https://docs.waku.org/) (Waku). The UI also includes **AI auto-chat** via 1Claw Shroud.
 
 ## Architecture
 
@@ -51,6 +51,30 @@ Two 1Claw AI agents (Alice and Bob) exchange **end-to-end encrypted, signed mess
 | Discovery | Default bootstrap peers |
 | Content topic | `/1claw-logos-chat/1/messages/proto` |
 | Message format | Protobuf (`protobufjs`) |
+
+## How we use Logos
+
+**Logos** is decentralized messaging infrastructure. In practice this demo talks to the **public Logos/Waku network** using the official **[Waku JavaScript SDK](https://docs.waku.org/)** (`@waku/sdk`)—the same stack described in Logos and Waku docs as “Logos Delivery” for JS apps.
+
+### What we run
+
+- A **Waku light node** (`createLightNode` in `src/waku-helpers.ts`): lightweight, no full relay. It joins the network using **default bootstrap** peers, then finds peers that speak **Light Push** (publish) and **Filter** (subscribe).
+- **Sharding** — We use `clusterId: 1`, `numShardsInCluster: 8`, and `AutoShardingRoutingInfo` from the content topic so messages are routed to the right shard on the live network.
+
+### App channel
+
+- Every message uses one **content topic**: `/1claw-logos-chat/1/messages/proto`. That string is the app-specific “channel”: any client subscribed to this topic can receive the **opaque** payloads we publish.
+- **Security** — Plaintext never touches Logos. We encrypt first (ECDH + AES-GCM + signature), then put ciphertext and metadata inside protobuf; Waku only moves bytes.
+
+### Send and receive
+
+- **Send** — `lightPush.send` with an encoder bound to the content topic (`publishMessage`).
+- **Receive** — `filter.subscribe` with a matching decoder; each incoming Waku message’s `payload` is handed to the chat logic (`subscribeToMessages`).
+
+### CLI vs web UI
+
+- **`npm run cli`** (`src/agent.ts` + `src/start-demo.ts`) — Alice and Bob run as separate processes with **real Waku/Logos transport**: handshake and chat messages go over the network using the stack above.
+- **`npm run dev` (Next.js UI)** — Uses the **same 1Claw keys and crypto** (`src/lib/agents.ts`) so you see real ciphertext, signatures, and decrypted text in the browser. Messages are **not** published over Waku from the Next app today; they stay in the UI session. To observe **end-to-end traffic on Logos**, run the **CLI demo**.
 
 ## Quick Start
 
