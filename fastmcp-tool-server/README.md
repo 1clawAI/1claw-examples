@@ -25,7 +25,7 @@ npm start
 
 - Node.js 20+
 - A [1Claw account](https://1claw.xyz) with a vault and agent
-- Uses `@1claw/sdk@^0.17.0` (npm install will fetch it)
+- Uses `@1claw/sdk@^0.20.0` (npm install will fetch it)
 
 ## Demo walkthrough (5–10 min)
 

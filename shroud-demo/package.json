@@ -17,7 +17,7 @@
     "real-sign-only": "npx tsx --env-file=.env src/real-sign-only.ts"
   },
   "dependencies": {
-    "@1claw/sdk": "^0.16.0"
+    "@1claw/sdk": "^0.20.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

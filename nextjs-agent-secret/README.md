@@ -27,7 +27,7 @@ npm run dev
 - Node.js 20+
 - A [1Claw account](https://1claw.xyz) with a vault and at least one secret
 - An [Anthropic API key](https://console.anthropic.com/) for Claude
-- Uses `@1claw/sdk@^0.17.0` (npm install will fetch it)
+- Uses `@1claw/sdk@^0.20.0` (npm install will fetch it)
 
 ## Demo walkthrough (5 min)
 

@@ -10,7 +10,7 @@
         "intents-api": "npx tsx --env-file=.env src/intents-api.ts"
     },
     "dependencies": {
-        "@1claw/sdk": "^0.16.0"
+        "@1claw/sdk": "^0.20.0"
     },
     "devDependencies": {
         "@types/node": "^22.0.0",

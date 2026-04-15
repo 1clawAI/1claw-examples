@@ -18,14 +18,14 @@ npm start
 
 - Define custom LangChain tools that wrap the `@1claw/sdk`
 - Let an LLM agent decide when to list and fetch vault secrets
-- Connect LangChain to the hosted 1Claw MCP server (all 11 tools, zero config)
+- Connect LangChain to the hosted 1Claw MCP server (all 18 tools, zero config)
 
 ## Prerequisites
 
 - Node.js 20+
 - A [1Claw account](https://1claw.xyz) with a vault containing at least one secret
 - An LLM API key: **OpenAI** (`OPENAI_API_KEY`) or **Gemini free tier** ([aistudio.google.com/apikey](https://aistudio.google.com/apikey))
-- Uses `@1claw/sdk@^0.8.0` (npm install will fetch it)
+- Uses `@1claw/sdk@^0.20.0` (npm install will fetch it)
 
 ## Demo walkthrough (5 min)
 
@@ -96,7 +96,7 @@ I've retrieved it but I'm not displaying the value as instructed.
 npm run mcp
 ```
 
-This connects LangChain to the hosted 1Claw MCP server at `mcp.1claw.xyz`. The agent automatically gets all 11 vault tools (list_secrets, get_secret, put_secret, etc.) without defining them manually.
+This connects LangChain to the hosted 1Claw MCP server at `mcp.1claw.xyz`. The agent automatically gets all 18 vault tools (list_secrets, get_secret, put_secret, etc.) without defining them manually.
 
 > **Requires:** `ONECLAW_AGENT_TOKEN` (a pre-set JWT) and `OPENAI_API_KEY`.
 
@@ -105,7 +105,7 @@ This connects LangChain to the hosted 1Claw MCP server at `mcp.1claw.xyz`. The a
 | Script | How it works | LLM support |
 |--------|-------------|-------------|
 | `src/tool-calling.ts` | Custom LangChain tools wrapping `@1claw/sdk` — you control which tools the agent has | OpenAI or Gemini |
-| `src/mcp-client.ts` | Connects to the hosted 1Claw MCP server — all 11 tools loaded automatically | OpenAI only |
+| `src/mcp-client.ts` | Connects to the hosted 1Claw MCP server — all 18 tools loaded automatically | OpenAI only |
 
 ## Environment variables
 

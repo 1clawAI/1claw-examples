@@ -36,7 +36,7 @@ The worker starts on port 4100; the coordinator discovers it and sends a "list s
 - Node.js 20+
 - A [1Claw account](https://1claw.xyz) with a vault containing at least one secret
 - For the ADK demo: a [Gemini API key](https://aistudio.google.com/apikey)
-- Uses `@1claw/sdk@^0.17.0` (npm install will fetch it)
+- Uses `@1claw/sdk@^0.20.0` (npm install will fetch it)
 
 ---
 
