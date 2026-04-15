@@ -1,0 +1,9 @@
+{
+  "name": "@1claw/examples-workspace",
+  "private": true,
+  "description": "1Claw example apps — use npm run bootstrap to copy .env templates",
+  "scripts": {
+    "bootstrap": "bash scripts/bootstrap-env.sh",
+    "test:all": "bash scripts/test-all-examples.sh"
+  }
+}

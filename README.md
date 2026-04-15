@@ -53,7 +53,24 @@ Add `GOOGLE_API_KEY` or `OPENAI_API_KEY` for langchain-agent, `ANTHROPIC_API_KEY
 
 ### Option B — Manual setup
 
-Every example follows the same pattern:
+**Bootstrap all env files at once** (copies each example’s template to `.env` or `.env.local` if the target file does not exist yet):
+
+```bash
+cd examples
+npm run bootstrap
+# Or from the monorepo root:
+./examples/scripts/bootstrap-env.sh
+```
+
+- **`nextjs-agent-secret`** uses `.env.local.example` → `.env.local` (Next.js convention).
+- All other examples use `.env.example` → `.env`.
+- Existing files are **not** overwritten; use `./examples/scripts/bootstrap-env.sh --force` to replace them.
+- Bootstrap one folder only: `./examples/scripts/bootstrap-env.sh basic`
+- Preview: `./examples/scripts/bootstrap-env.sh --dry-run`
+
+Then edit each file with your API keys and vault IDs from [1claw.xyz](https://1claw.xyz).
+
+Every example also follows the same per-folder pattern:
 
 ```bash
 # 1. Set up the example (uses published @1claw/sdk — check each example’s package.json for the range)
@@ -61,7 +78,7 @@ cd examples/<name>
 npm install
 # If npm reports peer dependency conflicts (e.g. langchain-agent), use:
 #   npm install --legacy-peer-deps
-cp .env.example .env     # or .env.local.example → .env.local for Next.js
+cp .env.example .env     # or .env.local.example → .env.local for Next.js — or use npm run bootstrap above
 # Fill in your credentials
 
 # 2. Run it

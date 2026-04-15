@@ -2,6 +2,7 @@
 # Test all 1Claw examples: install deps and run the main entrypoint (or build for Next.js).
 # Usage: from repo root: ./examples/scripts/test-all-examples.sh
 # Set SKIP_INSTALL=1 to skip npm install for faster re-runs.
+# First-time setup: ./examples/scripts/bootstrap-env.sh (copies .env.example → .env per example).
 
 set -e
 EXAMPLES_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
