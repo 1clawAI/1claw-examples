@@ -8,6 +8,20 @@ This example shows how [1Claw](https://1claw.xyz) (secrets management) and [Ampe
 
 An x402 paywall server charges $0.001 USDC per request on Base mainnet. When the client hits **402 Payment Required**, Ampersend's SDK signs the payment through a smart account (ERC-6492), and a local facilitator settles it on-chain. The session key lives in a 1Claw vault — never in `.env`.
 
+## Quick start
+
+```bash
+cd examples/ampersend-x402
+npm install
+cp .env.example .env
+# Fill ONECLAW_API_KEY, ONECLAW_VAULT_ID, ONECLAW_AGENT_ID, SMART_ACCOUNT_ADDRESS, X402_PAY_TO_ADDRESS (see table below)
+npm start
+```
+
+**First-time vault/agent setup (optional):** `npm run setup` — interactive; uses a human `1ck_` key to create vault, agent, policies, and store the session key.
+
+From the repo root: `cd examples && npm run bootstrap` copies `.env.example` → `.env` when missing.
+
 ## What you'll learn
 
 - Run a local x402 paywall server with a facilitator that supports smart-account signatures
@@ -31,16 +45,6 @@ An x402 paywall server charges $0.001 USDC per request on Base mainnet. When the
 - An [Ampersend smart account](https://docs.ampersend.ai) with a registered session key
 - ~$0.01 ETH on Base in the facilitator wallet (for gas)
 - USDC on Base in the smart account (for payments)
-
-## Quick start
-
-```bash
-cd examples/ampersend-x402
-npm install
-cp .env.example .env
-# Edit .env — see below
-npm start
-```
 
 ### Required `.env` values
 

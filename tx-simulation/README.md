@@ -16,6 +16,8 @@ npm run dev
 # Open http://localhost:3000
 ```
 
+From the repo root: `cd examples && npm run bootstrap` copies `.env.example` → `.env` when missing.
+
 ## What you'll learn
 
 - How 1Claw's transaction guardrails block unauthorized transactions before signing

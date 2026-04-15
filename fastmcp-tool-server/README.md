@@ -15,6 +15,8 @@ npm start
 # Or for HTTP mode: MCP_TRANSPORT=httpStream PORT=3001 npm start
 ```
 
+From the repo root: `cd examples && npm run bootstrap` copies `.env.example` → `.env` when missing.
+
 ## What you'll learn
 
 - Build an MCP server that composes SDK calls into domain tools

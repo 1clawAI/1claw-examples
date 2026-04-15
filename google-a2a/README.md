@@ -16,6 +16,8 @@ npm start
 
 The worker starts on port 4100; the coordinator discovers it and sends a "list secrets" task. You should see task completion and artifact output in the terminal.
 
+From the repo root: `cd examples && npm run bootstrap` copies `.env.example` → `.env` when missing.
+
 ## What you'll learn
 
 - Implement the A2A protocol (Agent Card discovery, JSON-RPC task handling)

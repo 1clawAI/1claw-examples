@@ -2,6 +2,20 @@
 
 > **Reference only** — not for production. This example targets organizations that have **LLM Token Billing** enabled in the dashboard (**Settings → Billing**). It verifies agent JWT claims (`llm_token_billing`, `stripe_customer_id`) and sends a minimal chat request through **Shroud** so traffic can be metered via **Stripe AI Gateway** when Shroud is configured with `STRIPE_SECRET_KEY`.
 
+## Quick start
+
+```bash
+cd examples/shroud-llm
+npm install
+cp .env.example .env
+# Edit .env: ONECLAW_API_KEY (user key from https://1claw.xyz/settings/api-keys)
+npm run setup   # creates a Shroud-enabled agent; writes ONECLAW_AGENT_ID + ONECLAW_AGENT_API_KEY to .env
+# Dashboard: Settings → Billing → enable LLM Token Billing for the org (if you want Stripe-metered path)
+npm start       # exchanges agent token, checks JWT claims, hits OpenAI / Anthropic / Google via Shroud
+```
+
+From the repo root: `cd examples && npm run bootstrap` copies `.env.example` → `.env` for each example (skipped if `.env` already exists).
+
 ## What you'll learn
 
 - Confirm your org has **LLM Token Billing** enabled and your agent JWT includes `llm_token_billing` and `stripe_customer_id`
@@ -50,18 +64,6 @@ npm start
 | Google | `POST .../v1/chat/completions` | OpenAI-style `messages` + `gemini-2.0-flash` (Stripe rewrites model to `google/...`) |
 
 With billing claims, Shroud sets Stripe customer headers server-side. Without billing, each provider needs its key (env or vault). Set `SHROUD_LLM_VERBOSE=1` for full request/response logs.
-
-## Quick start (summary)
-
-```bash
-cd examples/shroud-llm
-npm install
-cp .env.example .env
-# Edit .env: ONECLAW_API_KEY (user key from https://1claw.xyz/settings/api-keys)
-npm run setup
-# In the dashboard: Settings → Billing → enable LLM Token Billing if not already
-npm start
-```
 
 ## What `npm start` does
 

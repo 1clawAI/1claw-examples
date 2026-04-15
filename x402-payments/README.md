@@ -4,19 +4,6 @@
 
 This example demonstrates **real x402 micropayments** against the 1Claw API. When your org is over the free-tier quota (or you have no auth), payable endpoints return `402 Payment Required`. This script uses an EOA private key from `.env` to sign payments and retry, so you can call every x402-capable endpoint with automatic payment.
 
-## What you'll learn
-
-- Authenticate with 1Claw and call x402-capable endpoints (secrets, audit, simulate)
-- Handle **402 Payment Required** by signing with an EOA key and retrying with the `X-PAYMENT` header
-- Use the `@x402/evm` client with 1Claw's facilitator (Coinbase CDP on Base)
-- Run a **probe-only** mode (no payment key) to verify 402 behavior
-
-## Prerequisites
-
-- Node.js 20+
-- A [1Claw account](https://1claw.xyz) with an API key and vault
-- For real payments: an EOA private key with **USDC on Base** (chain 8453)
-
 ## Quick start
 
 ```bash
@@ -31,6 +18,23 @@ npm start
 ```
 
 The script authenticates with 1Claw, then calls get/put secret, audit, and optionally simulate. If the API returns 402, it signs the payment and retries with the `X-PAYMENT` header.
+
+**Probe only (no on-chain payment key):** `npm run probe`
+
+From the repo root: `cd examples && npm run bootstrap` copies `.env.example` → `.env` when missing.
+
+## What you'll learn
+
+- Authenticate with 1Claw and call x402-capable endpoints (secrets, audit, simulate)
+- Handle **402 Payment Required** by signing with an EOA key and retrying with the `X-PAYMENT` header
+- Use the `@x402/evm` client with 1Claw's facilitator (Coinbase CDP on Base)
+- Run a **probe-only** mode (no payment key) to verify 402 behavior
+
+## Prerequisites
+
+- Node.js 20+
+- A [1Claw account](https://1claw.xyz) with an API key and vault
+- For real payments: an EOA private key with **USDC on Base** (chain 8453)
 
 ## Demo walkthrough (5 min)
 

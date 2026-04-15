@@ -15,6 +15,8 @@ npm run dev
 # Open http://localhost:3000
 ```
 
+From the repo root: `cd examples && npm run bootstrap` copies `.env.local.example` → `.env.local` when missing.
+
 ## What you'll learn
 
 - Integrate the `@1claw/sdk` with the Vercel AI SDK as server-side tools

@@ -9,22 +9,19 @@ Reference-only demos for **Multi-Party Computation** vault modes on 1Claw:
 
 **2-of-3 multi-HSM** also needs the API deployment to have **three MPC-capable HSM providers** configured (typically GCP KMS + AWS KMS + Azure Key Vault). If you see `400` on vault create, the environment may only run a single HSM (common in local dev).
 
-## Setup
+## Quick start
 
 ```bash
 cd examples/mpc-vault
-cp .env.example .env
-# Add ONECLAW_API_KEY=1ck_... from https://1claw.xyz/settings/api-keys
 npm install
+cp .env.example .env
+# Edit .env: ONECLAW_API_KEY=1ck_... (https://1claw.xyz/settings/api-keys — human key for vault create)
+npm run 2of2    # Pro+ — 2-of-2 client custody (X-Client-Share on GET)
+npm run 2of3    # Business+ — 2-of-3 multi-HSM (needs triple-HSM backend)
+npm start       # runs both flows (each may skip or fail if tier/backend missing)
 ```
 
-## Run
-
-```bash
-npm run 2of2    # Pro+ org — client custody flow with X-Client-Share
-npm run 2of3    # Business+ org + triple-HSM backend
-npm start       # runs both (each may fail independently if tier/backend missing)
-```
+From the repo root you can copy all example env templates at once: `cd examples && npm run bootstrap`.
 
 Keep vaults after a successful run:
 

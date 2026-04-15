@@ -40,7 +40,7 @@ If your **organization** has opted into LLM token billing in the dashboard (**Se
 - **For Intents API:** A [1Claw](https://1claw.xyz) agent with `ONECLAW_AGENT_ID` and `ONECLAW_AGENT_API_KEY` (Intents API enabled if you want real signing).
 - **For LLM proxy:** Either store the provider key in the Vault at `providers/openai/api-key` with agent read access, or set `OPENAI_API_KEY` in `.env`.
 
-## Quick start (recommended)
+## Quick start
 
 **One-time setup:** Put your **user** API key in `.env`, then run setup to create an agent and write agent credentials to `.env`. To test **sign-only** or **real-tx**, run `setup-signing` after setup (creates a vault key and grants the agent read access):
 
@@ -56,6 +56,8 @@ npm start             # runs health, Intents API, and optional LLM proxy checks
 
 **Option B — Manual**  
 Create an agent in the [1Claw dashboard](https://1claw.xyz) (Agents → Create), copy the agent ID and API key, and set `ONECLAW_AGENT_ID` and `ONECLAW_AGENT_API_KEY` in `.env`. Then run `npm start`.
+
+From the repo root: `cd examples && npm run bootstrap` copies `.env.example` → `.env` when missing.
 
 `npm start` runs all checks (health, Intents, LLM proxy). Individual scripts:
 

@@ -14,6 +14,8 @@ cp .env.example .env
 npm start
 ```
 
+From the repo root: `cd examples && npm run bootstrap` copies `.env.example` → `.env` when missing.
+
 ## What you'll learn
 
 - Define custom LangChain tools that wrap the `@1claw/sdk`

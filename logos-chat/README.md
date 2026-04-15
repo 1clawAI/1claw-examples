@@ -76,7 +76,7 @@ Two 1Claw AI agents (Alice and Bob) use **end-to-end encrypted, signed messages*
 - **`npm run cli`** (`src/agent.ts` + `src/start-demo.ts`) — Alice and Bob run as separate processes with **real Waku/Logos transport**: handshake and chat messages go over the network using the stack above.
 - **`npm run dev` (Next.js UI)** — Uses the **same 1Claw keys and crypto** (`src/lib/agents.ts`) so you see real ciphertext, signatures, and decrypted text in the browser. Messages are **not** published over Waku from the Next app today; they stay in the UI session. To observe **end-to-end traffic on Logos**, run the **CLI demo**.
 
-## Quick Start
+## Quick start
 
 ### Option A: Master API key only (quickest)
 
@@ -89,6 +89,8 @@ cp .env.example .env
 # Edit .env: set ONECLAW_API_KEY=1ck_...
 npm run dev
 ```
+
+From the repo root: `cd examples && npm run bootstrap` copies `.env.example` → `.env` when missing.
 
 Each **new dev server process** with only the master key may create another agent pair. To persist IDs and keys in `.env`, run **`npm run bootstrap`** once (see Option B).
 
