@@ -7,6 +7,7 @@
   "type": "module",
   "scripts": {
     "start": "npx tsx --env-file=.env src/index.ts",
+    "start:shroud": "DEMO_SHROUD=1 npx tsx --env-file=.env src/index.ts",
     "build": "tsc --noEmit"
   },
   "dependencies": {

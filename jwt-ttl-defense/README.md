@@ -21,7 +21,8 @@ cd examples/jwt-ttl-defense
 npm install
 cp .env.example .env
 # Edit .env and set ONECLAW_API_KEY=1ck_...  (a USER key, not an agent key)
-npm start
+npm start                 # containment-only mode (TTL + scope + audit)
+npm run start:shroud      # + Shroud LLM proxy: prevention at the LLM boundary
 ```
 
 Expected output (abbreviated):
@@ -77,6 +78,12 @@ Expected output (abbreviated):
 | **Vault binding (`vault_ids`)**  | Agent is bound to a single vault. Even if an attacker discovers another `vault_id`, the JWT can't use it.   |
 | **Audit log**                    | Every legitimate read, denied read, and token exchange ends up on the chained, tamper-evident audit log.    |
 | **Rotation**                     | Human response: rotate the agent API key via `client.agents.rotateKey` — any stolen API key is now useless. |
+| **Shroud LLM proxy** (`DEMO_SHROUD=1`) | Agent is created with `shroud_enabled: true` + strict `shroud_config`. Shroud's response filter detects the JWT being echoed back by the compromised tool-loop and refuses to forward it. **Blast radius: 0 — the leak never happens.** |
+
+### Modes
+
+- **Containment mode** (`npm start`) — Shroud off. You see the leak happen, then watch TTL + scope + vault binding limit the damage to one secret. This is "what happens when your other defenses did not catch the hijack."
+- **Prevention mode** (`npm run start:shroud` or `DEMO_SHROUD=1`) — Shroud on. The simulated LLM response carrying the JWT is run through the same credential regexes and blocked-domain checks Shroud runs in its TEE (see [`shroud/src/inspection/response_filter.rs`](../../shroud/src/inspection/response_filter.rs)). The response is blocked before the tool-loop sees it, the JWT never reaches the exfil channel, and Act 2 does not occur. TTL/scope/vault binding remain as a fallback if Shroud is ever misconfigured or bypassed — classic defense in depth.
 
 ## Prerequisites
 
@@ -104,6 +111,7 @@ The exfiltration path — in-process `EventEmitter` — stands in for a Discord 
 | `DEMO_OPENWEATHER_KEY`        | No       | Real OpenWeather key. If set, the victim agent makes a real call to [openweathermap.org](https://openweathermap.org/api) after retrieving the secret. |
 | `DEMO_WEATHER_CITY`           | No       | City for the weather call (default: `Malibu,US`).                                                              |
 | `ATTACKER_SLOW_DELAY_SECONDS` | No       | Seconds the "slow attacker" waits before trying its leaked JWT (default: `4`, i.e. just past the 3-second TTL). |
+| `DEMO_SHROUD`                 | No       | Set to `1` / `true` to enable Shroud on the agent and run the LLM response through the local Shroud emulator. |
 
 ## Tuning the demo
 
@@ -113,10 +121,11 @@ The exfiltration path — in-process `EventEmitter` — stands in for a Discord 
 
 ## File map
 
-- `src/index.ts` — Orchestrator. Runs the three acts + audit + rotation.
-- `src/setup.ts` — Provisions vault, real secret, decoy secret, 3-second-TTL agent, narrow policy.
-- `src/victim.ts` — Legitimate agent flow + simulated prompt injection leak.
+- `src/index.ts` — Orchestrator. Runs the three acts + audit + rotation. Reads `DEMO_SHROUD`.
+- `src/setup.ts` — Provisions vault, real secret, decoy secret, 3-second-TTL agent, narrow policy. Optionally enables Shroud on the agent.
+- `src/victim.ts` — Legitimate agent flow + simulated prompt injection leak. Runs the Shroud response-inspection path when enabled.
 - `src/attacker.ts` — Hostile process that receives the stolen JWT and tries three reads.
+- `src/shroud.ts` — `buildShroudConfig()` + local emulator of `response_filter` and `network_detection` (mirrors `shroud/src/inspection/response_filter.rs`).
 - `src/bus.ts` — In-process exfil channel (stand-in for webhook / beacon).
 - `src/pretty.ts` — Console formatting helpers.
 

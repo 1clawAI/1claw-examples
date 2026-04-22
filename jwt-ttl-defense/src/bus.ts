@@ -40,6 +40,13 @@ class ExfilChannel {
                 unsub();
                 reject(new Error(`No credential leaked within ${timeoutMs}ms`));
             }, timeoutMs);
+            // Don't keep the Node event loop alive solely to fire this
+            // timeout. Once the rest of the demo finishes the process
+            // should exit, even if the attacker listener never received
+            // anything (e.g. Shroud blocked the leak).
+            if (typeof (timer as { unref?: () => void }).unref === "function") {
+                (timer as { unref: () => void }).unref();
+            }
             const unsub = this.subscribe((leak) => {
                 clearTimeout(timer);
                 unsub();

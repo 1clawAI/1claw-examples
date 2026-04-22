@@ -1,5 +1,6 @@
 import { createClient, type OneclawClient } from "@1claw/sdk";
 import { fail, note, ok, step } from "./pretty.js";
+import { buildShroudConfig } from "./shroud.js";
 
 export interface DemoResources {
     client: OneclawClient;
@@ -11,6 +12,12 @@ export interface DemoResources {
     secretPath: string;
     sensitivePath: string;
     cleanupSecrets: string[];
+    shroudEnabled: boolean;
+}
+
+export interface SetupOptions {
+    /** If true, agent is provisioned with shroud_enabled + strict shroud_config. */
+    shroudEnabled: boolean;
 }
 
 const SHORT_JWT_TTL_SECONDS = 3;
@@ -56,8 +63,12 @@ async function findOrCreateVault(
 export async function setup(
     baseUrl: string,
     apiKey: string,
+    options: SetupOptions = { shroudEnabled: false },
 ): Promise<DemoResources> {
-    step("Setting up the demo", "vault → real secret → scoped agent → policy");
+    const headline = options.shroudEnabled
+        ? "vault → real secret → scoped agent → policy → Shroud"
+        : "vault → real secret → scoped agent → policy";
+    step("Setting up the demo", headline);
 
     const client = createClient({ baseUrl, apiKey });
     // Give the SDK a beat to complete any implicit token exchange.
@@ -126,6 +137,12 @@ export async function setup(
         intents_api_enabled: false,
         token_ttl_seconds: SHORT_JWT_TTL_SECONDS,
         vault_ids: [vault.id],
+        ...(options.shroudEnabled
+            ? {
+                shroud_enabled: true,
+                shroud_config: buildShroudConfig(),
+            }
+            : {}),
     });
     if (agentRes.error || !agentRes.data) {
         throw new Error(
@@ -141,6 +158,12 @@ export async function setup(
         "Registered agent with 3-second JWT TTL",
         `agent_id=${agentId}  token_ttl=${SHORT_JWT_TTL_SECONDS}s  vault_ids=[${vault.id}]`,
     );
+    if (options.shroudEnabled) {
+        ok(
+            "Shroud LLM proxy enabled on agent",
+            "response_filter + tool_call_inspection + network_detection (evil.example blocked)",
+        );
+    }
 
     // 4. Grant the agent a *narrow* read policy: only `api/**` paths.
     //    The agent's JWT will inherit this pattern as its scope.
@@ -181,6 +204,7 @@ export async function setup(
         secretPath,
         sensitivePath,
         cleanupSecrets: [secretPath, sensitivePath],
+        shroudEnabled: options.shroudEnabled,
     };
 }
 

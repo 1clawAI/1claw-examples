@@ -57,6 +57,11 @@ export function victim(label: string, detail?: string): void {
     console.log(`${elapsed()} ${BLUE}🤖 agent  ${RESET} ${label}${d}`);
 }
 
+export function shroud(label: string, detail?: string): void {
+    const d = detail ? ` ${GRAY}${detail}${RESET}` : "";
+    console.log(`${elapsed()} ${CYAN}🛡 shroud ${RESET} ${label}${d}`);
+}
+
 export function note(text: string): void {
     console.log(`${GRAY}       ${text}${RESET}`);
 }
