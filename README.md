@@ -2,7 +2,7 @@
 
 > **Reference only** — these examples are for educational and demo purposes. They are not production-ready and may contain hardcoded values, skip error handling, or use development-only configurations. Always review and adapt for your own security requirements.
 
-Fourteen example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
+Fifteen example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
 
 ## Quick reference
 
@@ -22,6 +22,7 @@ Fourteen example applications demonstrating the [1Claw](https://1claw.xyz) SDK, 
 | [logos-chat](./logos-chat/)                    | Intermediate | 10 min | E2E encrypted agent-to-agent chat over Logos/Waku with AI auto-chat via Shroud              |
 | [ampersend-x402](./ampersend-x402/)           | Advanced     | 10 min | x402 micropayments via Ampersend — MCP/HTTP clients, hybrid billing, paywall server        |
 | [x402-payments](./x402-payments/)             | Advanced     | 5 min  | Real x402 payments for 1Claw endpoints — EOA key in .env, GET/PUT secrets, audit, simulate |
+| [jwt-ttl-defense](./jwt-ttl-defense/)         | Intermediate | 5 min  | Prompt-injection steals an agent JWT — 3s TTL + scope/vault binding contain the blast radius |
 
 **Shroud LLM:** Examples that hit Shroud’s OpenAI-compatible surface (`shroud-demo`, `shroud-llm`) must send **`X-Shroud-Provider`** (e.g. `openai`, `anthropic`, `google`) on chat requests; omitting it returns **400** from Shroud.
 
@@ -47,7 +48,7 @@ npm start
 
 Add `GOOGLE_API_KEY` or `OPENAI_API_KEY` for langchain-agent, `ANTHROPIC_API_KEY` for nextjs-agent-secret, and `SMART_ACCOUNT_ADDRESS` (and optional wallet key) for ampersend-x402 as needed.
 
-**Test all examples:** From the repo root, run `./examples/scripts/test-all-examples.sh`. This installs deps (unless `SKIP_INSTALL=1`), runs each example’s main script or build, and reports pass/fail (14 examples). CLI-style examples are run to completion or stopped after a short delay; Next.js examples are build-only. **shroud-llm** skips unless `.env` has agent credentials; use an org with LLM Token Billing enabled for full JWT checks. **mpc-vault** is typecheck-only (live runs need Pro+ / Business+ and real `1ck_` keys).
+**Test all examples:** From the repo root, run `./examples/scripts/test-all-examples.sh`. This installs deps (unless `SKIP_INSTALL=1`), runs each example’s main script or build, and reports pass/fail (15 examples). CLI-style examples are run to completion or stopped after a short delay; Next.js examples are build-only. **shroud-llm** skips unless `.env` has agent credentials; use an org with LLM Token Billing enabled for full JWT checks. **mpc-vault** is typecheck-only (live runs need Pro+ / Business+ and real `1ck_` keys).
 
 **Cleanup:** To delete all secrets in demo accounts (except ampersend-x402, so `keys/x402-session-key` is kept), run `./scripts/cleanup-demo-secrets.sh` from the repo root.
 
@@ -103,6 +104,7 @@ If you're new to 1Claw, walk through the examples in this order:
 12. **[logos-chat](./logos-chat/)** — E2E encrypted agent-to-agent chat over Logos/Waku
 13. **[ampersend-x402](./ampersend-x402/)** — Payments and billing integration
 14. **[x402-payments](./x402-payments/)** — Real x402 payments for all supported endpoints (EOA key in .env)
+15. **[jwt-ttl-defense](./jwt-ttl-defense/)** — Prompt-injection JWT theft contained by a 3-second TTL + scope/vault binding
 
 ## What you need
 
