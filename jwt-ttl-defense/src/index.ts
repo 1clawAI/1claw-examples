@@ -24,6 +24,7 @@ import { setup, teardown } from "./setup.js";
 import { runVictimAgent } from "./victim.js";
 import { runAttacker, type AttackAttempt } from "./attacker.js";
 import { attacker, fail, note, ok, preview, section, step, warn } from "./pretty.js";
+import { hasLlmProviderKey, llmProviderName } from "./shroud.js";
 
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 const API_KEY = process.env.ONECLAW_API_KEY;
@@ -52,7 +53,9 @@ async function main() {
     console.log("║  Prompt injection steals a token. 1Claw makes it cheap.      ║");
     console.log(
         SHROUD_ENABLED
-            ? "║  Mode: + Shroud LLM proxy (prevention at the boundary)       ║"
+            ? (hasLlmProviderKey()
+                ? `║  Mode: + Shroud TEE (real LLM via ${llmProviderName()})               ║`
+                : "║  Mode: + Shroud LLM proxy (local emulator, no LLM key)  ║")
             : "║  Mode: containment only (set DEMO_SHROUD=1 for prevention)   ║",
     );
     console.log("╚══════════════════════════════════════════════════════════════╝");
@@ -277,12 +280,16 @@ function printSummary(
 ): void {
     if (ctx.shroudEnabled && !ctx.leaked) {
         console.log(
-            "  ✓ prevented  LLM response filter     (shroud:response_filter + network_detection)",
+            hasLlmProviderKey()
+                ? "  ✓ prevented  Shroud TEE              (real LLM traffic inspected in confidential compute)"
+                : "  ✓ prevented  LLM response filter     (shroud:response_filter + network_detection)",
         );
         console.log("");
         console.log("  Blast radius: 0 secrets leaked, 0 attacker attempts occurred.");
         console.log(
-            "  Shroud stopped the exfil at the LLM boundary — the JWT never left the agent.",
+            hasLlmProviderKey()
+                ? "  Shroud TEE stopped the exfil — the LLM response was blocked inside confidential compute."
+                : "  Shroud stopped the exfil at the LLM boundary — the JWT never left the agent.",
         );
         console.log(
             "  TTL + scope + vault binding remain as layered defenses if Shroud ever fails open.",
