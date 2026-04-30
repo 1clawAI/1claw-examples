@@ -38,7 +38,7 @@ echo "=============================================="
 echo ""
 
 # --- 1. local-inspect (no credentials needed) ---
-echo "[1/15] local-inspect"
+echo "[1/16] local-inspect"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/local-inspect" && npm install --silent); fi
 if run_one "$EXAMPLES_ROOT/local-inspect" "npm start"; then
   echo "  ✓ local-inspect passed"
@@ -50,7 +50,7 @@ fi
 echo ""
 
 # --- 2. basic ---
-echo "[2/15] basic"
+echo "[2/16] basic"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/basic" && npm install --silent); fi
 if run_one "$EXAMPLES_ROOT/basic" "npm start" 60; then
   echo "  ✓ basic passed"
@@ -62,7 +62,7 @@ fi
 echo ""
 
 # --- 2. fastmcp-tool-server ---
-echo "[3/15] fastmcp-tool-server"
+echo "[3/16] fastmcp-tool-server"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/fastmcp-tool-server" && npm install --silent); fi
 # Filter expected warning when no MCP client connects (server runs alone for smoke test)
 run_timeout "$EXAMPLES_ROOT/fastmcp-tool-server" 12 "npm start 2>&1 | grep -v 'FastMCP warning' | grep -v 'could not infer client capabilities' | grep -v 'Connection may be unstable'"
@@ -71,7 +71,7 @@ echo "  ✓ fastmcp-tool-server (started and stopped)"
 echo ""
 
 # --- 3. nextjs-agent-secret ---
-echo "[4/15] nextjs-agent-secret"
+echo "[4/16] nextjs-agent-secret"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/nextjs-agent-secret" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/nextjs-agent-secret" && npm run build 2>&1); then
   echo "  ✓ nextjs-agent-secret build passed"
@@ -83,7 +83,7 @@ fi
 echo ""
 
 # --- 4. google-a2a ---
-echo "[5/15] google-a2a"
+echo "[5/16] google-a2a"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/google-a2a" && npm install --silent); fi
 run_timeout "$EXAMPLES_ROOT/google-a2a" 15 "npm start"
 echo "  ✓ google-a2a (started and stopped)"
@@ -91,7 +91,7 @@ echo "  ✓ google-a2a (started and stopped)"
 echo ""
 
 # --- 5. tx-simulation ---
-echo "[6/15] tx-simulation"
+echo "[6/16] tx-simulation"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/tx-simulation" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/tx-simulation" && npm run build 2>&1); then
   echo "  ✓ tx-simulation build passed"
@@ -103,7 +103,7 @@ fi
 echo ""
 
 # --- 6. shroud-demo ---
-echo "[7/15] shroud-demo"
+echo "[7/16] shroud-demo"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud-demo" && npm install --silent); fi
 out=$(cd "$EXAMPLES_ROOT/shroud-demo" && npm start 2>&1) || true
 if echo "$out" | grep -q "ONECLAW_\|Error\|error\|failed"; then
@@ -121,7 +121,7 @@ fi
 echo ""
 
 # --- 7. ampersend-x402 ---
-echo "[8/15] ampersend-x402"
+echo "[8/16] ampersend-x402"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/ampersend-x402" && npm install --silent); fi
 run_timeout "$EXAMPLES_ROOT/ampersend-x402" 12 "npm start"
 echo "  ✓ ampersend-x402 (started and stopped)"
@@ -129,7 +129,7 @@ echo "  ✓ ampersend-x402 (started and stopped)"
 echo ""
 
 # --- 8. x402-payments ---
-echo "[9/15] x402-payments"
+echo "[9/16] x402-payments"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/x402-payments" && npm install --silent); fi
 [ -f "$EXAMPLES_ROOT/x402-payments/.env" ] || cp "$EXAMPLES_ROOT/x402-payments/.env.example" "$EXAMPLES_ROOT/x402-payments/.env"
 out=$(cd "$EXAMPLES_ROOT/x402-payments" && npm start 2>&1) || true
@@ -147,7 +147,7 @@ fi
 echo ""
 
 # --- 9. langchain-agent (slow: 45s + LLM calls) ---
-echo "[10/15] langchain-agent"
+echo "[10/16] langchain-agent"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/langchain-agent" && npm install --silent --legacy-peer-deps); fi
 LANGCHAIN_OUT=$(mktemp 2>/dev/null || echo /tmp/langchain-out.$$)
 (cd "$EXAMPLES_ROOT/langchain-agent" && npm start > "$LANGCHAIN_OUT" 2>&1) & lpid=$!
@@ -174,7 +174,7 @@ fi
 echo ""
 
 # --- 10. shroud-security ---
-echo "[11/15] shroud-security"
+echo "[11/16] shroud-security"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud-security" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/shroud-security" && npx tsc --noEmit 2>&1); then
   echo "  ✓ shroud-security (typecheck passed)"
@@ -186,7 +186,7 @@ fi
 echo ""
 
 # --- 12. shroud-llm (LLM Token Billing + Shroud; skips without agent creds) ---
-echo "[12/15] shroud-llm"
+echo "[12/16] shroud-llm"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud-llm" && npm install --silent); fi
 [ -f "$EXAMPLES_ROOT/shroud-llm/.env" ] || cp "$EXAMPLES_ROOT/shroud-llm/.env.example" "$EXAMPLES_ROOT/shroud-llm/.env"
 out=$(cd "$EXAMPLES_ROOT/shroud-llm" && npm start 2>&1) || true
@@ -206,7 +206,7 @@ else
 fi
 echo ""
 
-echo "[13/15] mpc-vault"
+echo "[13/16] mpc-vault"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/mpc-vault" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/mpc-vault" && npx tsc --noEmit 2>&1); then
   echo "  ✓ mpc-vault (typecheck passed)"
@@ -218,7 +218,7 @@ fi
 echo ""
 
 # --- 14. logos-chat (Next.js UI + Waku CLI; build includes typecheck) ---
-echo "[14/15] logos-chat"
+echo "[14/16] logos-chat"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/logos-chat" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/logos-chat" && npm run build 2>&1); then
   echo "  ✓ logos-chat build passed"
@@ -229,8 +229,20 @@ else
 fi
 echo ""
 
-# --- 15. jwt-ttl-defense (typecheck only; run needs a real 1ck_ key) ---
-echo "[15/15] jwt-ttl-defense"
+# --- 15. intents-layers (typecheck; npm start = narrative + optional live sign) ---
+echo "[15/16] intents-layers"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/intents-layers" && npm install --silent); fi
+if (cd "$EXAMPLES_ROOT/intents-layers" && npx tsc --noEmit 2>&1); then
+  echo "  ✓ intents-layers (typecheck passed)"
+  ((PASS++)) || true
+else
+  echo "  ✗ intents-layers typecheck failed"
+  ((FAIL++)) || true
+fi
+echo ""
+
+# --- 16. jwt-ttl-defense (typecheck only; run needs a real 1ck_ key) ---
+echo "[16/16] jwt-ttl-defense"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/jwt-ttl-defense" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/jwt-ttl-defense" && npx tsc --noEmit 2>&1); then
   echo "  ✓ jwt-ttl-defense (typecheck passed)"
