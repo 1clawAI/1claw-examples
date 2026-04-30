@@ -3,6 +3,7 @@
  *
  * See README.md for SOLVER_MODE (mock | 1inch) and BROADCAST (optional mainnet / testnet spend).
  */
+import { readFile } from "node:fs/promises";
 import { createClient, type SignTransactionRequest } from "@1claw/sdk";
 import { mockSolverFillPlan } from "./mock-solver.js";
 import { fetch1inchSwapPlan, ONEINCH_ETH_PLACEHOLDER } from "./quote-1inch.js";
@@ -22,6 +23,19 @@ function hasAgentCreds(): boolean {
       AGENT_ID !== "your-agent-uuid" &&
       !AGENT_KEY.startsWith("ocv_your_"),
   );
+}
+
+/** Non-empty key from `ONEINCH_API_KEY` or first line of `ONEINCH_API_KEY_FILE`. */
+async function resolveOneinchApiKey(): Promise<string> {
+  const direct = (process.env.ONEINCH_API_KEY ?? "").trim();
+  if (direct) return direct;
+  const filePath = (process.env.ONEINCH_API_KEY_FILE ?? "").trim();
+  if (!filePath) return "";
+  try {
+    return (await readFile(filePath, "utf8")).split(/\r?\n/)[0]?.trim() ?? "";
+  } catch {
+    throw new Error(`ONEINCH_API_KEY_FILE is set but file could not be read: ${filePath}`);
+  }
 }
 
 function printBanner(): void {
@@ -58,9 +72,16 @@ async function loadPlan(): Promise<{ narrative: string; tx: SignTransactionReque
   }
 
   if (SOLVER_MODE === "1inch") {
-    const apiKey = (process.env.ONEINCH_API_KEY ?? "").trim();
+    const apiKey = await resolveOneinchApiKey();
     if (!apiKey) {
-      throw new Error("SOLVER_MODE=1inch requires ONEINCH_API_KEY (https://portal.1inch.dev/)");
+      console.error("");
+      console.error("  SOLVER_MODE=1inch needs a non-empty 1inch token.");
+      console.error("  • Put it in .env: ONEINCH_API_KEY=<token from https://portal.1inch.dev/>");
+      console.error("  • Or: export ONEINCH_API_KEY='…' before npm start");
+      console.error("  • Or: ONEINCH_API_KEY_FILE=/path/to/file (single line, no quotes)");
+      console.error("  Note: ONEINCH_API_KEY= with nothing after = still counts as empty.");
+      console.error("");
+      throw new Error("ONEINCH_API_KEY is missing or empty");
     }
     const chainId = parseInt(process.env.CHAIN_ID ?? "1", 10);
     if (Number.isNaN(chainId)) throw new Error("Invalid CHAIN_ID");

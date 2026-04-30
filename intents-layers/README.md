@@ -48,6 +48,8 @@ Without agent credentials, the script still prints the architecture and the mock
 
 ### Example: 1inch on Ethereum mainnet (tiny swap, sign-only)
 
+`SOLVER_MODE=1inch` **requires** a non-empty **`ONEINCH_API_KEY`** (from [1inch Portal](https://portal.1inch.dev/)) in `.env` or in the shell. Setting only `SOLVER_MODE` and `CHAIN_ID` is not enough — an empty `ONEINCH_API_KEY=` line in `.env` is treated as missing.
+
 ```bash
 export SOLVER_MODE=1inch
 export CHAIN_ID=1
