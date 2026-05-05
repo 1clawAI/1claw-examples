@@ -20,7 +20,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.example` →
 
 - Define custom LangChain tools that wrap the `@1claw/sdk`
 - Let an LLM agent decide when to list and fetch vault secrets
-- Connect LangChain to the hosted 1Claw MCP server (all 18 tools, zero config)
+- Connect LangChain to the hosted 1Claw MCP server (all 19 tools, zero config)
 
 ## Prerequisites
 
@@ -107,7 +107,7 @@ This connects LangChain to the hosted 1Claw MCP server at `mcp.1claw.xyz`. The a
 | Script | How it works | LLM support |
 |--------|-------------|-------------|
 | `src/tool-calling.ts` | Custom LangChain tools wrapping `@1claw/sdk` — you control which tools the agent has | OpenAI or Gemini |
-| `src/mcp-client.ts` | Connects to the hosted 1Claw MCP server — all 18 tools loaded automatically | OpenAI only |
+| `src/mcp-client.ts` | Connects to the hosted 1Claw MCP server — all 19 tools loaded automatically | OpenAI only |
 
 ## Environment variables
 

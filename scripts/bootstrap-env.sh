@@ -41,6 +41,7 @@ done
 # dir|source|dest — source is relative to dir
 MANIFEST=(
   "ampersend-x402|.env.example|.env"
+  "anthropic-wif|.env.example|.env"
   "basic|.env.example|.env"
   "fastmcp-tool-server|.env.example|.env"
   "google-a2a|.env.example|.env"
@@ -113,6 +114,6 @@ else
 fi
 if [[ -n "$FILTER" && "$copied" -eq 0 && "$skipped" -eq 0 && "$missing_tpl" -eq 0 ]]; then
   echo "No matching example: $FILTER" >&2
-  echo "Try one of: ampersend-x402 basic fastmcp-tool-server google-a2a intents-layers jwt-ttl-defense langchain-agent local-inspect logos-chat mpc-vault nextjs-agent-secret shroud-demo shroud-llm shroud-security tx-simulation x402-payments" >&2
+  echo "Try one of: ampersend-x402 anthropic-wif basic fastmcp-tool-server google-a2a intents-layers jwt-ttl-defense langchain-agent local-inspect logos-chat mpc-vault nextjs-agent-secret shroud-demo shroud-llm shroud-security tx-simulation x402-payments" >&2
   exit 1
 fi
