@@ -29,7 +29,8 @@ const API_KEY = process.env.ONECLAW_API_KEY?.trim();
 if (!API_KEY || API_KEY === "1ck_your_key_here") {
     console.error("");
     console.error("  Paste your 1Claw API key into .env (or export ONECLAW_API_KEY).");
-    console.error("  Get one at https://1claw.xyz → Settings → API Keys.");
+    console.error("  Accepts a human API key (1ck_...) or a JWT token.");
+    console.error("  Get a key at https://1claw.xyz → Settings → API Keys.");
     console.error("");
     process.exit(1);
 }
@@ -71,7 +72,8 @@ async function main() {
     console.log("══════════════════════════════════════════════════════════════");
     console.log("");
 
-    const client = createClient({ baseUrl: BASE_URL, apiKey: API_KEY });
+    // 1ck_ user keys and JWTs both work as Bearer tokens
+    const client = createClient({ baseUrl: BASE_URL, token: API_KEY });
 
     try {
         // ── 1. Create vault ──────────────────────────────────────────
