@@ -3,31 +3,29 @@
  *
  * One script, one API key. Bootstraps everything:
  *   1. Create a vault
- *   2. Generate a random testnet signing key and store it
+ *   2. Generate a random testnet signing key, derive its address, store it
  *   3. Register an agent with Intents API + Shroud enabled
- *   4. Grant the agent read access to the signing key
+ *   4. Grant the agent read access
  *   5. Submit a 0-value transaction on Base Sepolia (burn address)
- *   6. (Optional) Store your OpenAI key and call the LLM through Shroud
+ *   6. (Optional) Store your Gemini key and call the LLM through Shroud
  *   7. Clean up everything
  *
  * Usage:
  *   cp .env.example .env        # paste your 1ck_ key
  *   npm install && npm start
  *
- * The signing key is random and the transaction sends 0 ETH,
- * so no testnet funds are needed. The tx will be signed and
- * broadcast — you just won't see it on-chain because the
- * nonce / balance may not match. The point is to show the
- * full round-trip through the Intents API.
+ * Fund the derived address from a Base Sepolia faucet to see the tx land
+ * on-chain: https://www.alchemy.com/faucets/base-sepolia
  */
 
 import { createClient } from "@1claw/sdk";
 import { randomBytes } from "node:crypto";
+import { privateKeyToAccount } from "viem/accounts";
 
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 const SHROUD_URL = process.env.ONECLAW_SHROUD_URL ?? "https://shroud.1claw.xyz";
 const API_KEY = process.env.ONECLAW_API_KEY?.trim();
-const LLM_API_KEY = process.env.OPENAI_API_KEY?.trim();
+const LLM_API_KEY = process.env.GEMINI_API_KEY?.trim();
 
 if (!API_KEY || API_KEY === "1ck_your_key_here") {
     console.error("");
@@ -40,7 +38,7 @@ if (!API_KEY || API_KEY === "1ck_your_key_here") {
 const BURN = "0x000000000000000000000000000000000000dEaD";
 const CHAIN = "base-sepolia";
 const KEY_PATH = "keys/base-sepolia-signer";
-const LLM_KEY_PATH = "providers/openai/api-key";
+const LLM_KEY_PATH = "providers/google/api-key";
 const RUN_ID = `intents-quick-${Date.now()}`;
 
 interface Cleanup {
@@ -66,7 +64,7 @@ async function cleanupAll(client: ReturnType<typeof createClient>) {
     }
     if (state.llmKeyWritten && state.vaultId) {
         await client.secrets.delete(state.vaultId, LLM_KEY_PATH).catch(() => {});
-        console.log("  LLM key deleted.");
+        console.log("  Gemini key deleted.");
     }
     if (state.vaultCreated && state.vaultId) {
         const r = await client.vault.delete(state.vaultId);
@@ -101,12 +99,19 @@ async function main() {
         state.vaultCreated = true;
         console.log(`  Vault: ${vault.name} (${vault.id})`);
 
-        // ── 2. Store a random testnet signing key ────────────────────
-        console.log(`\n[2/${totalSteps}] Generating random signing key and storing in vault...`);
-        const privateKey = "0x" + randomBytes(32).toString("hex");
+        // ── 2. Generate signing key, derive address, store it ────────
+        console.log(`\n[2/${totalSteps}] Generating signing key...`);
+        const privateKey = `0x${randomBytes(32).toString("hex")}` as `0x${string}`;
+        const account = privateKeyToAccount(privateKey);
+
+        console.log(`  Address: ${account.address}`);
+        console.log(`  Fund this address from a Base Sepolia faucet to see the tx land on-chain:`);
+        console.log(`  https://www.alchemy.com/faucets/base-sepolia`);
+        console.log("");
+
         const putRes = await client.secrets.set(vault.id, KEY_PATH, privateKey, {
             type: "private_key",
-            metadata: { chain: CHAIN, note: "random testnet key" },
+            metadata: { chain: CHAIN, address: account.address },
         });
         if (putRes.error) {
             console.error("  Failed:", putRes.error.message);
@@ -188,7 +193,7 @@ async function main() {
             const msg = txRes.error.message ?? "";
             if (msg.includes("insufficient funds") || msg.includes("nonce")) {
                 console.log(`  Expected: ${msg}`);
-                console.log("  (Random key has no testnet ETH — tx was signed but broadcast failed. That's fine.)");
+                console.log("  (Random key has no testnet ETH. Fund the address above to see it land on-chain.)");
             } else {
                 console.error(`  Tx error: ${msg}`);
             }
@@ -201,16 +206,16 @@ async function main() {
             }
         }
 
-        // ── 6. (Optional) Store LLM key and call through Shroud ──────
+        // ── 6. (Optional) Store Gemini key and call LLM through Shroud
         if (LLM_API_KEY) {
-            console.log(`\n[6/${totalSteps}] Storing OpenAI key in vault and calling LLM through Shroud...`);
+            console.log(`\n[6/${totalSteps}] Storing Gemini key in vault and calling LLM through Shroud...`);
 
             const llmPut = await client.secrets.set(vault.id, LLM_KEY_PATH, LLM_API_KEY, {
                 type: "api_key",
-                metadata: { provider: "openai" },
+                metadata: { provider: "google" },
             });
             if (llmPut.error) {
-                console.error("  Failed to store LLM key:", llmPut.error.message);
+                console.error("  Failed to store Gemini key:", llmPut.error.message);
             } else {
                 state.llmKeyWritten = true;
                 console.log(`  Stored: ${llmPut.data!.path} (v${llmPut.data!.version})`);
@@ -222,10 +227,10 @@ async function main() {
                     headers: {
                         "Content-Type": "application/json",
                         "X-Shroud-Agent-Key": `${agentId}:${agentCreds}`,
-                        "X-Shroud-Provider": "openai",
+                        "X-Shroud-Provider": "google",
                     },
                     body: JSON.stringify({
-                        model: "gpt-4o-mini",
+                        model: "gemini-2.0-flash",
                         messages: [{ role: "user", content: "Reply with exactly one word: hello" }],
                         max_tokens: 10,
                     }),
@@ -236,10 +241,10 @@ async function main() {
                     const data = (await res.json()) as { choices?: { message?: { content?: string } }[] };
                     const reply = data.choices?.[0]?.message?.content?.trim() ?? "(empty)";
                     console.log(`  LLM reply via Shroud: "${reply}"`);
-                    console.log("  The OpenAI key never left the vault. Shroud fetched it server-side.");
+                    console.log("  The Gemini key never left the vault. Shroud fetched it server-side.");
                 } else {
                     const text = await res.text().catch(() => "");
-                    console.log(`  Shroud LLM returned ${res.status}: ${text.slice(0, 100)}`);
+                    console.log(`  Shroud LLM returned ${res.status}: ${text.slice(0, 120)}`);
                     console.log("  (This is OK if Shroud isn't configured to fetch keys from Vault yet.)");
                 }
             }
