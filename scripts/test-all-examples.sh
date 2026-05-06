@@ -9,9 +9,26 @@ EXAMPLES_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ROOT="$(cd "$EXAMPLES_ROOT/.." && pwd)"
 cd "$ROOT"
 
+# Load repo .env so cleanup + examples can use ONECLAW_* / ADMIN_* (optional)
+if [[ -f "$ROOT/.env" ]]; then
+  set -a
+  # shellcheck source=/dev/null
+  source "$ROOT/.env"
+  set +a
+fi
+
 PASS=0
 FAIL=0
 SKIP="${SKIP_INSTALL:-0}"
+
+run_vault_cleanup() {
+  if [[ -x "$ROOT/scripts/cleanup-test-vaults.sh" ]]; then
+    "$ROOT/scripts/cleanup-test-vaults.sh" || true
+  fi
+}
+
+echo "── Optional: remove leaked test-pattern vaults (sre-*, demo-*, …) ──"
+run_vault_cleanup
 
 # Portable timeout: run cmd in background, sleep, then kill. Usage: run_timeout <dir> <seconds> <cmd>
 run_timeout() {
@@ -264,6 +281,9 @@ else
   ((FAIL++)) || true
 fi
 echo ""
+
+echo "── Post-run: cleanup test-pattern vaults again ──"
+run_vault_cleanup
 
 echo "=============================================="
 echo " Done: $PASS passed, $FAIL failed"
