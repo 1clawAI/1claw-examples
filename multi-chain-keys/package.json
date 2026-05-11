@@ -1,0 +1,21 @@
+{
+    "name": "1claw-multi-chain-keys",
+    "version": "0.1.0",
+    "private": true,
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "provision": "npx tsx --env-file=.env src/provision-all-keys.ts",
+        "list": "npx tsx --env-file=.env src/list-keys.ts",
+        "rotate": "npx tsx --env-file=.env src/rotate-keys.ts",
+        "start": "npx tsx --env-file=.env src/provision-all-keys.ts"
+    },
+    "dependencies": {
+        "@1claw/sdk": "^0.21.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.0.0",
+        "tsx": "^4.0.0",
+        "typescript": "^5.0.0"
+    }
+}

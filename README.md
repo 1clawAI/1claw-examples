@@ -2,7 +2,7 @@
 
 > **Reference only** — these examples are for educational and demo purposes. They are not production-ready and may contain hardcoded values, skip error handling, or use development-only configurations. Always review and adapt for your own security requirements.
 
-Eighteen example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
+Twenty-two example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
 
 ## Quick reference
 
@@ -26,6 +26,10 @@ Eighteen example applications demonstrating the [1Claw](https://1claw.xyz) SDK, 
 | [intents-layers](./intents-layers/)           | Beginner     | 5 min  | **Two “intents”**: mock solver execution plan → 1Claw sign-only (agent never holds the key) |
 | [intents-quick](./intents-quick/)             | Beginner     | 3 min  | **One API key, full Intents flow**: bootstrap vault + agent + Shroud, sign tx on Base Sepolia    |
 | [anthropic-wif](./anthropic-wif/)             | Intermediate | 10 min | **OIDC federation**: 1claw mints RS256 JWT → Anthropic WIF → `sk-ant-oat01-…` (no static keys) |
+| [multi-chain-keys](./multi-chain-keys/)       | Beginner     | 5 min  | **Multi-chain**: provision HSM-backed signing keys for 6 blockchains (Ethereum, Bitcoin, Solana, XRP, Cardano, Tron) |
+| [evm-signing](./evm-signing/)                 | Intermediate | 5 min  | **EVM signing**: EIP-191 personal_sign, EIP-712 typed data, transaction types 0-2 (legacy, access list, EIP-1559) |
+| [agentic-tx](./agentic-tx/)                   | Advanced     | 10 min | **Real transactions**: end-to-end agent creation → fund → sign → broadcast on Ethereum and Base with guardrails |
+| [non-evm-keys](./non-evm-keys/)               | Beginner     | 5 min  | **Non-EVM keys**: generate keys and derive addresses for Bitcoin, Solana, XRP, Cardano, Tron (signing coming soon) |
 
 **Shroud LLM:** Examples that hit Shroud’s OpenAI-compatible surface (`shroud-demo`, `shroud-llm`) must send **`X-Shroud-Provider`** (e.g. `openai`, `anthropic`, `google`) on chat requests; omitting it returns **400** from Shroud.
 
@@ -51,7 +55,7 @@ npm start
 
 Add `GOOGLE_API_KEY` or `OPENAI_API_KEY` for langchain-agent, `ANTHROPIC_API_KEY` for nextjs-agent-secret, and `SMART_ACCOUNT_ADDRESS` (and optional wallet key) for ampersend-x402 as needed.
 
-**Test all examples:** From the repo root, run `./examples/scripts/test-all-examples.sh`. This installs deps (unless `SKIP_INSTALL=1`), runs each example’s main script or build, and reports pass/fail (18 examples). CLI-style examples are run to completion or stopped after a short delay; Next.js examples are build-only. **shroud-llm** skips unless `.env` has agent credentials; use an org with LLM Token Billing enabled for full JWT checks. **mpc-vault** is typecheck-only (live runs need Pro+ / Business+ and real `1ck_` keys). **intents-layers** is typecheck-only in the aggregate script; run `npm start` locally for the narrative + optional live `signTransaction`.
+**Test all examples:** From the repo root, run `./examples/scripts/test-all-examples.sh`. This installs deps (unless `SKIP_INSTALL=1`), runs each example’s main script or build, and reports pass/fail (22 examples). CLI-style examples are run to completion or stopped after a short delay; Next.js examples are build-only. **shroud-llm** skips unless `.env` has agent credentials; use an org with LLM Token Billing enabled for full JWT checks. **mpc-vault** is typecheck-only (live runs need Pro+ / Business+ and real `1ck_` keys). **intents-layers** is typecheck-only in the aggregate script; run `npm start` locally for the narrative + optional live `signTransaction`. **multi-chain-keys**, **evm-signing**, **agentic-tx**, and **non-evm-keys** are typecheck-only in CI (live runs need agent credentials and funded addresses).
 
 **Cleanup:** To delete all secrets in demo accounts (except ampersend-x402, so `keys/x402-session-key` is kept), run `./scripts/cleanup-demo-secrets.sh` from the repo root.
 
@@ -108,6 +112,10 @@ If you're new to 1Claw, walk through the examples in this order:
 13. **[ampersend-x402](./ampersend-x402/)** — Payments and billing integration
 14. **[x402-payments](./x402-payments/)** — Real x402 payments for all supported endpoints (EOA key in .env)
 15. **[jwt-ttl-defense](./jwt-ttl-defense/)** — Prompt-injection JWT theft contained by a 3-second TTL + scope/vault binding
+16. **[multi-chain-keys](./multi-chain-keys/)** — Provision signing keys for 6 blockchains and view derived addresses
+17. **[evm-signing](./evm-signing/)** — EIP-191, EIP-712, and all EIP-2718 transaction types
+18. **[agentic-tx](./agentic-tx/)** — Real on-chain transactions with mainnet funds and guardrails
+19. **[non-evm-keys](./non-evm-keys/)** — Non-EVM key generation (Bitcoin, Solana, XRP, Cardano, Tron)
 
 ## What you need
 
