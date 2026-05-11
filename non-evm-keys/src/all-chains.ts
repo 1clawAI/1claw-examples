@@ -98,13 +98,13 @@ async function main() {
     for (const chain of NON_EVM_CHAINS) {
         process.stdout.write(`  Provisioning ${chain}...`);
 
-        const res = await client.signingKeys.create(AGENT_ID, { chain });
+        const res = await client.signingKeys.create(AGENT_ID!, { chain });
 
         if (res.error) {
-            const msg = res.error.message ?? "";
-            if (res.error.status === 409 || msg.includes("already exists")) {
+            const msg = res.error.message ?? res.error.detail ?? "";
+            if (msg.includes("already") || msg.includes("409")) {
                 process.stdout.write(" already provisioned\n");
-                const listRes = await client.signingKeys.list(AGENT_ID);
+                const listRes = await client.signingKeys.list(AGENT_ID!);
                 const existing = listRes.data?.keys?.find(
                     (k) => k.chain === chain && k.is_active,
                 );
@@ -135,7 +135,7 @@ async function main() {
             chain,
             curve: key.curve,
             public_key: key.public_key,
-            address: key.address,
+            address: key.address ?? "-",
             status: "created",
         });
     }

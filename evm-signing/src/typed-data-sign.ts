@@ -68,9 +68,9 @@ async function main() {
         process.exit(1);
     }
 
-    console.log("Signature:      ", data.signature);
-    console.log("Typed data hash:", data.typed_data_hash);
-    console.log("From:           ", data.from);
+    console.log("Signature:      ", data!.signature);
+    console.log("Typed data hash:", data!.typed_data_hash);
+    console.log("From:           ", data!.from);
     console.log(
         "\nThe EIP-712 domain separator and struct hash were computed server-side.",
     );

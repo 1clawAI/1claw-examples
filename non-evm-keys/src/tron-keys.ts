@@ -32,13 +32,13 @@ async function main() {
     let publicKey: string;
     let address: string;
 
-    const res = await client.signingKeys.create(AGENT_ID, { chain });
+    const res = await client.signingKeys.create(AGENT_ID!, { chain });
 
     if (res.error) {
-        const msg = res.error.message ?? "";
-        if (res.error.status === 409 || msg.includes("already exists")) {
+        const msg = res.error.message ?? res.error.detail ?? "";
+        if (msg.includes("already") || msg.includes("409")) {
             console.log("  Key already provisioned — fetching existing key\n");
-            const listRes = await client.signingKeys.list(AGENT_ID);
+            const listRes = await client.signingKeys.list(AGENT_ID!);
             if (listRes.error) {
                 console.error("Failed to list keys:", listRes.error.message);
                 process.exit(1);
@@ -52,7 +52,7 @@ async function main() {
             }
             curve = existing.curve;
             publicKey = existing.public_key;
-            address = existing.address;
+            address = existing.address ?? "-";
         } else {
             console.error("Failed to provision key:", msg);
             process.exit(1);
@@ -61,7 +61,7 @@ async function main() {
         const key = res.data!;
         curve = key.curve;
         publicKey = key.public_key;
-        address = key.address;
+        address = key.address ?? "-";
         console.log("  Key provisioned successfully\n");
     }
 

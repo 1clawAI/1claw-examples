@@ -42,10 +42,10 @@ async function main() {
         process.exit(1);
     }
 
-    console.log("Signed tx:", data.signed_tx);
-    console.log("Tx hash:  ", data.tx_hash);
-    console.log("From:     ", data.from);
-    console.log("Tx type:  ", data.tx_type, "(EIP-1559)");
+    console.log("Signed tx:", data!.signed_tx);
+    console.log("Tx hash:  ", data!.tx_hash);
+    console.log("From:     ", data!.from);
+    console.log("Tx type:  ", data!.tx_type, "(EIP-1559)");
 }
 
 main().catch(console.error);

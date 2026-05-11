@@ -42,9 +42,9 @@ async function main() {
         process.exit(1);
     }
 
-    console.log("Signature: ", data.signature);
-    console.log("From:      ", data.from);
-    console.log("Msg hash:  ", data.message_hash);
+    console.log("Signature: ", data!.signature);
+    console.log("From:      ", data!.from);
+    console.log("Msg hash:  ", data!.message_hash);
     console.log(
         "\nThe \\x19Ethereum Signed Message prefix was applied server-side.",
     );

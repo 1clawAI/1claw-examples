@@ -49,17 +49,17 @@ async function main() {
         gas_limit: 30000,
         data: "0x",
         access_list: accessList,
-    });
+    } as any);
 
     if (error) {
         console.error("Sign failed:", error.message);
         process.exit(1);
     }
 
-    console.log("Signed tx:", data.signed_tx);
-    console.log("Tx hash:  ", data.tx_hash);
-    console.log("From:     ", data.from);
-    console.log("Tx type:  ", data.tx_type, "(EIP-2930 access list)");
+    console.log("Signed tx:", data!.signed_tx);
+    console.log("Tx hash:  ", data!.tx_hash);
+    console.log("From:     ", data!.from);
+    console.log("Tx type:  ", data!.tx_type, "(EIP-2930 access list)");
     console.log(
         "\nAccess list pre-warms storage slots for cheaper SLOAD/SSTORE.",
     );

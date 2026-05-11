@@ -43,9 +43,9 @@ async function main() {
         process.exit(1);
     }
 
-    console.log("Signed tx (hex):", data.signed_tx);
-    console.log("Tx hash:        ", data.tx_hash);
-    console.log("From:           ", data.from);
+    console.log("Signed tx (hex):", data!.signed_tx);
+    console.log("Tx hash:        ", data!.tx_hash);
+    console.log("From:           ", data!.from);
     console.log("\n--- What to do next ---");
     console.log(
         "Broadcast this signed transaction via your own RPC provider:",
@@ -54,7 +54,7 @@ async function main() {
         '  curl -X POST https://eth.llamarpc.com -H "Content-Type: application/json" \\',
     );
     console.log(
-        `    -d '{"jsonrpc":"2.0","method":"eth_sendRawTransaction","params":["${data.signed_tx}"],"id":1}'`,
+        `    -d '{"jsonrpc":"2.0","method":"eth_sendRawTransaction","params":["${data!.signed_tx}"],"id":1}'`,
     );
 }
 

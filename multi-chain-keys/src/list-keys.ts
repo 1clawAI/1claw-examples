@@ -39,7 +39,7 @@ async function main() {
         agentId: AGENT_ID,
     });
 
-    const res = await client.signingKeys.list(AGENT_ID);
+    const res = await client.signingKeys.list(AGENT_ID!);
 
     if (res.error) {
         console.error("Failed to list keys:", res.error.message);
@@ -101,8 +101,8 @@ async function main() {
                 padRight(` ${k.chain}`, cols.chain),
                 padRight(` ${k.curve}`, cols.curve),
                 padRight(` ${truncate(k.public_key, cols.publicKey - 2)}`, cols.publicKey),
-                padRight(` ${truncate(k.address, cols.address - 2)}`, cols.address),
-                padRight(` ${k.version ?? 1}`, cols.version),
+                padRight(` ${truncate(k.address ?? "-", cols.address - 2)}`, cols.address),
+                padRight(` ${k.key_version ?? 1}`, cols.version),
                 padRight(` ${k.is_active ? "yes" : "no"}`, cols.active),
                 padRight(` ${created}`, cols.created),
                 "",

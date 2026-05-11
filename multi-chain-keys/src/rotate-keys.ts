@@ -45,7 +45,7 @@ async function main() {
 
     // Snapshot before rotation
     console.log("--- Before ---");
-    const beforeRes = await client.signingKeys.list(AGENT_ID);
+    const beforeRes = await client.signingKeys.list(AGENT_ID!);
     if (beforeRes.error) {
         console.error("Failed to list keys:", beforeRes.error.message);
         process.exit(1);
@@ -64,12 +64,12 @@ async function main() {
     console.log(`  Chain:      ${beforeKey.chain}`);
     console.log(`  Curve:      ${beforeKey.curve}`);
     console.log(`  Public Key: ${truncate(beforeKey.public_key, 40)}`);
-    console.log(`  Address:    ${beforeKey.address}`);
-    console.log(`  Version:    ${beforeKey.version ?? 1}`);
+    console.log(`  Address:    ${beforeKey.address ?? "-"}`);
+    console.log(`  Version:    ${beforeKey.key_version ?? 1}`);
 
     // Rotate
     console.log(`\nRotating ${chain} key...`);
-    const rotateRes = await client.signingKeys.rotate(AGENT_ID, chain);
+    const rotateRes = await client.signingKeys.rotate(AGENT_ID!, chain);
 
     if (rotateRes.error) {
         console.error("Rotation failed:", rotateRes.error.message);
@@ -84,11 +84,11 @@ async function main() {
     console.log(`  Chain:      ${newKey.chain}`);
     console.log(`  Curve:      ${newKey.curve}`);
     console.log(`  Public Key: ${truncate(newKey.public_key, 40)}`);
-    console.log(`  Address:    ${newKey.address}`);
-    console.log(`  Version:    ${newKey.version ?? "n/a"}`);
+    console.log(`  Address:    ${newKey.address ?? "-"}`);
+    console.log(`  Version:    ${newKey.key_version ?? "n/a"}`);
 
     console.log("\n--- Diff ---");
-    console.log(`  Address:    ${beforeKey.address} → ${newKey.address}`);
+    console.log(`  Address:    ${beforeKey.address ?? "-"} → ${newKey.address ?? "-"}`);
     console.log(
         `  Public Key: ${truncate(beforeKey.public_key, 20)} → ${truncate(newKey.public_key, 20)}`,
     );
