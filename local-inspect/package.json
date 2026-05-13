@@ -15,8 +15,8 @@
     "test-clean": "npx tsx src/test-clean.ts"
   },
   "dependencies": {
-    "@1claw/mcp": "^0.20.1",
-    "@1claw/sdk": "^0.20.0"
+    "@1claw/mcp": "^0.23.0",
+    "@1claw/sdk": "^0.23.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",

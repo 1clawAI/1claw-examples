@@ -11,7 +11,7 @@
         "start": "npx tsx --env-file=.env src/provision-all-keys.ts"
     },
     "dependencies": {
-        "@1claw/sdk": "^0.21.0"
+        "@1claw/sdk": "^0.23.0"
     },
     "devDependencies": {
         "@types/node": "^22.0.0",
