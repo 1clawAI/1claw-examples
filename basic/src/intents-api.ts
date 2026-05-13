@@ -9,7 +9,8 @@
  *
  * Prerequisites:
  *   - ONECLAW_API_KEY set in your environment / .env
- *   - A vault with a stored signing key (e.g. "keys/base-signer")
+ *   - A per-chain signing key provisioned (POST /v1/agents/:id/signing-keys) or
+ *     a manual signing key stored in a vault (e.g. "keys/base-signer")
  */
 
 import { createClient, type AgentCreatedResponse } from "@1claw/sdk";
