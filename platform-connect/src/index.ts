@@ -19,11 +19,12 @@ async function main() {
   // 1. List existing platform apps
   console.log("1. Listing platform apps...");
   const apps = await client.platform.listApps();
-  console.log(`   Found ${apps.data?.length ?? 0} app(s)\n`);
+  const appList = apps.data?.apps ?? [];
+  console.log(`   Found ${appList.length} app(s)\n`);
 
   // 2. Create a bootstrap template (if we have an app)
-  if (apps.data && apps.data.length > 0) {
-    const appId = apps.data[0].id;
+  if (appList.length > 0) {
+    const appId = appList[0].id;
     console.log(`2. Creating template for app ${appId}...`);
 
     const template = await client.platform.createTemplate(appId, {
@@ -77,7 +78,8 @@ async function main() {
     // 5. List connected users
     console.log("5. Listing connected users...");
     const users = await client.platform.listUsers(appId);
-    console.log(`   ${users.data?.length ?? 0} connected user(s)\n`);
+    const userList = users.data?.users ?? [];
+    console.log(`   ${userList.length} connected user(s)\n`);
   }
 
   console.log("--- Done ---");
