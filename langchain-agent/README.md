@@ -27,7 +27,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.example` →
 - Node.js 20+
 - A [1Claw account](https://1claw.xyz) with a vault containing at least one secret
 - An LLM API key: **OpenAI** (`OPENAI_API_KEY`) or **Gemini free tier** ([aistudio.google.com/apikey](https://aistudio.google.com/apikey))
-- Uses `@1claw/sdk@^0.20.0` (npm install will fetch it)
+- Uses `@1claw/sdk@^0.23.0` (npm install will fetch it)
 
 ## Demo walkthrough (5 min)
 
