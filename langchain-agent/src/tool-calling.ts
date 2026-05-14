@@ -113,7 +113,7 @@ const executor = new AgentExecutor({ agent, tools, verbose: true });
 // ── Run ─────────────────────────────────────────────────────────────
 
 console.log("=== 1Claw + LangChain Agent ===\n");
-console.log(`LLM: ${useGemini ? "Gemini (GOOGLE_API_KEY)" : "OpenAI (OPENAI_API_KEY)"}\n`);
+console.log(`LLM: ${useGemini ? "Gemini (Google AI Studio)" : "OpenAI (ChatGPT)"}\n`);
 console.log(
     "Asking: list vault secrets, then fetch the first secret and report its path and type (not the value).\n",
 );
