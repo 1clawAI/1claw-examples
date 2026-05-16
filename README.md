@@ -2,7 +2,7 @@
 
 > **Reference only** — these examples are for educational and demo purposes. They are not production-ready and may contain hardcoded values, skip error handling, or use development-only configurations. Always review and adapt for your own security requirements.
 
-Twenty-two example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
+Twenty-three example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
 
 ## Quick reference
 
@@ -30,6 +30,7 @@ Twenty-two example applications demonstrating the [1Claw](https://1claw.xyz) SDK
 | [evm-signing](./evm-signing/)                 | Intermediate | 5 min  | **EVM signing**: EIP-191 personal_sign, EIP-712 typed data, transaction types 0-2 (legacy, access list, EIP-1559) |
 | [agentic-tx](./agentic-tx/)                   | Advanced     | 10 min | **Real transactions**: end-to-end agent creation → fund → sign → broadcast on Ethereum and Base with guardrails |
 | [non-evm-keys](./non-evm-keys/)               | Beginner     | 5 min  | **Non-EVM keys**: generate keys and derive addresses for Bitcoin, Solana, XRP, Cardano, Tron (signing coming soon) |
+| [platform-connect](./platform-connect/)       | Intermediate | 5 min  | **Platform API**: register an app, create a bootstrap template, provision users + vaults + agents |
 
 **Shroud LLM:** Examples that hit Shroud’s OpenAI-compatible surface (`shroud-demo`, `shroud-llm`) must send **`X-Shroud-Provider`** (e.g. `openai`, `anthropic`, `google`) on chat requests; omitting it returns **400** from Shroud.
 

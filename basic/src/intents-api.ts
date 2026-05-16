@@ -94,7 +94,7 @@ async function main() {
         description:
             "Automated DeFi agent that submits transactions via the signing proxy",
         auth_method: "api_key",
-        scopes: ["vault:read", "tx:sign"],
+        scopes: [],
         intents_api_enabled: true,
     });
     let agent: AgentCreatedResponse | null = agentRes.data ?? null;

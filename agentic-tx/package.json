@@ -12,7 +12,7 @@
         "start": "npx tsx --env-file=.env src/setup.ts"
     },
     "dependencies": {
-        "@1claw/sdk": "^0.23.0"
+        "@1claw/sdk": "^0.24.0"
     },
     "devDependencies": {
         "@types/node": "^22.0.0",

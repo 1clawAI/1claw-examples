@@ -63,3 +63,10 @@ Operator App                1Claw API
 - Resources created via bootstrap are `platform_locked: true`
 - The end-user owns their vault, agent, and API key
 - The operator sees metadata and audit events but not secret values
+
+### Bootstrap response details
+
+The `POST /v1/platform/connections/{id}/bootstrap` response `summary` object includes:
+
+- **`agent_api_key`** — One-time `ocv_` API key for the bootstrapped agent (not returned again; store it securely)
+- **`signing_keys[]`** — Array of provisioned signing keys, each with `chain`, `address`, and `public_key` (only present when the template specifies `signing_keys` on an agent entry)

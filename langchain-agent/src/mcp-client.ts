@@ -2,7 +2,7 @@
  * 1Claw + LangChain — MCP Client
  *
  * Connects LangChain to the hosted 1Claw MCP server so the agent
- * automatically gets all 11 vault tools (list_secrets, get_secret,
+ * automatically gets all 27+ vault and security tools (list_secrets, get_secret,
  * put_secret, etc.) without defining them manually.
  *
  * This uses @langchain/mcp-adapters to bridge MCP tools into LangChain.
