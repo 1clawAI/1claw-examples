@@ -27,6 +27,12 @@ run_vault_cleanup() {
   fi
 }
 
+run_account_cleanup() {
+  if [[ -x "$ROOT/scripts/cleanup-test-accounts.sh" ]]; then
+    "$ROOT/scripts/cleanup-test-accounts.sh" || true
+  fi
+}
+
 echo "── Optional: remove leaked test-pattern vaults (sre-*, demo-*, …) ──"
 run_vault_cleanup
 
@@ -356,6 +362,9 @@ echo ""
 
 echo "── Post-run: cleanup test-pattern vaults again ──"
 run_vault_cleanup
+
+echo "── Post-run: cleanup test accounts ──"
+run_account_cleanup
 
 echo "=============================================="
 echo " Done: $PASS passed, $FAIL failed"
