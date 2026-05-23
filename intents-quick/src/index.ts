@@ -20,17 +20,27 @@
 
 import { createClient } from "@1claw/sdk";
 import { randomBytes } from "node:crypto";
+import { readFileSync, writeFileSync, unlinkSync, existsSync } from "node:fs";
 import { privateKeyToAccount } from "viem/accounts";
 
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 const SHROUD_URL = process.env.ONECLAW_SHROUD_URL ?? "https://shroud.1claw.xyz";
-const API_KEY = process.env.ONECLAW_API_KEY?.trim();
+const args = process.argv.slice(2);
+const NO_CLEANUP = args.includes("--no-cleanup") || args.includes("-k");
+const positionalArgs = args.filter(a => !a.startsWith("-"));
+const API_KEY = positionalArgs[0]?.trim() || process.env.ONECLAW_API_KEY?.trim();
 const LLM_API_KEY = process.env.GEMINI_API_KEY?.trim();
 
 if (!API_KEY || API_KEY === "1ck_your_key_here") {
     console.error("");
-    console.error("  Paste your 1Claw human API key (1ck_...) into .env");
-    console.error("  Get one at https://1claw.xyz → Settings → API Keys");
+    console.error("  Usage:  npm run run -- 1ck_your_key_here [--no-cleanup]");
+    console.error("  Or:     npx tsx src/index.ts 1ck_your_key_here --no-cleanup");
+    console.error("");
+    console.error("  Flags:");
+    console.error("    --no-cleanup, -k   Keep vault/agent after run (fund the address, then rerun)");
+    console.error("");
+    console.error("  You can also set ONECLAW_API_KEY in .env instead.");
+    console.error("  Get a key at https://1claw.xyz → Settings → API Keys");
     console.error("");
     process.exit(1);
 }
@@ -39,7 +49,14 @@ const BURN = "0x000000000000000000000000000000000000dEaD";
 const CHAIN = "base-sepolia";
 const KEY_PATH = "keys/base-sepolia-signer";
 const LLM_KEY_PATH = "providers/google/api-key";
-const RUN_ID = `intents-quick-${Date.now()}`;
+const STATE_FILE = new URL("../.intents-state.json", import.meta.url).pathname;
+
+interface SavedState {
+    vaultId: string;
+    agentId: string;
+    agentApiKey: string;
+    address: string;
+}
 
 interface Cleanup {
     agentId?: string;
@@ -51,6 +68,23 @@ interface Cleanup {
 }
 
 const state: Cleanup = { vaultCreated: false, secretWritten: false, llmKeyWritten: false };
+
+function loadState(): SavedState | null {
+    if (!existsSync(STATE_FILE)) return null;
+    try {
+        return JSON.parse(readFileSync(STATE_FILE, "utf-8"));
+    } catch {
+        return null;
+    }
+}
+
+function saveState(s: SavedState) {
+    writeFileSync(STATE_FILE, JSON.stringify(s, null, 2));
+}
+
+function clearState() {
+    try { unlinkSync(STATE_FILE); } catch {}
+}
 
 async function cleanupAll(client: ReturnType<typeof createClient>) {
     console.log("\n── Cleanup ──");
@@ -80,8 +114,71 @@ async function main() {
     console.log("");
 
     const client = createClient({ baseUrl: BASE_URL, token: API_KEY });
+    const saved = loadState();
+
+    if (saved && NO_CLEANUP) {
+        console.log("  Resuming from previous run (found .intents-state.json)");
+        console.log(`  Vault:   ${saved.vaultId}`);
+        console.log(`  Agent:   ${saved.agentId}`);
+        console.log(`  Address: ${saved.address}`);
+        console.log("");
+
+        state.vaultId = saved.vaultId;
+        state.agentId = saved.agentId;
+        state.agentApiKey = saved.agentApiKey;
+        state.vaultCreated = true;
+        state.secretWritten = true;
+
+        console.log("[1/1] Submitting transaction (0 ETH to burn address on Base Sepolia)...");
+
+        const agentClient = createClient({
+            baseUrl: BASE_URL,
+            apiKey: saved.agentApiKey,
+            agentId: saved.agentId,
+        });
+
+        const txRes = await agentClient.agents.submitTransaction(saved.agentId, {
+            to: BURN,
+            value: "0",
+            chain: CHAIN,
+            signing_key_path: KEY_PATH,
+        });
+
+        if (txRes.error) {
+            const msg = txRes.error.message ?? "";
+            if (msg.includes("insufficient funds") || msg.includes("nonce")) {
+                console.log(`  Expected: ${msg}`);
+                console.log("  (Fund the address above to see it land on-chain.)");
+            } else {
+                console.error(`  Tx error: ${msg}`);
+            }
+        } else {
+            const tx = txRes.data!;
+            console.log(`  Status:  ${tx.status}`);
+            console.log(`  Tx hash: ${tx.tx_hash ?? "n/a"}`);
+            if (tx.signed_tx) {
+                console.log(`  Signed:  ${tx.signed_tx.slice(0, 40)}...`);
+            }
+        }
+
+        console.log("\n  Run without --no-cleanup to delete vault/agent.");
+        return;
+    }
+
+    if (saved && !NO_CLEANUP) {
+        console.log("  Cleaning up previous run...");
+        state.vaultId = saved.vaultId;
+        state.agentId = saved.agentId;
+        state.vaultCreated = true;
+        state.secretWritten = true;
+        await cleanupAll(client);
+        clearState();
+        console.log("");
+        return;
+    }
 
     try {
+        const RUN_ID = `intents-quick-${Date.now()}`;
         const totalSteps = LLM_API_KEY ? 7 : 6;
 
         // ── 1. Create vault ──────────────────────────────────────────
@@ -108,6 +205,7 @@ async function main() {
         console.log(`  Fund this address from a Base Sepolia faucet to see the tx land on-chain:`);
         console.log(`  https://www.alchemy.com/faucets/base-sepolia`);
         console.log("");
+        (state as any).address = account.address;
 
         const putRes = await client.secrets.set(vault.id, KEY_PATH, privateKey, {
             type: "private_key",
@@ -268,7 +366,24 @@ async function main() {
         console.log("  ever seeing the private key. The key lived in the HSM vault;");
         console.log("  the Intents API signed it server-side behind guardrails.");
     } finally {
-        await cleanupAll(client);
+        if (NO_CLEANUP && state.vaultId && state.agentId && state.agentApiKey) {
+            saveState({
+                vaultId: state.vaultId,
+                agentId: state.agentId,
+                agentApiKey: state.agentApiKey,
+                address: (state as any).address ?? "unknown",
+            });
+            console.log("\n── Saved state (--no-cleanup) ──");
+            console.log(`  Vault ID:      ${state.vaultId}`);
+            console.log(`  Agent ID:      ${state.agentId}`);
+            console.log(`  Agent API Key: ${state.agentApiKey}`);
+            console.log("");
+            console.log("  Fund the address above, then rerun the same command.");
+            console.log("  To clean up: run without --no-cleanup.");
+        } else if (!NO_CLEANUP) {
+            await cleanupAll(client);
+            clearState();
+        }
     }
 }
 

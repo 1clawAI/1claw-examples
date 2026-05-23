@@ -5,7 +5,8 @@
     "license": "MIT",
     "type": "module",
     "scripts": {
-        "start": "npx tsx --env-file=.env src/index.ts"
+        "start": "npx tsx --env-file=.env src/index.ts",
+        "run": "npx tsx src/index.ts"
     },
     "dependencies": {
         "@1claw/sdk": "^0.24.0",
