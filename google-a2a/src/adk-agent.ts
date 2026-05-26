@@ -26,6 +26,11 @@ if (!API_KEY || !VAULT_ID) {
     process.exit(1);
 }
 
+if (!process.env.GOOGLE_API_KEY && !process.env.GEMINI_API_KEY && !process.env.GOOGLE_GENAI_API_KEY) {
+    console.error("Required: GEMINI_API_KEY (or GOOGLE_API_KEY / GOOGLE_GENAI_API_KEY) — get one at https://aistudio.google.com/apikey");
+    process.exit(1);
+}
+
 const sdk = createClient({
     baseUrl: BASE_URL,
     apiKey: API_KEY,

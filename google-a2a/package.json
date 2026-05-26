@@ -8,7 +8,7 @@
         "worker": "npx tsx --env-file=.env src/worker-agent.ts",
         "coordinator": "npx tsx --env-file=.env src/coordinator.ts",
         "start": "npx tsx --env-file=.env src/start-all.ts",
-        "adk": "npx tsx src/start-adk-demo.ts",
+        "adk": "npx tsx --env-file=.env src/start-adk-demo.ts",
         "adk:worker": "npx tsx src/adk-a2a-server.ts",
         "ecdh:alice": "npx tsx src/ecdh-worker.ts",
         "ecdh:bob": "AGENT_NAME=Bob PORT=4101 npx tsx src/ecdh-worker.ts",

@@ -159,7 +159,7 @@ app.post("/", async (req, res) => {
 
         if (/fetch|get|retrieve|credential|key/i.test(userText)) {
             const pathMatch = userText.match(
-                /(?:secret|key|credential)s?\s+(?:at|for|named?|path)?\s*[""']?([a-zA-Z0-9/_-]+)[""']?/i,
+                /(?:secret|key|credential)s?\s+(?:at|for|named?|path)\s+[""']?([a-zA-Z0-9/_.-]+(?:\/[a-zA-Z0-9/_.-]+)+)[""']?/i,
             );
 
             if (pathMatch) {
