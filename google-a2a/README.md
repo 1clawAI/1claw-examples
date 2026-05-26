@@ -2,21 +2,33 @@
 
 > **Reference only** — not for production use. Review and adapt for your own security requirements.
 
-Three demos showing AI agents communicating via [Google's A2A protocol](https://google.github.io/A2A/), using 1Claw as the secure credential layer. A coordinator agent discovers a worker agent, sends it tasks, and the worker fetches secrets from a 1Claw vault to complete them.
+Four demos showing AI agents communicating via [Google's A2A protocol](https://google.github.io/A2A/), using 1Claw as the secure credential layer. A coordinator agent discovers a worker agent, sends it tasks, and the worker uses 1Claw (vault secrets or Intents API signing) to complete them.
 
-## Quick start (Demo 1 — Vault Worker)
+## Quick start (30 seconds)
+
+All you need is a 1Claw human API key (`1ck_...`). Get one free at [1claw.xyz/settings/api-keys](https://1claw.xyz/settings/api-keys).
 
 ```bash
 cd examples/google-a2a
 npm install
-cp .env.example .env
-# Edit .env: set ONECLAW_API_KEY and ONECLAW_VAULT_ID
-npm start
+
+# Bootstrap everything: vault, agent, signing key, policy
+ONECLAW_API_KEY=1ck_your_key_here npm run intents:setup
+
+# Run the Intents API demo
+npm run intents
 ```
 
-The worker starts on port 4100; the coordinator discovers it and sends a "list secrets" task. You should see task completion and artifact output in the terminal.
+That's it. The setup script creates the vault, an agent with Intents API enabled, a signing key, and an access policy. Then the demo signs a transaction via A2A without the agent ever touching the private key.
 
-From the repo root: `cd examples && npm run bootstrap` copies `.env.example` → `.env` when missing.
+For the simpler vault demo (list/fetch secrets):
+
+```bash
+# Same key, creates a vault + agent + policy for secret access
+ONECLAW_API_KEY=1ck_your_key_here npx tsx scripts/setup-intents-agent.ts
+cp .env.intents .env
+npm start
+```
 
 ## What you'll learn
 
