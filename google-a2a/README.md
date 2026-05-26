@@ -25,13 +25,14 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.example` →
 - Use Google ADK (Agent Development Kit) with Gemini to reason about tasks via LLM
 - Coordinate two agents doing ECDH key exchange with vault-stored keys
 
-## Three demos
+## Four demos
 
 | Demo | Command | Description |
 |------|---------|-------------|
 | **Vault Worker** | `npm start` | Regex-based worker lists/fetches secrets; coordinator sends tasks via A2A |
 | **ADK Agent** | `npm run adk` | Gemini-powered worker uses ADK `FunctionTool`s to reason about vault tasks |
 | **ECDH Key Exchange** | `npm run ecdh` | Two agents (Alice, Bob) perform ECDH key agreement — keys optionally stored in 1Claw |
+| **Intents API** | `npm run intents` | Sign and broadcast transactions via A2A — private key stays in TEE |
 
 ## Prerequisites
 
@@ -182,6 +183,78 @@ Launches Alice (4100), Bob (4101), and the coordinator. Keys are generated in me
 
 ---
 
+## Demo 4: Intents API — Transaction Signing (5 min)
+
+An A2A agent that signs and broadcasts transactions via the 1Claw Intents API. The private key never leaves the TEE. Per-agent guardrails (value caps, chain restrictions, daily limits) are enforced server-side.
+
+### Step 1 — Bootstrap with your human API key
+
+```bash
+ONECLAW_API_KEY=1ck_your_human_key npm run intents:setup
+```
+
+The setup wizard creates everything: vault, agent (with Intents API + Shroud enabled), signing key, and access policy. It writes `.env.intents` with the agent credentials.
+
+### Step 2 — Run the demo
+
+```bash
+npm run intents
+```
+
+The coordinator discovers the Intents worker, then:
+
+1. **Gets signer info** — shows the agent's address, chain, and guardrails
+2. **Signs a transaction** — 0.001 ETH to a burn address, signed in the TEE (not broadcast)
+3. **Lists history** — shows the signed transaction in the audit trail
+
+**Expected output:**
+
+```
+[intents-worker] 1Claw Intents Worker listening on port 4300
+[intents-worker] Chain: base-sepolia
+[intents-worker] Signer: 0xf00b...658f
+
+[intents-coordinator] Found: "1Claw Intents Worker"
+[intents-coordinator] Skills: Sign Transaction, Submit Transaction, Simulate Transaction, ...
+
+[intents-coordinator] Task: Show signer info and guardrails
+[intents-coordinator] Signer config: {
+  "intents_api_enabled": true,
+  "guardrails": { "tx_max_value_eth": "0.0100", "tx_daily_limit_eth": "0.0500" }
+}
+
+[intents-coordinator] Task: Sign a transfer of 0.001 ETH to 0x...dEaD
+[intents-coordinator] Signed tx: {
+  "status": "sign_only",
+  "tx_hash": "0xe332...",
+  "from": "0xf00b...658f",
+  "to": "0x...dEaD",
+  "nonce": 0
+}
+
+[intents-coordinator] Transaction count: 1
+[intents-coordinator] Demo complete.
+```
+
+### Guardrails in action
+
+The agent is configured with strict limits. Try tasks that exceed them:
+
+- "Send 1 ETH to 0x..." → rejected by `tx_max_value_eth: 0.01`
+- "Send 0.001 ETH on Ethereum mainnet" → rejected by `tx_allowed_chains: ["base-sepolia"]`
+
+The guardrails are enforced in the TEE before signing — the agent cannot bypass them regardless of what it's instructed to do.
+
+### Fund for live broadcast (optional)
+
+To test actual on-chain broadcast, fund the signer address on Base Sepolia:
+
+1. Copy the signer address from the setup output
+2. Use the [Base Sepolia faucet](https://www.coinbase.com/faucets/base-ethereum-goerli-faucet)
+3. Modify the coordinator to use "Send" instead of "Sign"
+
+---
+
 ## Files
 
 ```
@@ -198,8 +271,13 @@ src/
 ├── ecdh-worker.ts        # Demo 3: ECDH agent (key gen, exchange, derive)
 ├── ecdh-coordinator.ts   # ECDH coordinator (orchestrates Alice ↔ Bob)
 ├── ecdh-crypto.ts        # Node.js crypto ECDH helpers
-└── start-ecdh-demo.ts    # Launcher for Demo 3 (Alice + Bob + coordinator)
+├── start-ecdh-demo.ts    # Launcher for Demo 3 (Alice + Bob + coordinator)
+│
+├── intents-worker.ts     # Demo 4: Intents API A2A worker (sign/submit/simulate)
+├── intents-coordinator.ts # Intents coordinator (info → sign → history)
+└── start-intents-demo.ts # Launcher for Demo 4 (worker + coordinator)
 scripts/
+├── setup-intents-agent.ts # Bootstrap Intents API agent with human key
 ├── setup-ecdh-agents.ts  # Create two 1Claw agents, grant key access, write .env.ecdh
 ├── bootstrap-ecdh-keys.ts  # (legacy) Manual key bootstrap for two-vault setup
 ├── cleanup-ecdh-keys.ts
