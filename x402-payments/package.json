@@ -12,7 +12,7 @@
         "probe": "npx tsx --env-file=.env src/probe-402.ts"
     },
     "dependencies": {
-        "@1claw/sdk": "^0.24.0",
+        "@1claw/sdk": "^0.27.0",
         "@x402/core": "^2.4.0",
         "@x402/evm": "^2.4.0",
         "@x402/fetch": "^2.3.0",

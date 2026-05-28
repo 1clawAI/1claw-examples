@@ -9,7 +9,7 @@
         "start": "next start"
     },
     "dependencies": {
-        "@1claw/sdk": "^0.24.0",
+        "@1claw/sdk": "^0.27.0",
         "@ai-sdk/anthropic": "^1.0.0",
         "ai": "^4.0.0",
         "next": "^15.0.0",

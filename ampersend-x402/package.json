@@ -15,7 +15,7 @@
         "paywall": "npx tsx --env-file=.env src/run-paywall-demo.ts"
     },
     "dependencies": {
-        "@1claw/sdk": "^0.24.0",
+        "@1claw/sdk": "^0.27.0",
         "@ampersend_ai/ampersend-sdk": "^0.0.16",
         "@x402/core": "^2.9.0",
         "@x402/evm": "^2.9.0",
