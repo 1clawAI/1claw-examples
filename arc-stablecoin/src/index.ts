@@ -6,7 +6,7 @@
  * native gas token — every transaction fee is paid in USDC.
  *
  * What this script does:
- *   1. Create a vault for the demo
+ *   1. Create a vault
  *   2. Generate a secp256k1 signing key, derive the Arc address, store it
  *   3. Register an agent with Intents API enabled and arc-testnet chain allowed
  *   4. Grant the agent read access to the signing key
@@ -68,18 +68,21 @@ async function cleanup(client: ReturnType<typeof createClient>) {
   }
   console.log("\n🧹 Cleaning up...");
   try {
-    if (state.secretWritten && state.vaultId) {
-      await client.secrets.delete(state.vaultId, KEY_PATH);
+    if (state.agentId) {
+      await client.agents.delete(state.agentId);
+      console.log("  Agent deleted.");
     }
   } catch {}
   try {
-    if (state.agentId) {
-      await client.agents.delete(state.agentId);
+    if (state.secretWritten && state.vaultId) {
+      await client.secrets.delete(state.vaultId, KEY_PATH);
+      console.log("  Signing key deleted.");
     }
   } catch {}
   try {
     if (state.vaultCreated && state.vaultId) {
-      await client.vaults.delete(state.vaultId);
+      await client.vault.delete(state.vaultId);
+      console.log("  Vault deleted.");
     }
   } catch {}
 }
@@ -92,24 +95,28 @@ async function main() {
 
   const client = createClient({
     baseUrl: BASE_URL,
-    apiKey: API_KEY,
+    token: API_KEY,
   });
 
   try {
     // 1. Create vault
     console.log("1️⃣  Creating vault...");
-    const vault = await client.vaults.create({
+    const vaultRes = await client.vault.create({
       name: `arc-demo-${Date.now()}`,
       description: "Arc stablecoin Intents API demo",
     });
+    if (vaultRes.error) {
+      console.error("  Failed:", vaultRes.error.message);
+      return;
+    }
+    const vault = vaultRes.data!;
     state.vaultId = vault.id;
     state.vaultCreated = true;
     console.log(`   Vault: ${vault.id}`);
 
     // 2. Generate signing key and derive address
     console.log("2️⃣  Generating signing key...");
-    const privKeyBytes = randomBytes(32);
-    const privKeyHex = `0x${privKeyBytes.toString("hex")}` as `0x${string}`;
+    const privKeyHex = `0x${randomBytes(32).toString("hex")}` as `0x${string}`;
     const account = privateKeyToAccount(privKeyHex);
     console.log(`   Address: ${account.address}`);
     console.log(
@@ -118,68 +125,91 @@ async function main() {
 
     // 3. Store the private key in the vault
     console.log("3️⃣  Storing signing key in vault...");
-    await client.secrets.put(state.vaultId, KEY_PATH, {
-      value: privKeyHex,
+    const putRes = await client.secrets.set(vault.id, KEY_PATH, privKeyHex, {
       type: "private_key",
-      description: "Arc Testnet secp256k1 signing key",
+      metadata: { chain: CHAIN, address: account.address },
     });
+    if (putRes.error) {
+      console.error("  Failed:", putRes.error.message);
+      return;
+    }
     state.secretWritten = true;
+    console.log(`   Stored: ${putRes.data!.path} (v${putRes.data!.version})`);
 
     // 4. Register an Intents-API-enabled agent bound to arc-testnet
     console.log("4️⃣  Registering agent (Intents API + arc-testnet)...");
-    const agent = await client.agents.create({
+    const agentRes = await client.agents.create({
       name: `arc-demo-agent-${Date.now()}`,
       description: "Demo agent for Arc stablecoin transfers",
+      auth_method: "api_key",
       intents_api_enabled: true,
-      vault_ids: [state.vaultId],
+      vault_ids: [vault.id],
       tx_allowed_chains: [CHAIN],
-      tx_max_value_eth: "1", // 1 USDC max per tx (Arc uses USDC as native)
-      tx_daily_limit_eth: "10", // 10 USDC daily cap
+      tx_to_allowlist: [RECIPIENT],
+      tx_max_value_eth: "1",
+      tx_daily_limit_eth: "10",
     });
-    state.agentId = agent.id;
+    if (agentRes.error) {
+      console.error("  Failed:", agentRes.error.message);
+      return;
+    }
+    const agent = agentRes.data!;
+    state.agentId = agent.agent.id;
     state.agentApiKey = agent.api_key;
-    console.log(`   Agent: ${agent.id}`);
+    console.log(`   Agent: ${agent.agent.id}`);
+    console.log(`   Guardrails: chains=[${CHAIN}], to=[${RECIPIENT.slice(0, 10)}...], max=1 USDC/tx, 10 USDC/day`);
 
     // 5. Grant agent read access to the signing key
     console.log("5️⃣  Granting agent read access...");
-    await client.access.create(state.vaultId, {
-      principal_type: "agent",
-      principal_id: agent.id,
-      secret_path_pattern: "keys/**",
-      permissions: ["read"],
-    });
+    const polRes = await client.access.grantAgent(
+      vault.id,
+      agent.agent.id,
+      ["read"],
+      { secretPathPattern: "keys/**" },
+    );
+    if (polRes.error) {
+      console.error("  Policy failed:", polRes.error.message);
+      return;
+    }
+    console.log(`   Policy: ${polRes.data!.secret_path_pattern} → [${polRes.data!.permissions}]`);
 
-    // 6. Exchange for agent token and submit transaction
+    // 6. Submit the transaction via Intents API
     console.log("6️⃣  Submitting USDC transfer on Arc Testnet...");
     const agentClient = createClient({
       baseUrl: BASE_URL,
-      apiKey: state.agentApiKey!,
-      agentId: state.agentId!,
+      apiKey: agent.api_key,
+      agentId: agent.agent.id,
     });
 
-    const txResult = await agentClient.agents.submitTransaction(
-      state.agentId!,
-      {
-        chain: CHAIN,
-        to: RECIPIENT,
-        value: "0.001", // 0.001 USDC (native transfer)
-        signing_key_path: KEY_PATH,
-        max_fee_per_gas: "20000000000", // 20 Gwei minimum for Arc
-        max_priority_fee_per_gas: "1000000000", // 1 Gwei tip
-      }
-    );
+    const txRes = await agentClient.agents.submitTransaction(agent.agent.id, {
+      chain: CHAIN,
+      to: RECIPIENT,
+      value: "0.001",
+      signing_key_path: KEY_PATH,
+      max_fee_per_gas: "20000000000",
+      max_priority_fee_per_gas: "1000000000",
+    });
 
-    console.log("\n--- Result ---");
-    console.log(`Status:   ${txResult.status}`);
-    console.log(`TX hash:  ${txResult.tx_hash}`);
-    console.log(`From:     ${txResult.from}`);
-    if (txResult.status === "broadcast") {
-      console.log(
-        `Explorer: https://testnet.arcscan.app/tx/${txResult.tx_hash}`
-      );
-    } else if (txResult.status === "signed") {
-      console.log("  (Not broadcast — address likely needs USDC for gas)");
-      console.log("  Fund it at https://faucet.circle.com and rerun with -k");
+    if (txRes.error) {
+      const msg = txRes.error.message ?? "";
+      if (msg.includes("insufficient funds") || msg.includes("nonce") || msg.includes("balance")) {
+        console.log(`\n   Expected: ${msg}`);
+        console.log("   (Random key has no USDC. Fund the address above and rerun with -k.)");
+      } else {
+        console.error(`\n   ❌ Tx error: ${msg}`);
+      }
+    } else {
+      const tx = txRes.data!;
+      console.log("\n--- Result ---");
+      console.log(`Status:   ${tx.status}`);
+      console.log(`TX hash:  ${tx.tx_hash ?? "n/a"}`);
+      console.log(`From:     ${tx.from}`);
+      if (tx.status === "broadcast") {
+        console.log(`Explorer: https://testnet.arcscan.app/tx/${tx.tx_hash}`);
+      } else if (tx.signed_tx) {
+        console.log(`Signed:   ${tx.signed_tx.slice(0, 40)}...`);
+        console.log("(Not broadcast — address likely needs USDC for gas)");
+      }
     }
     console.log("");
   } finally {
