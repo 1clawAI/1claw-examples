@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@1claw/sdk": "^0.27.0"
+    "@1claw/sdk": "^0.28.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
