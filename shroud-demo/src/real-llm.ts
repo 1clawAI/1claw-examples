@@ -25,7 +25,7 @@ async function main() {
 
   const useGemini = !!GEMINI_API_KEY;
   const provider = useGemini ? "google" : "openai";
-  const model = useGemini ? "gemini-2.0-flash" : "gpt-4o-mini";
+  const model = useGemini ? "gemini-2.5-flash" : "gpt-4o-mini";
 
   const headers: Record<string, string> = {
     "X-Shroud-Agent-Key": `${creds.agentId}:${creds.apiKey}`,

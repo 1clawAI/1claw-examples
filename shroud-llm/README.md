@@ -61,7 +61,7 @@ npm start
 |----------|-------------|-------------------------|
 | OpenAI | `POST .../v1/chat/completions` | OpenAI chat (`gpt-4o-mini`) |
 | Anthropic | **Billing on:** `POST .../v1/chat/completions` with OpenAI-shaped `messages` + Claude model (rewritten to `anthropic/…` by Shroud). If Stripe returns 400 *supported model*, the script **skips** Anthropic (gateway allowlist varies by account). **Billing off:** `POST .../v1/messages` + native body (`claude-sonnet-4-5-20250929`). |
-| Google | `POST .../v1/chat/completions` | OpenAI-style `messages` + `gemini-2.0-flash` (Stripe rewrites model to `google/...`) |
+| Google | `POST .../v1/chat/completions` | OpenAI-style `messages` + `gemini-2.5-flash` (Stripe rewrites model to `google/...`) |
 
 With billing claims, Shroud sets Stripe customer headers server-side. Without billing, each provider needs its key (env or vault). Set `SHROUD_LLM_VERBOSE=1` for full request/response logs.
 

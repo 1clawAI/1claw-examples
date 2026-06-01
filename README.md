@@ -2,7 +2,7 @@
 
 > **Reference only** — these examples are for educational and demo purposes. They are not production-ready and may contain hardcoded values, skip error handling, or use development-only configurations. Always review and adapt for your own security requirements.
 
-Twenty-three example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
+Twenty-five example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
 
 ## Quick reference
 
@@ -31,6 +31,8 @@ Twenty-three example applications demonstrating the [1Claw](https://1claw.xyz) S
 | [agentic-tx](./agentic-tx/)                   | Advanced     | 10 min | **Real transactions**: end-to-end agent creation → fund → sign → broadcast on Ethereum and Base with guardrails |
 | [non-evm-keys](./non-evm-keys/)               | Beginner     | 5 min  | **Non-EVM keys**: generate keys and derive addresses for Bitcoin, Solana, XRP, Cardano, Tron (signing coming soon) |
 | [platform-connect](./platform-connect/)       | Intermediate | 5 min  | **Platform API**: register an app, create a bootstrap template, provision users + vaults + agents |
+| [treasury-wallets](./treasury-wallets/)       | Beginner     | 5 min  | **Treasury wallets**: generate multi-chain wallets, check balances, and send transactions         |
+| [arc-stablecoin](./arc-stablecoin/)           | Intermediate | 5 min  | **Arc Testnet**: sign a native USDC transfer on a stablecoin-native EVM L2 via Intents API       |
 
 **Shroud LLM:** Examples that hit Shroud’s OpenAI-compatible surface (`shroud-demo`, `shroud-llm`) must send **`X-Shroud-Provider`** (e.g. `openai`, `anthropic`, `google`) on chat requests; omitting it returns **400** from Shroud.
 
@@ -56,7 +58,7 @@ npm start
 
 Add `GOOGLE_API_KEY` or `OPENAI_API_KEY` for langchain-agent, `ANTHROPIC_API_KEY` for nextjs-agent-secret, and `SMART_ACCOUNT_ADDRESS` (and optional wallet key) for ampersend-x402 as needed.
 
-**Test all examples:** From the repo root, run `./examples/scripts/test-all-examples.sh`. This installs deps (unless `SKIP_INSTALL=1`), runs each example’s main script or build, and reports pass/fail (22 examples). CLI-style examples are run to completion or stopped after a short delay; Next.js examples are build-only. **shroud-llm** skips unless `.env` has agent credentials; use an org with LLM Token Billing enabled for full JWT checks. **mpc-vault** is typecheck-only (live runs need Pro+ / Business+ and real `1ck_` keys). **intents-layers** is typecheck-only in the aggregate script; run `npm start` locally for the narrative + optional live `signTransaction`. **multi-chain-keys**, **evm-signing**, **agentic-tx**, and **non-evm-keys** are typecheck-only in CI (live runs need agent credentials and funded addresses).
+**Test all examples:** From the repo root, run `./examples/scripts/test-all-examples.sh`. This installs deps (unless `SKIP_INSTALL=1`), runs each example’s main script or build, and reports pass/fail (25 examples). When `ADMIN_EMAIL`/`ADMIN_PASSWORD` or `ONECLAW_TEST_*` are set in the repo root `.env`, the script mints a ephemeral `1ck_` key for the **basic** example. CLI-style examples are run to completion or stopped after a short delay; Next.js examples are build-only. **shroud-llm** skips unless `.env` has agent credentials; use an org with LLM Token Billing enabled for full JWT checks. **mpc-vault** is typecheck-only (live runs need Pro+ / Business+ and real `1ck_` keys). **intents-layers** is typecheck-only in the aggregate script; run `npm start` locally for the narrative + optional live `signTransaction`. **multi-chain-keys**, **evm-signing**, **agentic-tx**, **non-evm-keys**, **treasury-wallets**, and **arc-stablecoin** are typecheck-only in CI (live runs need agent credentials and funded addresses).
 
 **Cleanup:** To delete all secrets in demo accounts (except ampersend-x402, so `keys/x402-session-key` is kept), run `./scripts/cleanup-demo-secrets.sh` from the repo root.
 
@@ -117,6 +119,8 @@ If you're new to 1Claw, walk through the examples in this order:
 17. **[evm-signing](./evm-signing/)** — EIP-191, EIP-712, and all EIP-2718 transaction types
 18. **[agentic-tx](./agentic-tx/)** — Real on-chain transactions with mainnet funds and guardrails
 19. **[non-evm-keys](./non-evm-keys/)** — Non-EVM key generation (Bitcoin, Solana, XRP, Cardano, Tron)
+20. **[treasury-wallets](./treasury-wallets/)** — Generate multi-chain wallets, check balances, send
+21. **[arc-stablecoin](./arc-stablecoin/)** — Sign a USDC transfer on Arc Testnet (stablecoin-native L2)
 
 ## What you need
 

@@ -65,7 +65,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: google("gemini-2.0-flash"),
+    model: google("gemini-2.5-flash"),
     system: `You are a demo AI agent showcasing 1Claw's Intents API with guardrails.
 
 You have a crypto wallet managed through 1Claw. Your signing keys are stored in an HSM-backed vault — you never see the private key. Instead, you submit transaction intents and 1Claw signs them server-side.

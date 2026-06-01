@@ -193,10 +193,9 @@ const PROVIDERS: ProviderCase[] = [
     id: "google",
     path: "/v1/chat/completions",
     xShroudProvider: "google",
-    // Prefer a model Stripe’s gateway consistently exposes as google/… (2.5 may return empty via some gateways).
-    xShroudModel: "gemini-2.0-flash",
+    xShroudModel: "gemini-2.5-flash",
     body: {
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
       messages: [{ role: "user", content: PROMPT }],
       max_tokens: 10,
     },

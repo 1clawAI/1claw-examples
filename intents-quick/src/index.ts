@@ -328,7 +328,7 @@ async function main() {
                         "X-Shroud-Provider": "google",
                     },
                     body: JSON.stringify({
-                        model: "gemini-2.0-flash",
+                        model: "gemini-2.5-flash",
                         messages: [{ role: "user", content: "Reply with exactly one word: hello" }],
                         max_tokens: 10,
                     }),

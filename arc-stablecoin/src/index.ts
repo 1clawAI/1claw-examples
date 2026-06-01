@@ -203,7 +203,7 @@ async function main() {
       console.log("\n--- Result ---");
       console.log(`Status:   ${tx.status}`);
       console.log(`TX hash:  ${tx.tx_hash ?? "n/a"}`);
-      console.log(`From:     ${tx.from}`);
+      console.log(`From:     ${account.address}`);
       if (tx.status === "broadcast") {
         console.log(`Explorer: https://testnet.arcscan.app/tx/${tx.tx_hash}`);
       } else if (tx.signed_tx) {

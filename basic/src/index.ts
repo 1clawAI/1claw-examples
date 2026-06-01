@@ -31,7 +31,7 @@ async function main() {
         : await client.auth.apiKeyToken({ api_key: API_KEY! });
     if (authRes.error) {
         console.error("Auth failed:", authRes.error.message);
-        return;
+        process.exit(1);
     }
 
     let vault: { id: string; name: string } | null = null;

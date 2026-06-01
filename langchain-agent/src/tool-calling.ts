@@ -84,7 +84,7 @@ const getSecretTool = new DynamicStructuredTool({
 const useGemini = Boolean(GOOGLE_API_KEY);
 const llm = useGemini
     ? new ChatGoogleGenerativeAI({
-          model: "gemini-2.0-flash",
+          model: "gemini-2.5-flash",
           temperature: 0,
           apiKey: GOOGLE_API_KEY,
       })
