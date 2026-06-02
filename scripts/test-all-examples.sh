@@ -351,7 +351,7 @@ fi
 echo ""
 
 # --- 20. evm-signing (typecheck; live run needs agent + signing key) ---
-echo "[20/23] evm-signing"
+echo "[20/25] evm-signing"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/evm-signing" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/evm-signing" && npx tsc --noEmit 2>&1); then
   echo "  ✓ evm-signing (typecheck passed)"
