@@ -84,7 +84,7 @@ run_one() {
 }
 
 echo "=============================================="
-echo " 1Claw examples — test all (25)"
+echo " 1Claw examples — test all (26)"
 echo "=============================================="
 echo ""
 
@@ -409,13 +409,25 @@ else
 fi
 echo ""
 
-echo "[25/25] arc-stablecoin"
+echo "[25/26] arc-stablecoin"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/arc-stablecoin" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/arc-stablecoin" && npx tsc --noEmit 2>&1); then
   echo "  ✓ arc-stablecoin (typecheck passed)"
   ((PASS++)) || true
 else
   echo "  ✗ arc-stablecoin typecheck failed"
+  ((FAIL++)) || true
+fi
+echo ""
+
+echo "[26/26] bankr-key-vending"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/bankr-key-vending" && npm install --silent); fi
+[ -f "$EXAMPLES_ROOT/bankr-key-vending/.env" ] || cp "$EXAMPLES_ROOT/bankr-key-vending/.env.example" "$EXAMPLES_ROOT/bankr-key-vending/.env"
+if (cd "$EXAMPLES_ROOT/bankr-key-vending" && npx tsc --noEmit 2>&1); then
+  echo "  ✓ bankr-key-vending (typecheck passed)"
+  ((PASS++)) || true
+else
+  echo "  ✗ bankr-key-vending typecheck failed"
   ((FAIL++)) || true
 fi
 echo ""

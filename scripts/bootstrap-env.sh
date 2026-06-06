@@ -44,6 +44,7 @@ MANIFEST=(
   "ampersend-x402|.env.example|.env"
   "anthropic-wif|.env.example|.env"
   "arc-stablecoin|.env.example|.env"
+  "bankr-key-vending|.env.example|.env"
   "basic|.env.example|.env"
   "evm-signing|.env.example|.env"
   "fastmcp-tool-server|.env.example|.env"
