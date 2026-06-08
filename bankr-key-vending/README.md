@@ -12,7 +12,7 @@ Demonstrates [Bankr dynamic key vending](https://docs.1claw.xyz/guides/bankr-key
 ## Prerequisites
 
 - A 1Claw user API key (`1ck_`) from **Settings → API Keys**
-- Production Bankr vending requires operator config: `BANKR_PARTNER_KEY` (+ optional `BANKR_DEFAULT_WALLET_ID`) on Vault. Without it, lease calls return **400** and the example still validates policy enforcement.
+- Production Bankr vending requires your org's partner key: **Settings → Bankr** in the dashboard, or `PUT /v1/org/bankr-config`. Without org BYOK (or a deployment `BANKR_PARTNER_KEY` fallback), lease calls return **400** and the example still validates policy enforcement.
 
 ## Run
 
