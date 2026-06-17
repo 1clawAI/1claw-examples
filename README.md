@@ -34,6 +34,7 @@ Twenty-six example applications demonstrating the [1Claw](https://1claw.xyz) SDK
 | [treasury-wallets](./treasury-wallets/)       | Beginner     | 5 min  | **Treasury wallets**: generate multi-chain wallets, check balances, and send transactions         |
 | [arc-stablecoin](./arc-stablecoin/)           | Intermediate | 5 min  | **Arc Testnet**: sign a native USDC transfer on a stablecoin-native EVM L2 via Intents API       |
 | [bankr-key-vending](./bankr-key-vending/)     | Intermediate | 5 min  | **Bankr key vending**: deny-by-default policy, agent vs human lease, list/revoke, optional Shroud |
+| [signa-messaging](./signa-messaging/)         | Beginner     | 5 min  | **SIGNA**: a custodied key signs wallet-signed agent DMs on Base — `personal_sign` → SignaAgent, re-verifiable, key never on disk |
 
 **Shroud LLM:** Examples that hit Shroud’s OpenAI-compatible surface (`shroud-demo`, `shroud-llm`) must send **`X-Shroud-Provider`** (e.g. `openai`, `anthropic`, `google`) on chat requests; omitting it returns **400** from Shroud.
 
