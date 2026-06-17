@@ -1,0 +1,22 @@
+{
+    "name": "1claw-signa-messaging",
+    "version": "0.1.0",
+    "private": true,
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "setup": "npx tsx --env-file=.env src/setup.ts",
+        "send": "npx tsx --env-file=.env src/send-signed-dm.ts",
+        "start": "npx tsx --env-file=.env src/setup.ts"
+    },
+    "dependencies": {
+        "@1claw/sdk": "^0.28.0",
+        "signa-agent": "^0.12.0",
+        "viem": "^2.21.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.0.0",
+        "tsx": "^4.0.0",
+        "typescript": "^5.0.0"
+    }
+}
