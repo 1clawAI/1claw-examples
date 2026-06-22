@@ -18,9 +18,9 @@
         "ecdh:cleanup": "npx tsx scripts/cleanup-ecdh-keys.ts",
         "ecdh:setup-agents": "npx tsx scripts/setup-ecdh-agents.ts",
         "ecdh:test": "npx tsx scripts/test-ecdh-with-1claw.ts",
-        "intents:setup": "npx tsx scripts/setup-intents-agent.ts",
-        "intents": "npx tsx src/start-intents-demo.ts",
-        "intents:worker": "npx tsx --env-file=.env.intents src/intents-worker.ts"
+        "intents:setup": "echo 'TODO: intents agent setup (see basic example)'",
+        "intents": "echo 'TODO: intents demo (see basic example)'",
+        "intents:worker": "echo 'TODO: intents worker (see basic example)'"
     },
     "dependencies": {
         "@1claw/sdk": "^0.28.0",

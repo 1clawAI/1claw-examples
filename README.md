@@ -2,7 +2,7 @@
 
 > **Reference only** — these examples are for educational and demo purposes. They are not production-ready and may contain hardcoded values, skip error handling, or use development-only configurations. Always review and adapt for your own security requirements.
 
-Twenty-six example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
+Twenty-seven example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
 
 ## Quick reference
 
@@ -34,6 +34,7 @@ Twenty-six example applications demonstrating the [1Claw](https://1claw.xyz) SDK
 | [treasury-wallets](./treasury-wallets/)       | Beginner     | 5 min  | **Treasury wallets**: generate multi-chain wallets, check balances, and send transactions         |
 | [arc-stablecoin](./arc-stablecoin/)           | Intermediate | 5 min  | **Arc Testnet**: sign a native USDC transfer on a stablecoin-native EVM L2 via Intents API       |
 | [bankr-key-vending](./bankr-key-vending/)     | Intermediate | 5 min  | **Bankr key vending**: deny-by-default policy, agent vs human lease, list/revoke, optional Shroud |
+| [python-sdk](./python-sdk/)                   | Beginner     | 5 min  | **Python SDK**: vault CRUD, secrets, billing, agent auth & audit (pip install oneclaw)            |
 
 **Shroud LLM:** Examples that hit Shroud’s OpenAI-compatible surface (`shroud-demo`, `shroud-llm`) must send **`X-Shroud-Provider`** (e.g. `openai`, `anthropic`, `google`) on chat requests; omitting it returns **400** from Shroud.
 
@@ -59,7 +60,7 @@ npm start
 
 Add `GOOGLE_API_KEY` or `OPENAI_API_KEY` for langchain-agent, `ANTHROPIC_API_KEY` for nextjs-agent-secret, and `SMART_ACCOUNT_ADDRESS` (and optional wallet key) for ampersend-x402 as needed.
 
-**Test all examples:** From the repo root, run `./examples/scripts/test-all-examples.sh`. This installs deps (unless `SKIP_INSTALL=1`), runs each example’s main script or build, and reports pass/fail (26 examples). When `ADMIN_EMAIL`/`ADMIN_PASSWORD` or `ONECLAW_TEST_*` are set in the repo root `.env`, the script mints a ephemeral `1ck_` key for the **basic** example. CLI-style examples are run to completion or stopped after a short delay; Next.js examples are build-only. **shroud-llm** skips unless `.env` has agent credentials; use an org with LLM Token Billing enabled for full JWT checks. **mpc-vault** is typecheck-only (live runs need Pro+ / Business+ and real `1ck_` keys). **intents-layers** is typecheck-only in the aggregate script; run `npm start` locally for the narrative + optional live `signTransaction`. **multi-chain-keys**, **evm-signing**, **agentic-tx**, **non-evm-keys**, **treasury-wallets**, **arc-stablecoin**, and **bankr-key-vending** are typecheck-only in CI (live runs need a `1ck_` key; Bankr lease also needs `BANKR_PARTNER_KEY` on Vault for full vending).
+**Test all examples:** From the repo root, run `./examples/scripts/test-all-examples.sh`. This installs deps (unless `SKIP_INSTALL=1`), runs each example’s main script or build, and reports pass/fail (27 examples). When `ADMIN_EMAIL`/`ADMIN_PASSWORD` or `ONECLAW_TEST_*` are set in the repo root `.env`, the script mints a ephemeral `1ck_` key for the **basic** example. CLI-style examples are run to completion or stopped after a short delay; Next.js examples are build-only. **shroud-llm** skips unless `.env` has agent credentials; use an org with LLM Token Billing enabled for full JWT checks. **mpc-vault** is typecheck-only (live runs need Pro+ / Business+ and real `1ck_` keys). **intents-layers** is typecheck-only in the aggregate script; run `npm start` locally for the narrative + optional live `signTransaction`. **multi-chain-keys**, **evm-signing**, **agentic-tx**, **non-evm-keys**, **treasury-wallets**, **arc-stablecoin**, and **bankr-key-vending** are typecheck-only in CI (live runs need a `1ck_` key; Bankr lease also needs `BANKR_PARTNER_KEY` on Vault for full vending).
 
 **Cleanup:** To delete all secrets in demo accounts (except ampersend-x402, so `keys/x402-session-key` is kept), run `./scripts/cleanup-demo-secrets.sh` from the repo root.
 
@@ -122,6 +123,7 @@ If you're new to 1Claw, walk through the examples in this order:
 19. **[non-evm-keys](./non-evm-keys/)** — Non-EVM key generation (Bitcoin, Solana, XRP, Cardano, Tron)
 20. **[treasury-wallets](./treasury-wallets/)** — Generate multi-chain wallets, check balances, send
 21. **[arc-stablecoin](./arc-stablecoin/)** — Sign a USDC transfer on Arc Testnet (stablecoin-native L2)
+22. **[python-sdk](./python-sdk/)** — Python SDK: vault CRUD, secrets, billing, agent auth
 
 ## What you need
 
