@@ -15,7 +15,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const packageRoot = join(__dirname, "..");
 const envPath = join(packageRoot, ".env");
 
-const BASE_URL = (process.env.ONECLAW_API_URL || process.env.ONECLAW_BASE_URL || "https://api.1claw.xyz").trim();
+const BASE_URL = (process.env.ONECLAW_BASE_URL || "https://api.1claw.xyz").trim();
 const USER_API_KEY = (process.env.ONECLAW_API_KEY ?? "").trim();
 
 function isPlaceholder(key: string): boolean {

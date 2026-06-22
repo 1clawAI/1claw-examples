@@ -13,26 +13,25 @@ import { MultiServerMCPClient } from "@langchain/mcp-adapters";
 import { createOpenAIToolsAgent, AgentExecutor } from "langchain/agents";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 
-const AGENT_TOKEN = process.env.ONECLAW_AGENT_TOKEN;
-const VAULT_ID = process.env.ONECLAW_VAULT_ID;
+const AGENT_API_KEY = process.env.ONECLAW_AGENT_API_KEY;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-if (!AGENT_TOKEN || !VAULT_ID || !OPENAI_API_KEY) {
+if (!AGENT_API_KEY || !OPENAI_API_KEY) {
     console.error(
-        "Required env vars: ONECLAW_AGENT_TOKEN, ONECLAW_VAULT_ID, OPENAI_API_KEY",
+        "Required env vars: ONECLAW_AGENT_API_KEY, OPENAI_API_KEY",
     );
     process.exit(1);
 }
 
-// ── Connect to the 1Claw MCP server ────────────────────────────────
+// ── Connect to the 1Claw MCP server via stdio ──────────────────────
 
 const mcpClient = new MultiServerMCPClient({
     "1claw": {
-        transport: "sse",
-        url: "https://mcp.1claw.xyz/mcp",
-        headers: {
-            Authorization: `Bearer ${AGENT_TOKEN}`,
-            "X-Vault-ID": VAULT_ID,
+        transport: "stdio",
+        command: "npx",
+        args: ["-y", "@1claw/mcp"],
+        env: {
+            ONECLAW_AGENT_API_KEY: AGENT_API_KEY,
         },
     },
 });

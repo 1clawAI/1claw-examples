@@ -26,7 +26,7 @@ npm install
 Set environment variables:
 
 ```bash
-export ONECLAW_API_URL=https://api.1claw.xyz
+export ONECLAW_BASE_URL=https://api.1claw.xyz
 export ONECLAW_PLATFORM_KEY=plt_your_key_here
 ```
 

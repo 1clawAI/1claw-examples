@@ -95,7 +95,7 @@ async function main() {
 
   const client = createClient({
     baseUrl: BASE_URL,
-    token: API_KEY,
+    apiKey: API_KEY,
   });
 
   try {

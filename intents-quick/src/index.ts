@@ -113,7 +113,7 @@ async function main() {
     console.log("══════════════════════════════════════════════════════════════");
     console.log("");
 
-    const client = createClient({ baseUrl: BASE_URL, token: API_KEY });
+    const client = createClient({ baseUrl: BASE_URL, apiKey: API_KEY });
     const saved = loadState();
 
     if (saved && NO_CLEANUP) {

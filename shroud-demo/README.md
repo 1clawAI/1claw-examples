@@ -80,7 +80,7 @@ Only `examples/shroud-demo/.env` is loaded (no sibling or shared env files).
 | Variable                | Required        | Description                                               |
 | ----------------------- | --------------- | --------------------------------------------------------- |
 | `ONECLAW_SHROUD_URL`    | No              | Shroud base URL (default: `https://shroud.1claw.xyz`)     |
-| `ONECLAW_API_URL`       | No              | 1Claw Vault API (default: `https://api.1claw.xyz`)        |
+| `ONECLAW_BASE_URL`      | No              | 1Claw Vault API (default: `https://api.1claw.xyz`)        |
 | `ONECLAW_AGENT_ID`      | For Intents/LLM | Agent UUID                                                |
 | `ONECLAW_AGENT_API_KEY` | For Intents/LLM | Agent API key (`ocv_...`)                                 |
 | `OPENAI_API_KEY`        | Optional        | If not using Vault key for OpenAI, set for LLM proxy test |

@@ -100,7 +100,7 @@ npm run mcp
 
 This connects LangChain to the hosted 1Claw MCP server at `mcp.1claw.xyz`. The agent automatically gets all 27+ vault and security tools (list_secrets, get_secret, put_secret, etc.) without defining them manually.
 
-> **Requires:** `ONECLAW_AGENT_TOKEN` (a pre-set JWT) and `OPENAI_API_KEY`.
+> **Requires:** `ONECLAW_AGENT_API_KEY` (agent API key, `ocv_` prefix) and `OPENAI_API_KEY`.
 
 ## Two approaches
 
@@ -118,7 +118,7 @@ This connects LangChain to the hosted 1Claw MCP server at `mcp.1claw.xyz`. The a
 | `ONECLAW_AGENT_ID` | No | Agent UUID (enables agent-level policies) |
 | `OPENAI_API_KEY` | One LLM required | OpenAI API key |
 | `GOOGLE_API_KEY` | One LLM required | Gemini free tier key |
-| `ONECLAW_AGENT_TOKEN` | MCP only | Agent JWT for MCP server auth |
+| `ONECLAW_AGENT_API_KEY` | MCP only | Agent API key (`ocv_` prefix, auto-refreshes JWT) |
 | `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
 
 ## How it works

@@ -1,4 +1,4 @@
-const API_URL = process.env.ONECLAW_API_URL || "https://api.1claw.xyz";
+const API_URL = process.env.ONECLAW_BASE_URL || "https://api.1claw.xyz";
 const AGENT_ID = process.env.ONECLAW_AGENT_ID!;
 const AGENT_API_KEY = process.env.ONECLAW_AGENT_API_KEY!;
 

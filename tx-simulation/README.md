@@ -48,7 +48,7 @@ cp .env.example .env
 Open `.env` and fill in your credentials:
 
 ```env
-ONECLAW_API_URL=https://api.1claw.xyz
+ONECLAW_BASE_URL=https://api.1claw.xyz
 ONECLAW_AGENT_ID=your-agent-uuid
 ONECLAW_AGENT_API_KEY=ocv_your_agent_api_key
 GOOGLE_GENERATIVE_AI_API_KEY=your-gemini-key
@@ -148,7 +148,7 @@ The agent resolves `vitalik.eth` via ENS, encodes the ERC-20 `transfer()` callda
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ONECLAW_API_URL` | No | 1Claw API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | 1Claw API URL (default: `https://api.1claw.xyz`) |
 | `ONECLAW_AGENT_ID` | Yes | UUID of the agent with Intents API enabled |
 | `ONECLAW_AGENT_API_KEY` | Yes | Agent API key (`ocv_...`) |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | Yes | Google Gemini API key |

@@ -127,7 +127,7 @@ async function main() {
       description: "Bankr key vending example (ephemeral)",
       shroud_enabled: true,
     });
-    agentId = created.data.id;
+    agentId = created.data.agent.id;
     agentApiKey = created.data.api_key ?? "";
     createdAgent = true;
     if (!agentApiKey) fail("create agent did not return api_key");

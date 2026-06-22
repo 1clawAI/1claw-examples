@@ -21,7 +21,7 @@ PASS=0
 FAIL=0
 SKIP="${SKIP_INSTALL:-0}"
 
-API_URL="${ONECLAW_API_URL:-${ONECLAW_BASE_URL:-https://api.1claw.xyz}}"
+API_URL="${ONECLAW_BASE_URL:-https://api.1claw.xyz}"
 API_URL="${API_URL%/}"
 
 # Mint a live 1ck_ key from admin/test creds when example .env still has placeholders.

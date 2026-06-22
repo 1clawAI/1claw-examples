@@ -7,7 +7,7 @@
     "start": "tsx src/index.ts"
   },
   "dependencies": {
-    "@1claw/sdk": "^0.28.0"
+    "@1claw/sdk": "^0.34.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

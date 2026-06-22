@@ -283,7 +283,7 @@ async function main() {
     }
 
     console.log("\n--- Add this to examples/ampersend-x402/.env ---\n");
-    console.log(`ONECLAW_API_URL=${BASE_URL}`);
+    console.log(`ONECLAW_BASE_URL=${BASE_URL}`);
     console.log(`ONECLAW_BASE_URL=${BASE_URL}`);
     console.log(`ONECLAW_VAULT_ID=${vaultId}`);
     console.log(`ONECLAW_AGENT_ID=${agentId}`);

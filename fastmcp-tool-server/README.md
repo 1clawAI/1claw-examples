@@ -52,7 +52,7 @@ ONECLAW_VAULT_ID=your-vault-uuid
 **Option B — Pre-set agent JWT:**
 
 ```env
-ONECLAW_AGENT_TOKEN=your-jwt-here
+ONECLAW_AGENT_API_KEY=ocv_your_agent_key_here
 ONECLAW_VAULT_ID=your-vault-uuid
 ```
 
@@ -153,9 +153,8 @@ Now ask Claude: *"Rotate the API key at demo/api-key"* and it will call the tool
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `ONECLAW_VAULT_ID` | Yes | UUID of the vault to operate on |
-| `ONECLAW_API_KEY` | Yes* | API key (`ocv_...`). Use with `ONECLAW_AGENT_ID`. |
-| `ONECLAW_AGENT_ID` | No | Agent UUID. With API key, server fetches JWT at startup. |
-| `ONECLAW_AGENT_TOKEN` | Yes* | Pre-set agent JWT. Alternative to API key + agent ID. |
+| `ONECLAW_AGENT_API_KEY` | Yes | Agent API key (`ocv_...`). Auto-refreshes JWT. |
+| `ONECLAW_AGENT_ID` | No | Agent UUID. Auto-discovered from API key if omitted. |
 | `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
 | `MCP_TRANSPORT` | No | `stdio` (default) or `httpStream` |
 | `PORT` | No | HTTP port for streaming mode (default: `3001`) |

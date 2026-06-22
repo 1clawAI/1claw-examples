@@ -82,7 +82,7 @@ When claims are present, **Shroud** routes to Stripe's AI Gateway (`llm.stripe.c
 | `ONECLAW_AGENT_ID` | Yes | Agent UUID |
 | `ONECLAW_AGENT_API_KEY` | Yes | Agent key (`ocv_...`) |
 | `ONECLAW_API_KEY` | Optional | User API key — org billing check + `npm run setup` |
-| `ONECLAW_API_URL` | No | Default `https://api.1claw.xyz` |
+| `ONECLAW_BASE_URL` | No | Default `https://api.1claw.xyz` |
 | `ONECLAW_SHROUD_URL` | No | Default `https://shroud.1claw.xyz` |
 | `OPENAI_API_KEY` | No | Only if billing disabled (or use vault `providers/openai/api-key`). |
 | `ANTHROPIC_API_KEY` | No | Only if billing disabled (or vault `providers/anthropic/api-key`). |

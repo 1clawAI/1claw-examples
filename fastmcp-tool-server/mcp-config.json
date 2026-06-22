@@ -5,7 +5,8 @@
             "args": ["tsx", "src/server.ts"],
             "cwd": ".",
             "env": {
-                "ONECLAW_AGENT_API_KEY": "ocv_your_agent_api_key"
+                "ONECLAW_AGENT_API_KEY": "ocv_your_agent_api_key",
+                "ONECLAW_VAULT_ID": "your-vault-uuid"
             }
         }
     }
