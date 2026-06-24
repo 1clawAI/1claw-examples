@@ -61,6 +61,12 @@ run_account_cleanup() {
   fi
 }
 
+run_agent_cleanup() {
+  if [[ -x "$ROOT/scripts/cleanup-test-agents.sh" ]]; then
+    "$ROOT/scripts/cleanup-test-agents.sh" || true
+  fi
+}
+
 echo "── Optional: remove leaked test-pattern vaults (sre-*, demo-*, …) ──"
 run_vault_cleanup
 
@@ -466,6 +472,9 @@ else
   ((PASS++)) || true
 fi
 echo ""
+
+echo "── Post-run: cleanup test-pattern agents (protects /demo) ──"
+run_agent_cleanup
 
 echo "── Post-run: cleanup test-pattern vaults again ──"
 run_vault_cleanup
