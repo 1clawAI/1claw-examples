@@ -67,15 +67,16 @@ def main() -> None:
         # ── 3. Retrieve the secret ──────────────────────────────────
         print("\n--- Retrieving secret ---")
         secret = client.secrets.get(vault_id, "demo/api-key")
-        val = secret.data.get("value", "")
+        sdata = secret.data if secret.data else {}
+        val = sdata.get("value", "")
         masked = val[:6] + "..." + val[-4:] if len(val) > 10 else val
         print(f"  Value: {masked}")
-        print(f"  Type:  {secret.data.get('type', 'N/A')}")
+        print(f"  Type:  {sdata.get('type', 'N/A')}")
 
         # ── 4. List secrets ─────────────────────────────────────────
         print("\n--- Listing secrets ---")
         listing = client.secrets.list(vault_id)
-        entries = listing.data.get("secrets", [])
+        entries = (listing.data or {}).get("secrets", [])
         print(f"  Found {len(entries)} secret(s):")
         for entry in entries:
             print(f"    - {entry.get('path', '?')} (v{entry.get('current_version', '?')})")
@@ -83,16 +84,17 @@ def main() -> None:
         # ── 5. Billing usage ────────────────────────────────────────
         print("\n--- Billing usage ---")
         sub = client.billing.subscription()
-        usage = sub.data.get("usage", {})
+        sub_data = sub.data or {}
+        usage = sub_data.get("usage", {})
         req = usage.get("requests", {})
-        print(f"  Plan:     {sub.data.get('tier', 'unknown')}")
+        print(f"  Plan:     {sub_data.get('tier', 'unknown')}")
         print(f"  Requests: {req.get('used', '?')} / {req.get('limit', '?')}")
-        print(f"  Status:   {sub.data.get('status', '?')}")
+        print(f"  Status:   {sub_data.get('status', '?')}")
 
         # ── 6. List chains ──────────────────────────────────────────
         print("\n--- Supported chains ---")
         chains_res = client.chains.list()
-        chains = chains_res.data.get("chains", [])
+        chains = (chains_res.data or {}).get("chains", [])
         names = [c.get("name", "?") for c in chains[:6]]
         print(f"  {', '.join(names)}" + (" ..." if len(chains) > 6 else ""))
 
