@@ -59,6 +59,20 @@ async function main() {
       email: `demo-user-${Date.now()}@example.com`,
       display_name: "Demo User",
     });
+
+    // Handle cross-org consent flow: if the user exists in another org,
+    // the API returns 409 with link_required containing an OAuth authorize URL.
+    const userData = user.data as unknown as Record<string, unknown> | null;
+    const linkRequired = userData?.link_required as
+      | { authorize_url: string; app_slug: string }
+      | undefined;
+    if (linkRequired) {
+      console.log(`   Cross-org user detected — redirect to consent:`);
+      console.log(`   ${linkRequired.authorize_url}\n`);
+      console.log("--- Done (user must complete OAuth consent) ---");
+      return;
+    }
+
     console.log(`   User: ${user.data?.user_handle} (new: ${user.data?.is_new})`);
     console.log(`   Connection: ${user.data?.connection_id}\n`);
 
