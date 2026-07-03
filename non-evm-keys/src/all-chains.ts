@@ -158,8 +158,10 @@ async function main() {
 Fund any address above to receive tokens. Private keys are stored
 in the org's __agent-keys vault and never leave the HSM boundary.
 
-On-chain signing for non-EVM chains is coming soon. For EVM signing
-(Ethereum, Base, etc.), see the evm-signing and agentic-tx examples.`);
+On-chain signing is LIVE for all five non-EVM chains (Bitcoin, Solana,
+XRP, Cardano, Tron). Sign + broadcast with:
+  npm run sign -- <testnet> <recipient> <amount>
+For EVM signing (Ethereum, Base, etc.), see the evm-signing and agentic-tx examples.`);
 }
 
 main().catch(console.error);

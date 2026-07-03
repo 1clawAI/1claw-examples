@@ -77,10 +77,10 @@ async function main() {
 
     console.log("\n--- Next Steps ---\n");
     console.log(
-        "  Coming soon: on-chain transaction signing for Tron",
+        "  On-chain signing is LIVE for Tron (TRX + TRC-20).",
     );
     console.log(
-        "  Tron transaction signing (protobuf serialization) is on the roadmap",
+        "  Run the signing demo:  npm run sign -- tron-shasta <recipient> <amount>",
     );
 }
 

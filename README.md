@@ -29,7 +29,7 @@ Twenty-seven example applications demonstrating the [1Claw](https://1claw.xyz) S
 | [multi-chain-keys](./multi-chain-keys/)       | Beginner     | 5 min  | **Multi-chain**: provision HSM-backed signing keys for 6 blockchains (Ethereum, Bitcoin, Solana, XRP, Cardano, Tron) |
 | [evm-signing](./evm-signing/)                 | Intermediate | 5 min  | **EVM signing**: EIP-191 personal_sign, EIP-712 typed data, transaction types 0-2 (legacy, access list, EIP-1559) |
 | [agentic-tx](./agentic-tx/)                   | Advanced     | 10 min | **Real transactions**: end-to-end agent creation → fund → sign → broadcast on Ethereum and Base with guardrails |
-| [non-evm-keys](./non-evm-keys/)               | Beginner     | 5 min  | **Non-EVM keys**: generate keys and derive addresses for Bitcoin, Solana, XRP, Cardano, Tron (signing coming soon) |
+| [non-evm-keys](./non-evm-keys/)               | Beginner     | 5 min  | **Non-EVM signing**: provision keys and sign + broadcast native transactions on Bitcoin, Solana, XRP, Cardano, Tron |
 | [platform-connect](./platform-connect/)       | Intermediate | 5 min  | **Platform API**: register an app, create a bootstrap template, provision users + vaults + agents |
 | [treasury-wallets](./treasury-wallets/)       | Beginner     | 5 min  | **Treasury wallets**: generate multi-chain wallets, check balances, and send transactions         |
 | [arc-stablecoin](./arc-stablecoin/)           | Intermediate | 5 min  | **Arc Testnet**: sign a native USDC transfer on a stablecoin-native EVM L2 via Intents API       |
@@ -120,7 +120,7 @@ If you're new to 1Claw, walk through the examples in this order:
 16. **[multi-chain-keys](./multi-chain-keys/)** — Provision signing keys for 6 blockchains and view derived addresses
 17. **[evm-signing](./evm-signing/)** — EIP-191, EIP-712, and all EIP-2718 transaction types
 18. **[agentic-tx](./agentic-tx/)** — Real on-chain transactions with mainnet funds and guardrails
-19. **[non-evm-keys](./non-evm-keys/)** — Non-EVM key generation (Bitcoin, Solana, XRP, Cardano, Tron)
+19. **[non-evm-keys](./non-evm-keys/)** — Non-EVM signing + broadcast (Bitcoin, Solana, XRP, Cardano, Tron)
 20. **[treasury-wallets](./treasury-wallets/)** — Generate multi-chain wallets, check balances, send
 21. **[arc-stablecoin](./arc-stablecoin/)** — Sign a USDC transfer on Arc Testnet (stablecoin-native L2)
 22. **[python-sdk](./python-sdk/)** — Python SDK: vault CRUD, secrets, billing, agent auth

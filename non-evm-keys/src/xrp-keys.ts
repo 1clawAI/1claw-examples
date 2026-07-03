@@ -80,10 +80,10 @@ async function main() {
 
     console.log("\n--- Next Steps ---\n");
     console.log(
-        "  Coming soon: on-chain transaction signing for XRP",
+        "  On-chain signing is LIVE for XRP (Payment, with destination_tag).",
     );
     console.log(
-        "  XRP Ledger transaction signing is on the roadmap",
+        "  Run the signing demo:  npm run sign -- xrp-testnet <recipient> <amount>",
     );
 }
 

@@ -77,10 +77,10 @@ async function main() {
 
     console.log("\n--- Next Steps ---\n");
     console.log(
-        "  Coming soon: on-chain transaction signing for Bitcoin",
+        "  On-chain signing is LIVE for Bitcoin (P2WPKH SegWit, BIP-143).",
     );
     console.log(
-        "  Bitcoin signing support (PSBT, legacy P2PKH) is on the roadmap",
+        "  Run the signing demo:  npm run sign -- bitcoin-testnet <recipient> <amount>",
     );
 }
 

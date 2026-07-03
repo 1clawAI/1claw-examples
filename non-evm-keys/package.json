@@ -11,10 +11,11 @@
         "cardano": "npx tsx --env-file=.env src/cardano-keys.ts",
         "tron": "npx tsx --env-file=.env src/tron-keys.ts",
         "all": "npx tsx --env-file=.env src/all-chains.ts",
+        "sign": "npx tsx --env-file=.env src/sign-transaction.ts",
         "start": "npx tsx --env-file=.env src/all-chains.ts"
     },
     "dependencies": {
-        "@1claw/sdk": "^0.34.0"
+        "@1claw/sdk": "^0.35.0"
     },
     "devDependencies": {
         "@types/node": "^22.0.0",

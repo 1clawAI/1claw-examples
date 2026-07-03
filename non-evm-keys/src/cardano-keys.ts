@@ -82,10 +82,10 @@ async function main() {
 
     console.log("\n--- Next Steps ---\n");
     console.log(
-        "  Coming soon: on-chain transaction signing for Cardano",
+        "  On-chain signing is LIVE for Cardano (CBOR tx, blake2b-256, ed25519).",
     );
     console.log(
-        "  Cardano transaction signing (CBOR serialization) is on the roadmap",
+        "  Run the signing demo:  npm run sign -- cardano-preprod <recipient> <amount>",
     );
 }
 

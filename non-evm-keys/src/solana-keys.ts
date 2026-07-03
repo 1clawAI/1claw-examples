@@ -77,12 +77,10 @@ async function main() {
     console.log("  Faucet:   https://faucet.solana.com (devnet)");
 
     console.log("\n--- Next Steps ---\n");
-    console.log(
-        "  Coming soon: on-chain transaction signing for Solana",
-    );
-    console.log(
-        "  Solana transaction signing (versioned messages, legacy) is on the roadmap",
-    );
+    console.log("  On-chain signing is LIVE for Solana (native SOL + SPL).");
+    console.log("  Run the signing demo:  npm run sign -- solana-devnet <recipient> <amount>");
+    console.log("  Or call the SDK directly:");
+    console.log('    client.agents.submitTransaction(agentId, { chain: "solana-devnet", to, value })');
 }
 
 main().catch(console.error);
