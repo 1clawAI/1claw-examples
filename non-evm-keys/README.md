@@ -47,13 +47,70 @@ npm run sign -- solana-devnet   <recipient>    5 --token <mint> --decimals 6
 
 `amount` is the human-readable major unit (BTC/SOL/XRP/ADA/TRX). 1Claw auto-fetches the chain data it needs (UTXOs, blockhash, sequence, protocol params, ref block), signs inside the HSM/TEE, and broadcasts.
 
+## XRP: `xrpl_tx_json` (arbitrary transaction types)
+
+Beyond simple Payments, you can sign **any** of the 30+ XRPL transaction types by passing the `xrpl_tx_json` field. The server auto-fills `Account`, `Sequence`, `Fee`, `Flags`, `LastLedgerSequence`, and `SigningPubKey` — you provide only the transaction-specific fields.
+
+```bash
+# Run the advanced xrpl_tx_json demo
+npm run sign -- xrp-testnet rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe 0 --xrpl-demo
+```
+
+### Example: TrustSet
+
+```typescript
+const result = await client.agents.signTransaction(agentId, {
+  chain: "xrp-testnet",
+  to: recipientAddress,   // required by API schema but ignored when xrpl_tx_json is present
+  value: "0",
+  xrpl_tx_json: {
+    TransactionType: "TrustSet",
+    LimitAmount: {
+      currency: "USD",
+      issuer: "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+      value: "1000",
+    },
+  },
+});
+```
+
+### Example: OfferCreate (DEX order)
+
+```typescript
+const result = await client.agents.signTransaction(agentId, {
+  chain: "xrp-testnet",
+  to: recipientAddress,
+  value: "0",
+  xrpl_tx_json: {
+    TransactionType: "OfferCreate",
+    TakerPays: { currency: "USD", issuer: issuerAddress, value: "100" },
+    TakerGets: "50000000", // 50 XRP in drops
+  },
+});
+```
+
+### Supported XRPL transaction types
+
+| Category | Types |
+| -------- | ----- |
+| Payments & Escrow | Payment, EscrowCreate, EscrowFinish, EscrowCancel |
+| Trust & Tokens | TrustSet, Clawback |
+| DEX | OfferCreate, OfferCancel |
+| Payment Channels | PaymentChannelCreate, PaymentChannelFund, PaymentChannelClaim |
+| NFTs | NFTokenMint, NFTokenBurn, NFTokenCreateOffer, NFTokenAcceptOffer, NFTokenCancelOffer |
+| AMM | AMMCreate, AMMDeposit, AMMWithdraw, AMMBid, AMMDelete, AMMVote |
+| Account | AccountSet, AccountDelete, SetRegularKey, SignerListSet, DepositPreauth |
+| Checks & Tickets | CheckCreate, CheckCash, CheckCancel, TicketCreate |
+
+The legacy `to`/`value`/`destination_tag` Payment path is preserved for backward compatibility — you don't need `xrpl_tx_json` for simple payments.
+
 ## Supported Chains
 
 | Chain    | Curve      | Address Format                                | Explorer                    | Key Gen     | Signing       |
 | -------- | ---------- | --------------------------------------------- | --------------------------- | ----------- | ------------- |
 | Bitcoin  | secp256k1  | P2WPKH native SegWit (bech32, `bc1q...`)      | mempool.space               | Available   | **Live**      |
 | Solana   | Ed25519    | Base58-encoded 32-byte public key              | solscan.io                  | Available   | **Live** (SOL + SPL) |
-| XRP      | Ed25519    | Classic address (base58check, `r...`)          | xrpscan.com                 | Available   | **Live**      |
+| XRP      | Ed25519    | Classic address (base58check, `r...`)          | xrpscan.com                 | Available   | **Live** (30+ tx types via `xrpl_tx_json`) |
 | Cardano  | Ed25519    | Bech32 enterprise address (`addr1...`)         | cardanoscan.io              | Available   | **Live**      |
 | Tron     | secp256k1  | Base58Check (`T...`)                           | tronscan.org                | Available   | **Live** (TRX + TRC-20) |
 

@@ -130,4 +130,85 @@ async function main() {
     }
 }
 
-main().catch(console.error);
+/**
+ * Demonstrates xrpl_tx_json for arbitrary XRPL transaction types beyond simple
+ * Payment. The field accepts full XRPL transaction JSON — Account, Sequence, Fee,
+ * and SigningPubKey are auto-filled by the server.
+ */
+async function xrplTxJsonDemo() {
+    console.log("\n\n=== XRP xrpl_tx_json Demo (arbitrary transaction types) ===\n");
+
+    const client = createClient({
+        baseUrl: BASE_URL,
+        apiKey: AGENT_API_KEY,
+        agentId: AGENT_ID,
+    });
+
+    const XRP_FAUCET = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe"; // testnet faucet
+
+    // --- XRP TrustSet via xrpl_tx_json ---
+    console.log("--- XRP TrustSet (xrpl_tx_json) ---");
+    const trustSetResult = await client.agents.signTransaction(AGENT_ID!, {
+        chain: "xrp-testnet",
+        to: XRP_FAUCET,
+        value: "0",
+        xrpl_tx_json: {
+            TransactionType: "TrustSet",
+            LimitAmount: {
+                currency: "USD",
+                issuer: XRP_FAUCET,
+                value: "1000",
+            },
+        },
+    });
+
+    if (trustSetResult.error) {
+        console.error("  TrustSet failed:", trustSetResult.error.detail ?? trustSetResult.error.message);
+    } else {
+        const data = trustSetResult.data as { tx_hash?: string; from?: string; signed_tx?: string };
+        console.log(`  From:    ${data.from ?? "-"}`);
+        console.log(`  Tx hash: ${data.tx_hash ?? "-"}`);
+        if (data.signed_tx) console.log(`  Raw tx:  ${data.signed_tx.slice(0, 24)}…`);
+    }
+
+    // --- XRP OfferCreate via xrpl_tx_json ---
+    console.log("\n--- XRP OfferCreate (xrpl_tx_json) ---");
+    const offerResult = await client.agents.signTransaction(AGENT_ID!, {
+        chain: "xrp-testnet",
+        to: XRP_FAUCET,
+        value: "0",
+        xrpl_tx_json: {
+            TransactionType: "OfferCreate",
+            TakerPays: {
+                currency: "USD",
+                issuer: XRP_FAUCET,
+                value: "100",
+            },
+            TakerGets: "50000000", // 50 XRP in drops
+        },
+    });
+
+    if (offerResult.error) {
+        console.error("  OfferCreate failed:", offerResult.error.detail ?? offerResult.error.message);
+    } else {
+        const data = offerResult.data as { tx_hash?: string; from?: string };
+        console.log(`  From:    ${data.from ?? "-"}`);
+        console.log(`  Tx hash: ${data.tx_hash ?? "-"}`);
+    }
+
+    console.log("\n--- Available XRPL transaction types ---");
+    console.log("  Payment, TrustSet, OfferCreate, OfferCancel, AccountSet,");
+    console.log("  AccountDelete, EscrowCreate, EscrowFinish, EscrowCancel,");
+    console.log("  PaymentChannelCreate, PaymentChannelFund, PaymentChannelClaim,");
+    console.log("  NFTokenMint, NFTokenBurn, NFTokenCreateOffer, NFTokenAcceptOffer,");
+    console.log("  NFTokenCancelOffer, AMMCreate, AMMDeposit, AMMWithdraw, AMMBid,");
+    console.log("  AMMDelete, AMMVote, SetRegularKey, SignerListSet, DepositPreauth,");
+    console.log("  CheckCreate, CheckCash, CheckCancel, TicketCreate, Clawback");
+}
+
+// Run xrpl_tx_json demo when chain is xrp-testnet and --xrpl-demo flag is present
+if (flags.has("--xrpl-demo") || (chain === "xrp-testnet" && flags.has("--advanced"))) {
+    xrplTxJsonDemo().catch(console.error);
+} else {
+    main().catch(console.error);
+}

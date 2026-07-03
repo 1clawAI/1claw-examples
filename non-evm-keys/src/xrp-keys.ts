@@ -80,10 +80,16 @@ async function main() {
 
     console.log("\n--- Next Steps ---\n");
     console.log(
-        "  On-chain signing is LIVE for XRP (Payment, with destination_tag).",
+        "  On-chain signing is LIVE for XRP (Payment, TrustSet, OfferCreate,",
+    );
+    console.log(
+        "  NFTokenMint, and 25+ more transaction types via xrpl_tx_json).",
     );
     console.log(
         "  Run the signing demo:  npm run sign -- xrp-testnet <recipient> <amount>",
+    );
+    console.log(
+        "  Advanced xrpl_tx_json: npm run sign -- xrp-testnet <recipient> 0 --xrpl-demo",
     );
 }
 
