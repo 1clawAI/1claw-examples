@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: anthropic("claude-sonnet-4-20250514"),
+    model: anthropic("claude-sonnet-5"),
     system: `You are a helpful assistant with access to a secure 1Claw vault.
 You can list vaults, list secret keys, and fetch secrets when needed.
 When a user asks you to use a secret (like an API key), fetch it from the vault first.
