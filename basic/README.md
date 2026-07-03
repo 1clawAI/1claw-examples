@@ -28,7 +28,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.example` →
 
 - Node.js 20+
 - A [1Claw account](https://1claw.xyz) with an API key (get one at **Settings → API Keys**)
-- Uses `@1claw/sdk@^0.23.0` (npm install will fetch it)
+- Uses `@1claw/sdk@^0.34.0` (npm install will fetch it)
 
 ## Demo walkthrough (5 min)
 
@@ -44,7 +44,7 @@ Open `.env` and fill in your API key:
 
 ```env
 ONECLAW_BASE_URL=https://api.1claw.xyz
-ONECLAW_API_KEY=ocv_your_key_here
+ONECLAW_API_KEY=1ck_your_key_here
 ```
 
 ### Step 2 — Run the core vault flow
