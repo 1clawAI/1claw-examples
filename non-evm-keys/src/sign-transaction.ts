@@ -206,9 +206,67 @@ async function xrplTxJsonDemo() {
     console.log("  CheckCreate, CheckCash, CheckCancel, TicketCreate, Clawback");
 }
 
+/**
+ * Demonstrates SPL / TRC-20 token transfers using token_mint and token_decimals.
+ * The server builds the token-specific transfer instruction automatically.
+ *
+ * Usage:
+ *   npm run sign -- solana-devnet <recipient> 10 --token <spl_mint> --decimals 6
+ *   npm run sign -- tron-shasta   <recipient> 50 --token <trc20_contract> --decimals 6
+ */
+async function tokenTransferDemo() {
+    console.log("\n\n=== Token Transfer Demo (SPL / TRC-20) ===\n");
+
+    const client = createClient({
+        baseUrl: BASE_URL,
+        apiKey: AGENT_API_KEY,
+        agentId: AGENT_ID,
+    });
+
+    // --- Solana SPL token transfer ---
+    console.log("--- Solana SPL Token Transfer (sign-only) ---");
+    const splResult = await client.agents.signTransaction(AGENT_ID!, {
+        chain: "solana-devnet",
+        to: "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+        value: "10",
+        token_mint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC on Solana
+        token_decimals: 6,
+    });
+
+    if (splResult.error) {
+        console.error("  SPL transfer failed:", splResult.error.detail ?? splResult.error.message);
+    } else {
+        const data = splResult.data as { tx_hash?: string; from?: string; status?: string };
+        console.log(`  From:   ${data.from ?? "-"}`);
+        console.log(`  Status: ${data.status ?? "-"}`);
+        console.log(`  Hash:   ${data.tx_hash ?? "-"}`);
+    }
+
+    // --- Tron TRC-20 token transfer ---
+    console.log("\n--- Tron TRC-20 Token Transfer (sign-only) ---");
+    const trcResult = await client.agents.signTransaction(AGENT_ID!, {
+        chain: "tron-shasta",
+        to: "TJRabPrwbZy45sbavfcjinPJC18kjpRTv8",
+        value: "50",
+        token_mint: "TG3XXyExBkFU9nQGf5GLbRNtUN6K9JQE4H", // USDT on Tron Shasta
+        token_decimals: 6,
+    });
+
+    if (trcResult.error) {
+        console.error("  TRC-20 transfer failed:", trcResult.error.detail ?? trcResult.error.message);
+    } else {
+        const data = trcResult.data as { tx_hash?: string; from?: string; status?: string };
+        console.log(`  From:   ${data.from ?? "-"}`);
+        console.log(`  Status: ${data.status ?? "-"}`);
+        console.log(`  Hash:   ${data.tx_hash ?? "-"}`);
+    }
+}
+
 // Run xrpl_tx_json demo when chain is xrp-testnet and --xrpl-demo flag is present
 if (flags.has("--xrpl-demo") || (chain === "xrp-testnet" && flags.has("--advanced"))) {
     xrplTxJsonDemo().catch(console.error);
+} else if (flags.has("--token-demo")) {
+    tokenTransferDemo().catch(console.error);
 } else {
     main().catch(console.error);
 }

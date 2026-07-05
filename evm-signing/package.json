@@ -11,10 +11,11 @@
         "eip1559-tx": "npx tsx --env-file=.env src/eip1559-tx.ts",
         "sign-only": "npx tsx --env-file=.env src/sign-only.ts",
         "access-list-tx": "npx tsx --env-file=.env src/access-list-tx.ts",
+        "token-transfer": "npx tsx --env-file=.env src/token-transfer.ts",
         "start": "npx tsx --env-file=.env src/personal-sign.ts"
     },
     "dependencies": {
-        "@1claw/sdk": "^0.34.0"
+        "@1claw/sdk": "^0.38.0"
     },
     "devDependencies": {
         "@types/node": "^22.0.0",

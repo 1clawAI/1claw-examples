@@ -176,7 +176,29 @@ async function main() {
             }
         }
 
-        // ── 7. Verify agent status ─────────────────────────────────────
+        // ── 7. ERC-20 token transfer via token_mint ─────────────────────
+        console.log("\n--- ERC-20 token transfer (USDC via token_mint) ---");
+
+        const tokenTx = await agentClient.agents.submitTransaction(
+            agent.agent.id,
+            {
+                to: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", // USDC contract
+                value: "100", // 100 USDC
+                chain: "ethereum",
+                token_mint: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                token_decimals: 6,
+            },
+        );
+        if (tokenTx.error) {
+            console.error("Token tx failed:", tokenTx.error.message);
+        } else {
+            const ttx = tokenTx.data!;
+            console.log(`  Status: ${ttx.status}`);
+            console.log(`  Tx hash: ${ttx.tx_hash ?? "n/a"}`);
+            console.log(`  From: ${ttx.from ?? "n/a"}`);
+        }
+
+        // ── 8. Verify agent status ──────────────────────────────────────
         console.log("\n--- Verifying agent ---");
         const getRes = await client.agents.get(agent.agent.id);
         if (getRes.error) {
@@ -189,7 +211,7 @@ async function main() {
             console.log(`  Scopes: [${a.scopes.join(", ")}]`);
         }
 
-        // ── 8. Toggle Intents API off ───────────────────────────────────
+        // ── 9. Toggle Intents API off ───────────────────────────────────
         console.log("\n--- Disabling Intents API ---");
         const updateRes = await client.agents.update(agent.agent.id, {
             intents_api_enabled: false,
@@ -203,7 +225,7 @@ async function main() {
         }
     }
 
-    // ── 9. Clean up ────────────────────────────────────────────────
+    // ── 10. Clean up ───────────────────────────────────────────────
     console.log("\n--- Cleaning up ---");
     if (agent) {
         const agentDelRes = await client.agents.delete(agent.agent.id);
