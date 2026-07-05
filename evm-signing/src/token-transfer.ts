@@ -54,7 +54,6 @@ async function main() {
 
     console.log("Status:    ", data!.status);
     console.log("Tx hash:   ", data!.tx_hash ?? "n/a");
-    console.log("From:      ", data!.from ?? "n/a");
     if (data!.signed_tx) {
         console.log("Signed tx: ", data!.signed_tx.slice(0, 30) + "...");
     }
