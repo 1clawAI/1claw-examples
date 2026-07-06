@@ -9,7 +9,7 @@
         "run": "npx tsx src/index.ts"
     },
     "dependencies": {
-        "@1claw/sdk": "^0.38.0",
+        "@1claw/sdk": "^0.39.0",
         "viem": "^2.48.8"
     },
     "devDependencies": {
