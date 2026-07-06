@@ -170,8 +170,8 @@ Keep responses concise. Use the tools proactively.`,
                 intents_api_enabled: info.intents_api_enabled,
                 allowed_chains: info.tx_allowed_chains ?? [],
                 allowed_destinations: info.tx_to_allowlist ?? [],
-                max_value_per_tx_eth: info.tx_max_value_eth ?? "unlimited",
-                daily_spend_limit_eth: info.tx_daily_limit_eth ?? "unlimited",
+                max_value_per_tx_eth: info.tx_max_value ?? info.tx_max_value_eth ?? "unlimited",
+                daily_spend_limit_eth: info.tx_daily_limit ?? info.tx_daily_limit_eth ?? "unlimited",
               },
             };
           } catch (e) {

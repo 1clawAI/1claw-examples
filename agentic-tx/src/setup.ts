@@ -51,8 +51,8 @@ async function main() {
         description:
             "Agent for on-chain transaction signing with safety guardrails",
         intents_api_enabled: true,
-        tx_max_value_eth: "0.01",
-        tx_daily_limit_eth: "0.05",
+        tx_max_value: "0.01",
+        tx_daily_limit: "0.05",
         tx_allowed_chains: ["ethereum", "base", "sepolia", "base-sepolia"],
         vault_ids: [vaultId],
     });

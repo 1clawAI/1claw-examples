@@ -65,7 +65,7 @@ npm start
 |--------|----------------|-----|
 | Gas token | ETH | USDC |
 | Min base fee | Variable | 20 Gwei (floor) |
-| `tx_max_value_eth` meaning | ETH cap | USDC cap (same field, different denomination) |
+| `tx_max_value` meaning | Native unit cap (ETH on Ethereum, USDC on Arc) | Same field, value in chain's native major unit |
 | Fee model | EIP-1559 | EIP-1559 + EWMA smoothing |
 | Faucet | Alchemy / Coinbase | [Circle Faucet](https://faucet.circle.com) |
 

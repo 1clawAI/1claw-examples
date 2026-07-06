@@ -276,8 +276,8 @@ app.post("/", async (req, res) => {
                         shroud_enabled: agent.shroud_enabled,
                         guardrails: {
                             tx_allowed_chains: agent.tx_allowed_chains,
-                            tx_max_value_eth: agent.tx_max_value_eth,
-                            tx_daily_limit_eth: agent.tx_daily_limit_eth,
+                            tx_max_value: agent.tx_max_value ?? agent.tx_max_value_eth,
+                            tx_daily_limit: agent.tx_daily_limit ?? agent.tx_daily_limit_eth,
                             tx_to_allowlist: agent.tx_to_allowlist,
                         },
                     },

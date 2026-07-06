@@ -146,8 +146,8 @@ async function main() {
       vault_ids: [vault.id],
       tx_allowed_chains: [CHAIN],
       tx_to_allowlist: [RECIPIENT],
-      tx_max_value_eth: "1",
-      tx_daily_limit_eth: "10",
+      tx_max_value: "1",
+      tx_daily_limit: "10",
     });
     if (agentRes.error) {
       console.error("  Failed:", agentRes.error.message);

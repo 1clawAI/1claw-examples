@@ -47,8 +47,8 @@ The agent is created with safety caps enforced server-side before every signatur
 
 | Guardrail | Value | Description |
 |---|---|---|
-| `tx_max_value_eth` | `0.01` | Max ETH per single transaction |
-| `tx_daily_limit_eth` | `0.05` | Rolling 24-hour cumulative spend cap |
+| `tx_max_value` | `0.01` | Max value per single transaction (native major units) |
+| `tx_daily_limit` | `0.05` | Rolling 24-hour per-chain cumulative spend cap |
 | `tx_allowed_chains` | `ethereum, base, sepolia, base-sepolia` | Chains the agent may transact on |
 | `tx_to_allowlist` | *(empty = unrestricted)* | Restrict `to` addresses (add via dashboard or SDK) |
 
@@ -69,6 +69,6 @@ Violations return a 403 with a descriptive error. Adjust limits in the dashboard
 ## Safety Notes
 
 - **Start on testnets.** Use Sepolia and Base Sepolia faucets before touching mainnet.
-- **Guardrails are enforced server-side.** Even if you modify the client code, the vault rejects transactions that exceed `tx_max_value_eth`, `tx_daily_limit_eth`, or target a disallowed chain.
+- **Guardrails are enforced server-side.** Even if you modify the client code, the vault rejects transactions that exceed `tx_max_value`, `tx_daily_limit`, or target a disallowed chain.
 - **API keys are one-time.** The agent `ocv_` key is shown once during setup. Store it immediately.
 - **Private keys never leave the TEE.** Signing happens inside the 1Claw vault (or Shroud TEE). Your agent never sees raw private keys.

@@ -228,7 +228,7 @@ async function main() {
             shroud_enabled: true,
             tx_allowed_chains: [CHAIN],
             tx_to_allowlist: [BURN],
-            tx_max_value_eth: "0.01",
+            tx_max_value: "0.01",
             vault_ids: [vault.id],
         });
         if (agentRes.error) {

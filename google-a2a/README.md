@@ -232,7 +232,7 @@ The coordinator discovers the Intents worker, then:
 [intents-coordinator] Task: Show signer info and guardrails
 [intents-coordinator] Signer config: {
   "intents_api_enabled": true,
-  "guardrails": { "tx_max_value_eth": "0.0100", "tx_daily_limit_eth": "0.0500" }
+  "guardrails": { "tx_max_value": "0.0100", "tx_daily_limit": "0.0500" }
 }
 
 [intents-coordinator] Task: Sign a transfer of 0.001 ETH to 0x...dEaD
@@ -252,7 +252,7 @@ The coordinator discovers the Intents worker, then:
 
 The agent is configured with strict limits. Try tasks that exceed them:
 
-- "Send 1 ETH to 0x..." → rejected by `tx_max_value_eth: 0.01`
+- "Send 1 ETH to 0x..." → rejected by `tx_max_value: 0.01`
 - "Send 0.001 ETH on Ethereum mainnet" → rejected by `tx_allowed_chains: ["base-sepolia"]`
 
 The guardrails are enforced in the TEE before signing — the agent cannot bypass them regardless of what it's instructed to do.

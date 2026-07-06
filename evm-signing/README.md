@@ -84,8 +84,8 @@ The Intents API enforces per-agent guardrails before signing:
 | `eip712_domain_allowlist`  | Allowlisted `verifyingContract` addresses for 712  |
 | `eip712_default_policy`    | `"deny"` (default) or `"allow"` for unlisted domains |
 | `tx_to_allowlist`          | Restrict which `to` addresses the agent can sign for |
-| `tx_max_value_eth`         | Max ETH value per transaction                      |
-| `tx_daily_limit_eth`       | Rolling 24h cumulative spend cap                   |
+| `tx_max_value`             | Max value per transaction (native major units; `tx_max_value_eth` accepted as deprecated alias) |
+| `tx_daily_limit`           | Rolling 24h per-chain cumulative spend cap (`tx_daily_limit_eth` accepted as deprecated alias) |
 | `tx_allowed_chains`        | Restrict which chains the agent may transact on    |
 
 Configure guardrails via the dashboard, SDK, or CLI before running these examples.

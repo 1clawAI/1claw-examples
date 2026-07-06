@@ -57,7 +57,11 @@ interface AgentInfo {
   name: string;
   intents_api_enabled: boolean;
   tx_to_allowlist?: string[];
+  tx_max_value?: string;
+  tx_daily_limit?: string;
+  /** @deprecated Use tx_max_value */
   tx_max_value_eth?: string;
+  /** @deprecated Use tx_daily_limit */
   tx_daily_limit_eth?: string;
   tx_allowed_chains?: string[];
 }

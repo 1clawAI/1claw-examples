@@ -99,8 +99,8 @@ async function main() {
             shroud_enabled: true,
             vault_ids: [vault.id],
             tx_allowed_chains: [chain],
-            tx_max_value_eth: maxValue,
-            tx_daily_limit_eth: dailyLimit,
+            tx_max_value: maxValue,
+            tx_daily_limit: dailyLimit,
             tx_to_allowlist: [],
         });
         console.log(`  ✓ Agent created: ${agentData.agent.id}`);
