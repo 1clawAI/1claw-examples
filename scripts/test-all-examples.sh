@@ -90,7 +90,7 @@ run_one() {
 }
 
 echo "=============================================="
-echo " 1Claw examples — test all (27)"
+echo " 1Claw examples — test all (28)"
 echo "=============================================="
 echo ""
 
@@ -469,6 +469,23 @@ if [ -d "$PYSDK_DIR" ]; then
   rm -f "$pysdk_out"
 else
   echo "  ○ python-sdk skipped (directory not found)"
+  ((PASS++)) || true
+fi
+echo ""
+
+# --- 28. multichain-agent (Next.js build) ---
+echo "[28/28] multichain-agent"
+if [ -d "$EXAMPLES_ROOT/multichain-agent" ]; then
+  if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/multichain-agent" && npm install --silent); fi
+  if (cd "$EXAMPLES_ROOT/multichain-agent" && npm run build 2>&1); then
+    echo "  ✓ multichain-agent build passed"
+    ((PASS++)) || true
+  else
+    echo "  ✗ multichain-agent build failed"
+    ((FAIL++)) || true
+  fi
+else
+  echo "  ○ multichain-agent skipped (directory not found)"
   ((PASS++)) || true
 fi
 echo ""

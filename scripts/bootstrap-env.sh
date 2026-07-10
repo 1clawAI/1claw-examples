@@ -55,6 +55,7 @@ MANIFEST=(
   "langchain-agent|.env.example|.env"
   "local-inspect|.env.example|.env"
   "logos-chat|.env.example|.env"
+  "multichain-agent|.env.example|.env.local"
   "mpc-vault|.env.example|.env"
   "multi-chain-keys|.env.example|.env"
   "nextjs-agent-secret|.env.local.example|.env.local"
