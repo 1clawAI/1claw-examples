@@ -49,28 +49,55 @@ export async function fetchBalance(
         return { chain, balance: (sun / 1e6).toFixed(2), unit: "TRX" };
       }
       case "ethereum": {
-        const r = (await postJson("https://rpc.sepolia.org", {
-          jsonrpc: "2.0",
-          id: 1,
-          method: "eth_getBalance",
-          params: [address, "latest"],
-        })) as { result?: string };
-        const wei = parseInt(r.result ?? "0x0", 16);
-        return { chain, balance: (wei / 1e18).toFixed(6), unit: "ETH" };
+        const sepoliaRpcs = [
+          "https://ethereum-sepolia-rpc.publicnode.com",
+          "https://1rpc.io/sepolia",
+          "https://rpc.sepolia.org",
+        ];
+        for (const rpcUrl of sepoliaRpcs) {
+          try {
+            const res = await fetch(rpcUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                jsonrpc: "2.0",
+                id: 1,
+                method: "eth_getBalance",
+                params: [address, "latest"],
+              }),
+              signal: AbortSignal.timeout(5000),
+            });
+            if (!res.ok) continue;
+            const r = (await res.json()) as { result?: string };
+            if (!r.result) continue;
+            const wei = parseInt(r.result, 16);
+            return { chain, balance: (wei / 1e18).toFixed(6), unit: "ETH" };
+          } catch {
+            continue;
+          }
+        }
+        return { chain, unit: "ETH", error: "All Sepolia RPCs unavailable" };
       }
       case "bitcoin": {
         const signetAddr = signetDisplayAddress(address);
-        const res = await fetch(
-          `https://mempool.space/signet/api/address/${signetAddr}`,
-        );
-        if (!res.ok) {
-          return { chain, unit: "BTC", error: "Could not fetch UTXOs" };
+        try {
+          const res = await fetch(
+            `https://mempool.space/signet/api/address/${signetAddr}`,
+            { signal: AbortSignal.timeout(8000) },
+          );
+          if (!res.ok) {
+            return { chain, unit: "BTC", error: `Mempool API ${res.status}` };
+          }
+          const d = (await res.json()) as {
+            chain_stats?: { funded_txo_sum?: number; spent_txo_sum?: number };
+          };
+          const funded = d.chain_stats?.funded_txo_sum ?? 0;
+          const spent = d.chain_stats?.spent_txo_sum ?? 0;
+          const sats = funded - spent;
+          return { chain, balance: (sats / 1e8).toFixed(8), unit: "BTC" };
+        } catch {
+          return { chain, unit: "BTC", error: "Could not reach mempool.space" };
         }
-        const d = (await res.json()) as {
-          chain_stats?: { funded_txo_sum?: number };
-        };
-        const sats = d.chain_stats?.funded_txo_sum ?? 0;
-        return { chain, balance: (sats / 1e8).toFixed(8), unit: "BTC" };
       }
       case "cardano": {
         const preprod = cardanoPreprodAddress(address);
