@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import { SUPPORTED_CHAINS } from "@/lib/chains";
 import {
-  displayAddress,
   fetchBalance,
   requestProgrammaticFaucet,
 } from "@/lib/funding";
-import { isAgentConfigured, listSigningKeys } from "@/lib/oneclaw";
+import {
+  isAgentConfigured,
+  listSigningKeys,
+  getSigningKeyBalance,
+} from "@/lib/oneclaw";
 
 export async function GET() {
   if (!isAgentConfigured()) {
@@ -15,16 +18,56 @@ export async function GET() {
   try {
     const keys = await listSigningKeys();
     const byChain = Object.fromEntries(
-      keys.filter((k) => k.is_active !== false).map((k) => [k.chain, k.address]),
+      keys.filter((k) => k.is_active !== false).map((k) => [k.chain, k]),
     );
 
     const chains = await Promise.all(
       SUPPORTED_CHAINS.map(async (cfg) => {
-        const address = byChain[cfg.signingKeyChain];
-        const display = address ? displayAddress(cfg.key, address) : undefined;
-        const balance = address
-          ? await fetchBalance(cfg.key, address)
-          : { chain: cfg.key, unit: cfg.nativeSymbol, error: "Not provisioned" };
+        const key = byChain[cfg.signingKeyChain];
+        if (!key?.address) {
+          return {
+            key: cfg.key,
+            label: cfg.label,
+            testnetChain: cfg.testnetChain,
+            nativeSymbol: cfg.nativeSymbol,
+            faucet: cfg.faucet,
+            unit: cfg.nativeSymbol,
+            balanceError: "Not provisioned",
+            canAutoFund: cfg.key === "xrp" || cfg.key === "solana",
+          };
+        }
+
+        // Call the 1Claw balance API with the testnet chain name.
+        // This correctly derives the testnet address from the stored public key.
+        let address = key.address;
+        let balance: string | undefined;
+        let balanceError: string | undefined;
+        let unit = cfg.nativeSymbol;
+
+        try {
+          const bal = (await getSigningKeyBalance(cfg.testnetChain)) as Record<
+            string,
+            unknown
+          >;
+          if (bal.address && typeof bal.address === "string") {
+            address = bal.address;
+          }
+          if (bal.balance_display && typeof bal.balance_display === "string") {
+            balance = bal.balance_display;
+          } else if (bal.message && typeof bal.message === "string") {
+            // API returned a message instead of a balance; fall back to direct
+            const fb = await fetchBalance(cfg.key, address);
+            balance = fb.balance;
+            balanceError = fb.error;
+            unit = fb.unit;
+          }
+        } catch {
+          // 1Claw balance API failed; fall back to direct external API
+          const fb = await fetchBalance(cfg.key, address);
+          balance = fb.balance;
+          balanceError = fb.error;
+          unit = fb.unit;
+        }
 
         return {
           key: cfg.key,
@@ -32,12 +75,12 @@ export async function GET() {
           testnetChain: cfg.testnetChain,
           nativeSymbol: cfg.nativeSymbol,
           address,
-          displayAddress: display,
+          displayAddress: address,
           faucet: cfg.faucet,
-          explorerAddress: address ? cfg.explorerAddress(display ?? address) : undefined,
-          balance: balance.balance,
-          balanceError: balance.error,
-          unit: balance.unit,
+          explorerAddress: cfg.explorerAddress(address),
+          balance,
+          balanceError,
+          unit,
           canAutoFund: cfg.key === "xrp" || cfg.key === "solana",
         };
       }),
