@@ -112,7 +112,7 @@ function ThreatCard({ result }: { result: Record<string, unknown> }) {
       ) : (
         <p className="text-emerald-400">All checks passed. No threats detected.</p>
       )}
-      {result.note && <p className="text-[#6b6b73] italic">{result.note as string}</p>}
+      {result.note ? <p className="text-[#6b6b73] italic">{result.note as string}</p> : null}
     </div>
   );
 }
