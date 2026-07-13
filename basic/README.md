@@ -2,7 +2,7 @@
 
 > **Reference only** — not for production use. Review and adapt for your own security requirements.
 
-Three TypeScript scripts that walk through the core 1Claw workflows: vault CRUD, secrets management, billing, user signup with sharing, and the Intents API.
+Four TypeScript scripts that walk through the core 1Claw workflows: vault CRUD, secrets management, billing, user signup with sharing, the Intents API, and Execution Intents bindings.
 
 ## Quick start
 
@@ -23,6 +23,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.example` →
 - Check your billing usage
 - Sign up a new user and share a secret by email
 - Register an agent with the Intents API, submit a signed transaction, and verify guardrails
+- Create Execution Intents bindings with inline and vault-ref credentials
 
 ## Prerequisites
 
@@ -123,6 +124,22 @@ This runs `src/intents-api.ts`, which:
 5. Verifies the agent's configuration
 6. Disables the Intents API and cleans up
 
+### Step 5 — Run the Execution Intents flow (optional)
+
+```bash
+npm run execution-intents
+```
+
+This runs `src/execution-intents.ts`, which:
+
+1. Creates a vault and stores a Stripe API key
+2. Registers an agent with `execution_intents_enabled: true`
+3. Creates a binding with an **inline** credential (HSM-encrypted copy)
+4. Creates a binding with a **vault-ref** credential (`credential_source: { type: "vault_ref", vault_id, path }`)
+5. Lists bindings showing both credential source types
+6. Rotates the vault secret — vault-ref bindings automatically resolve the new value
+7. Cleans up
+
 ## Scripts
 
 | Command | Script | Description |
@@ -130,6 +147,7 @@ This runs `src/intents-api.ts`, which:
 | `npm start` | `src/index.ts` | Vault CRUD, secrets, billing |
 | `npm run signup` | `src/signup-and-share.ts` | User signup, create vault, share by email |
 | `npm run intents-api` | `src/intents-api.ts` | Agent with Intents API, transaction signing |
+| `npm run execution-intents` | `src/execution-intents.ts` | Execution Intents: bindings with inline & vault-ref credentials |
 
 ## Environment variables
 

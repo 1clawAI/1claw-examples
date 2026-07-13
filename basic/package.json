@@ -7,7 +7,8 @@
     "scripts": {
         "start": "npx tsx --env-file=.env src/index.ts",
         "signup": "npx tsx --env-file=.env src/signup-and-share.ts",
-        "intents-api": "npx tsx --env-file=.env src/intents-api.ts"
+        "intents-api": "npx tsx --env-file=.env src/intents-api.ts",
+        "execution-intents": "npx tsx --env-file=.env src/execution-intents.ts"
     },
     "dependencies": {
         "@1claw/sdk": "^0.38.0"

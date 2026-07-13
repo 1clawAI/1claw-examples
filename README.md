@@ -8,7 +8,7 @@ Twenty-eight example applications demonstrating the [1Claw](https://1claw.xyz) S
 
 | Example                                       | Difficulty   | Time   | What you'll build                                                                          |
 | --------------------------------------------- | ------------ | ------ | ------------------------------------------------------------------------------------------ |
-| [basic](./basic/)                             | Beginner     | 5 min  | TypeScript scripts: vault CRUD, secrets, billing, signup, sharing, Intents API             |
+| [basic](./basic/)                             | Beginner     | 5 min  | TypeScript scripts: vault CRUD, secrets, billing, signup, sharing, Intents API, Execution Intents (inline & vault-ref bindings) |
 | [mpc-vault](./mpc-vault/)                     | Intermediate | 10 min | **MPC**: 2-of-2 client custody (`X-Client-Share`) and 2-of-3 multi-HSM vaults (tier-dependent) |
 | [langchain-agent](./langchain-agent/)         | Beginner     | 5 min  | LangChain agent fetches secrets just-in-time (OpenAI or Gemini)                            |
 | [fastmcp-tool-server](./fastmcp-tool-server/) | Intermediate | 5 min  | Custom MCP server with domain tools (rotate keys, deploy, parse env configs)               |
