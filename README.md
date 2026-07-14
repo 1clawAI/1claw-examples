@@ -35,6 +35,7 @@ Twenty-eight example applications demonstrating the [1Claw](https://1claw.xyz) S
 | [treasury-wallets](./treasury-wallets/)       | Beginner     | 5 min  | **Treasury wallets**: generate multi-chain wallets, check balances, and send transactions         |
 | [arc-stablecoin](./arc-stablecoin/)           | Intermediate | 5 min  | **Arc Testnet**: sign a native USDC transfer on a stablecoin-native EVM L2 via Intents API       |
 | [bankr-key-vending](./bankr-key-vending/)     | Intermediate | 5 min  | **Bankr key vending**: deny-by-default policy, agent vs human lease, list/revoke, optional Shroud |
+| [payment-cards](./payment-cards/)             | Intermediate | 5 min  | **Payment Card Vault**: enable guardrails, order a prepaid card via x402, poll to ready, reveal    |
 | [python-sdk](./python-sdk/)                   | Beginner     | 5 min  | **Python SDK**: vault CRUD, secrets, billing, agent auth & audit (pip install oneclaw)            |
 
 **Shroud LLM:** Examples that hit Shroud’s OpenAI-compatible surface (`shroud-demo`, `shroud-llm`) must send **`X-Shroud-Provider`** (e.g. `openai`, `anthropic`, `google`) on chat requests; omitting it returns **400** from Shroud.
