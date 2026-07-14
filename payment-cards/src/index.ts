@@ -93,7 +93,7 @@ async function main() {
     const e = asSdkError(err);
     if (e?.status === 409) {
       const { data } = await human.signingKeys.list(agentId);
-      ethAddress = data.keys?.find((k) => k.chain === "ethereum")?.address;
+      ethAddress = data.keys?.find((k: any) => k.chain === "ethereum")?.address;
       ok(`Ethereum signing key already present: ${ethAddress ?? "(unknown)"}`);
     } else {
       fail(`signing-key provisioning → ${e?.status ?? "?"}: ${e?.detail ?? String(err)}`);
