@@ -195,7 +195,7 @@ async function main() {
             const ttx = tokenTx.data!;
             console.log(`  Status: ${ttx.status}`);
             console.log(`  Tx hash: ${ttx.tx_hash ?? "n/a"}`);
-            console.log(`  From: ${ttx.from ?? "n/a"}`);
+            console.log(`  From: ${(ttx as any).from ?? "n/a"}`);
         }
 
         // ── 8. Verify agent status ──────────────────────────────────────

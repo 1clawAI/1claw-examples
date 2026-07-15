@@ -11,7 +11,7 @@
         "execution-intents": "npx tsx --env-file=.env src/execution-intents.ts"
     },
     "dependencies": {
-        "@1claw/sdk": "^0.38.0"
+        "@1claw/sdk": "^0.41.0"
     },
     "devDependencies": {
         "@types/node": "^22.0.0",
