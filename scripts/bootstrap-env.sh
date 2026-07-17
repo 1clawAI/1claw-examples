@@ -67,8 +67,10 @@ MANIFEST=(
   "treasury-wallets|.env.example|.env"
   "tx-simulation|.env.example|.env"
   "x402-payments|.env.example|.env"
+  "execution-intents|.env.example|.env"
+  "payment-cards|.env.example|.env"
+  "python-sdk|.env.example|.env"
 )
-
 copied=0
 skipped=0
 missing_tpl=0
@@ -124,6 +126,6 @@ else
 fi
 if [[ -n "$FILTER" && "$copied" -eq 0 && "$skipped" -eq 0 && "$missing_tpl" -eq 0 ]]; then
   echo "No matching example: $FILTER" >&2
-  echo "Try one of: agentic-tx ampersend-x402 anthropic-wif arc-stablecoin basic evm-signing fastmcp-tool-server google-a2a intents-layers intents-quick jwt-ttl-defense langchain-agent local-inspect logos-chat mpc-vault multi-chain-keys nextjs-agent-secret non-evm-keys platform-connect shroud-demo shroud-llm shroud-security treasury-wallets tx-simulation x402-payments" >&2
+  echo "Try one of: agentic-tx ampersend-x402 anthropic-wif arc-stablecoin bankr-key-vending basic evm-signing execution-intents fastmcp-tool-server google-a2a intents-layers intents-quick jwt-ttl-defense langchain-agent local-inspect logos-chat mpc-vault multi-chain-keys multichain-agent nextjs-agent-secret non-evm-keys payment-cards platform-connect python-sdk shroud-demo shroud-llm shroud-security treasury-wallets tx-simulation x402-payments" >&2
   exit 1
 fi

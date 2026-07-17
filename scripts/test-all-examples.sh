@@ -90,12 +90,12 @@ run_one() {
 }
 
 echo "=============================================="
-echo " 1Claw examples — test all (28)"
+echo " 1Claw examples — test all (30)"
 echo "=============================================="
 echo ""
 
 # --- 1. local-inspect (no credentials needed) ---
-echo "[1/27] local-inspect"
+echo "[1/30] local-inspect"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/local-inspect" && npm install --silent); fi
 if run_one "$EXAMPLES_ROOT/local-inspect" "npm start"; then
   echo "  ✓ local-inspect passed"
@@ -107,7 +107,7 @@ fi
 echo ""
 
 # --- 2. basic ---
-echo "[2/27] basic"
+echo "[2/30] basic"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/basic" && npm install --silent); fi
 ensure_live_api_key || true
 basic_out=$(mktemp 2>/dev/null || echo /tmp/basic-out.$$)
@@ -129,7 +129,7 @@ rm -f "$basic_out"
 echo ""
 
 # --- 2. fastmcp-tool-server ---
-echo "[3/27] fastmcp-tool-server"
+echo "[3/30] fastmcp-tool-server"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/fastmcp-tool-server" && npm install --silent); fi
 # Filter expected warning when no MCP client connects (server runs alone for smoke test)
 run_timeout "$EXAMPLES_ROOT/fastmcp-tool-server" 12 "npm start 2>&1 | grep -v 'FastMCP warning' | grep -v 'could not infer client capabilities' | grep -v 'Connection may be unstable'"
@@ -138,7 +138,7 @@ echo "  ✓ fastmcp-tool-server (started and stopped)"
 echo ""
 
 # --- 3. nextjs-agent-secret ---
-echo "[4/27] nextjs-agent-secret"
+echo "[4/30] nextjs-agent-secret"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/nextjs-agent-secret" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/nextjs-agent-secret" && npm run build 2>&1); then
   echo "  ✓ nextjs-agent-secret build passed"
@@ -150,7 +150,7 @@ fi
 echo ""
 
 # --- 4. google-a2a ---
-echo "[5/27] google-a2a"
+echo "[5/30] google-a2a"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/google-a2a" && npm install --silent); fi
 run_timeout "$EXAMPLES_ROOT/google-a2a" 15 "npm start"
 echo "  ✓ google-a2a (started and stopped)"
@@ -158,7 +158,7 @@ echo "  ✓ google-a2a (started and stopped)"
 echo ""
 
 # --- 5. tx-simulation ---
-echo "[6/27] tx-simulation"
+echo "[6/30] tx-simulation"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/tx-simulation" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/tx-simulation" && npm run build 2>&1); then
   echo "  ✓ tx-simulation build passed"
@@ -170,7 +170,7 @@ fi
 echo ""
 
 # --- 6. shroud-demo ---
-echo "[7/27] shroud-demo"
+echo "[7/30] shroud-demo"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud-demo" && npm install --silent); fi
 out=$(cd "$EXAMPLES_ROOT/shroud-demo" && npm start 2>&1) || true
 if echo "$out" | grep -q "ONECLAW_\|Error\|error\|failed"; then
@@ -188,7 +188,7 @@ fi
 echo ""
 
 # --- 7. ampersend-x402 ---
-echo "[8/27] ampersend-x402"
+echo "[8/30] ampersend-x402"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/ampersend-x402" && npm install --silent); fi
 run_timeout "$EXAMPLES_ROOT/ampersend-x402" 12 "npm start"
 echo "  ✓ ampersend-x402 (started and stopped)"
@@ -196,7 +196,7 @@ echo "  ✓ ampersend-x402 (started and stopped)"
 echo ""
 
 # --- 8. x402-payments ---
-echo "[9/27] x402-payments"
+echo "[9/30] x402-payments"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/x402-payments" && npm install --silent); fi
 [ -f "$EXAMPLES_ROOT/x402-payments/.env" ] || cp "$EXAMPLES_ROOT/x402-payments/.env.example" "$EXAMPLES_ROOT/x402-payments/.env"
 out=$(cd "$EXAMPLES_ROOT/x402-payments" && npm start 2>&1) || true
@@ -214,7 +214,7 @@ fi
 echo ""
 
 # --- 9. langchain-agent (slow: 45s + LLM calls) ---
-echo "[10/27] langchain-agent"
+echo "[10/30] langchain-agent"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/langchain-agent" && npm install --silent --legacy-peer-deps); fi
 LANGCHAIN_OUT=$(mktemp 2>/dev/null || echo /tmp/langchain-out.$$)
 (cd "$EXAMPLES_ROOT/langchain-agent" && npm start > "$LANGCHAIN_OUT" 2>&1) & lpid=$!
@@ -241,7 +241,7 @@ fi
 echo ""
 
 # --- 10. shroud-security ---
-echo "[11/27] shroud-security"
+echo "[11/30] shroud-security"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud-security" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/shroud-security" && npx tsc --noEmit 2>&1); then
   echo "  ✓ shroud-security (typecheck passed)"
@@ -253,7 +253,7 @@ fi
 echo ""
 
 # --- 12. shroud-llm (LLM Token Billing + Shroud; skips without agent creds) ---
-echo "[12/27] shroud-llm"
+echo "[12/30] shroud-llm"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud-llm" && npm install --silent); fi
 [ -f "$EXAMPLES_ROOT/shroud-llm/.env" ] || cp "$EXAMPLES_ROOT/shroud-llm/.env.example" "$EXAMPLES_ROOT/shroud-llm/.env"
 out=$(cd "$EXAMPLES_ROOT/shroud-llm" && npm start 2>&1) || true
@@ -273,7 +273,7 @@ else
 fi
 echo ""
 
-echo "[13/27] mpc-vault"
+echo "[13/30] mpc-vault"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/mpc-vault" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/mpc-vault" && npx tsc --noEmit 2>&1); then
   echo "  ✓ mpc-vault (typecheck passed)"
@@ -285,7 +285,7 @@ fi
 echo ""
 
 # --- 14. logos-chat (Next.js UI + Waku CLI; build includes typecheck) ---
-echo "[14/27] logos-chat"
+echo "[14/30] logos-chat"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/logos-chat" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/logos-chat" && npm run build 2>&1); then
   echo "  ✓ logos-chat build passed"
@@ -297,7 +297,7 @@ fi
 echo ""
 
 # --- 15. intents-layers (typecheck; npm start = narrative + optional live sign) ---
-echo "[15/27] intents-layers"
+echo "[15/30] intents-layers"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/intents-layers" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/intents-layers" && npx tsc --noEmit 2>&1); then
   echo "  ✓ intents-layers (typecheck passed)"
@@ -309,7 +309,7 @@ fi
 echo ""
 
 # --- 16. jwt-ttl-defense (typecheck only; run needs a real 1ck_ key) ---
-echo "[16/27] jwt-ttl-defense"
+echo "[16/30] jwt-ttl-defense"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/jwt-ttl-defense" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/jwt-ttl-defense" && npx tsc --noEmit 2>&1); then
   echo "  ✓ jwt-ttl-defense (typecheck passed)"
@@ -321,7 +321,7 @@ fi
 echo ""
 
 # --- 17. anthropic-wif (typecheck only; live run needs an Anthropic WIF provider) ---
-echo "[17/27] anthropic-wif"
+echo "[17/30] anthropic-wif"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/anthropic-wif" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/anthropic-wif" && npx tsc --noEmit 2>&1); then
   echo "  ✓ anthropic-wif (typecheck passed)"
@@ -333,7 +333,7 @@ fi
 echo ""
 
 # --- 18. intents-quick (typecheck; live run needs a 1ck_ key) ---
-echo "[18/27] intents-quick"
+echo "[18/30] intents-quick"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/intents-quick" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/intents-quick" && npx tsc --noEmit 2>&1); then
   echo "  ✓ intents-quick (typecheck passed)"
@@ -345,7 +345,7 @@ fi
 echo ""
 
 # --- 19. multi-chain-keys (typecheck; live run needs agent creds) ---
-echo "[19/27] multi-chain-keys"
+echo "[19/30] multi-chain-keys"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/multi-chain-keys" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/multi-chain-keys" && npx tsc --noEmit 2>&1); then
   echo "  ✓ multi-chain-keys (typecheck passed)"
@@ -357,7 +357,7 @@ fi
 echo ""
 
 # --- 20. evm-signing (typecheck; live run needs agent + signing key) ---
-echo "[20/27] evm-signing"
+echo "[20/30] evm-signing"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/evm-signing" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/evm-signing" && npx tsc --noEmit 2>&1); then
   echo "  ✓ evm-signing (typecheck passed)"
@@ -369,7 +369,7 @@ fi
 echo ""
 
 # --- 21. agentic-tx (typecheck; live run needs agent + funded address) ---
-echo "[21/27] agentic-tx"
+echo "[21/30] agentic-tx"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/agentic-tx" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/agentic-tx" && npx tsc --noEmit 2>&1); then
   echo "  ✓ agentic-tx (typecheck passed)"
@@ -381,7 +381,7 @@ fi
 echo ""
 
 # --- 22. non-evm-keys (typecheck; live run needs agent creds) ---
-echo "[22/27] non-evm-keys"
+echo "[22/30] non-evm-keys"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/non-evm-keys" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/non-evm-keys" && npx tsc --noEmit 2>&1); then
   echo "  ✓ non-evm-keys (typecheck passed)"
@@ -393,7 +393,7 @@ fi
 echo ""
 
 # --- 23. platform-connect (typecheck; live run needs plt_ key) ---
-echo "[23/27] platform-connect"
+echo "[23/30] platform-connect"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/platform-connect" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/platform-connect" && npx tsc --noEmit 2>&1); then
   echo "  ✓ platform-connect (typecheck passed)"
@@ -404,7 +404,7 @@ else
 fi
 echo ""
 
-echo "[24/27] treasury-wallets"
+echo "[24/30] treasury-wallets"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/treasury-wallets" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/treasury-wallets" && npx tsc --noEmit 2>&1); then
   echo "  ✓ treasury-wallets (typecheck passed)"
@@ -415,7 +415,7 @@ else
 fi
 echo ""
 
-echo "[25/27] arc-stablecoin"
+echo "[25/30] arc-stablecoin"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/arc-stablecoin" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/arc-stablecoin" && npx tsc --noEmit 2>&1); then
   echo "  ✓ arc-stablecoin (typecheck passed)"
@@ -426,7 +426,7 @@ else
 fi
 echo ""
 
-echo "[26/27] bankr-key-vending"
+echo "[26/30] bankr-key-vending"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/bankr-key-vending" && npm install --silent); fi
 [ -f "$EXAMPLES_ROOT/bankr-key-vending/.env" ] || cp "$EXAMPLES_ROOT/bankr-key-vending/.env.example" "$EXAMPLES_ROOT/bankr-key-vending/.env"
 if (cd "$EXAMPLES_ROOT/bankr-key-vending" && npx tsc --noEmit 2>&1); then
@@ -438,8 +438,34 @@ else
 fi
 echo ""
 
-# --- 27. python-sdk (pip install + run main.py with live creds) ---
-echo "[27/27] python-sdk"
+echo ""
+
+echo "[27/30] payment-cards"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/payment-cards" && npm install --silent); fi
+[ -f "$EXAMPLES_ROOT/payment-cards/.env" ] || cp "$EXAMPLES_ROOT/payment-cards/.env.example" "$EXAMPLES_ROOT/payment-cards/.env" 2>/dev/null || true
+if (cd "$EXAMPLES_ROOT/payment-cards" && npx tsc --noEmit 2>&1); then
+  echo "  ✓ payment-cards (typecheck passed)"
+  ((PASS++)) || true
+else
+  echo "  ✗ payment-cards typecheck failed"
+  ((FAIL++)) || true
+fi
+echo ""
+
+echo "[28/30] execution-intents"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/execution-intents" && npm install --silent); fi
+[ -f "$EXAMPLES_ROOT/execution-intents/.env" ] || cp "$EXAMPLES_ROOT/execution-intents/.env.example" "$EXAMPLES_ROOT/execution-intents/.env" 2>/dev/null || true
+if (cd "$EXAMPLES_ROOT/execution-intents" && npx tsc --noEmit 2>&1); then
+  echo "  ✓ execution-intents (typecheck passed)"
+  ((PASS++)) || true
+else
+  echo "  ✗ execution-intents typecheck failed"
+  ((FAIL++)) || true
+fi
+echo ""
+
+# --- 29. python-sdk (pip install + run main.py with live creds) ---
+echo "[29/30] python-sdk"
 PYSDK_DIR="$EXAMPLES_ROOT/python-sdk"
 if [ -d "$PYSDK_DIR" ]; then
   if [ "$SKIP" != "1" ]; then
@@ -474,7 +500,7 @@ fi
 echo ""
 
 # --- 28. multichain-agent (Next.js build) ---
-echo "[28/28] multichain-agent"
+echo "[30/30] multichain-agent"
 if [ -d "$EXAMPLES_ROOT/multichain-agent" ]; then
   if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/multichain-agent" && npm install --silent); fi
   if (cd "$EXAMPLES_ROOT/multichain-agent" && npm run build 2>&1); then
