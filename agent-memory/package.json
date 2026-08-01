@@ -1,20 +1,20 @@
 {
-    "name": "1claw-agent-memory-example",
-    "version": "0.1.0",
-    "private": true,
-    "license": "MIT",
-    "type": "module",
-    "scripts": {
-        "durable": "npx tsx --env-file=.env durable-memory.ts",
-        "semantic": "npx tsx --env-file=.env semantic-search.ts",
-        "scratch": "npx tsx --env-file=.env ttl-scratch.ts"
-    },
-    "dependencies": {
-        "@1claw/sdk": "^0.41.0"
-    },
-    "devDependencies": {
-        "@types/node": "^22.0.0",
-        "tsx": "^4.0.0",
-        "typescript": "^5.0.0"
-    }
+  "name": "1claw-agent-memory-example",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "durable": "npx tsx --env-file=.env durable-memory.ts",
+    "semantic": "npx tsx --env-file=.env semantic-search.ts",
+    "scratch": "npx tsx --env-file=.env ttl-scratch.ts"
+  },
+  "dependencies": {
+    "@1claw/sdk": "file:../../packages/sdk"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
 }

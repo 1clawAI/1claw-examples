@@ -37,11 +37,7 @@ interface AutomationRun {
 async function main() {
     console.log("Authenticating...");
     const client = createClient({ baseUrl: BASE_URL });
-    const authRes = await client.auth.apiKeyToken({ api_key: API_KEY! });
-    if (authRes.error) {
-        console.error("Auth failed:", authRes.error.message);
-        process.exit(1);
-    }
+    await client.auth.apiKeyToken({ api_key: API_KEY! });
 
     let automationId: string | null = null;
 
@@ -49,7 +45,7 @@ async function main() {
         // ── 1. Create a manual automation for testing ───────────────
         console.log("\n--- Creating manual automation ---");
 
-        const createRes = await client.http.post<{
+        const automation = await client.http.post<{
             id: string;
             name: string;
         }>("/v1/automations", {
@@ -65,98 +61,79 @@ async function main() {
             is_active: true,
         });
 
-        if (createRes.error) {
-            console.error("Failed to create automation:", createRes.error.message);
-            return;
-        }
-
-        automationId = createRes.data!.id;
-        console.log(`Automation: ${createRes.data!.name} (${automationId})`);
+        automationId = automation.id;
+        console.log(`Automation: ${automation.name} (${automationId})`);
 
         // ── 2. Trigger a couple of manual runs ──────────────────────
         console.log("\n--- Triggering runs ---");
 
         for (let i = 1; i <= 2; i++) {
-            const triggerRes = await client.http.post(
+            await client.http.post<{ run_id: string; status: string }>(
                 `/v1/automations/${automationId}/trigger`,
+                {},
             );
-            if (triggerRes.error) {
-                console.error(`Run ${i} trigger failed:`, triggerRes.error.message);
-            } else {
-                console.log(`  Run ${i} triggered.`);
-            }
-            // Brief pause between triggers
-            await new Promise((r) => setTimeout(r, 1000));
+            console.log(`  Run ${i} triggered.`);
+            await new Promise<void>((r) => setTimeout(r, 1000));
         }
 
         // Wait a moment for runs to complete
         console.log("  Waiting for runs to complete...");
-        await new Promise((r) => setTimeout(r, 3000));
+        await new Promise<void>((r) => setTimeout(r, 3000));
 
         // ── 3. List all runs for this automation ────────────────────
         console.log("\n--- Run history ---");
 
-        const runsRes = await client.http.get<{ runs: AutomationRun[] }>(
+        const runsResult = await client.http.get<{ runs: AutomationRun[] }>(
             `/v1/automations/${automationId}/runs`,
         );
 
-        if (runsRes.error) {
-            console.error("Failed to list runs:", runsRes.error.message);
-        } else {
-            const runs = runsRes.data!.runs;
-            console.log(`  Total runs: ${runs.length}`);
+        const runs = runsResult.runs;
+        console.log(`  Total runs: ${runs.length}`);
 
-            for (const run of runs) {
-                const started = new Date(run.started_at).toLocaleString();
-                const duration = run.duration_ms != null ? `${run.duration_ms}ms` : "in progress";
-                console.log(`\n  Run ${run.id.slice(0, 8)}...`);
-                console.log(`    Status:   ${run.status}`);
-                console.log(`    Trigger:  ${run.trigger}`);
-                console.log(`    Started:  ${started}`);
-                console.log(`    Duration: ${duration}`);
-                if (run.error) {
-                    console.log(`    Error:    ${run.error}`);
-                }
+        for (const run of runs) {
+            const started = new Date(run.started_at).toLocaleString();
+            const duration = run.duration_ms != null ? `${run.duration_ms}ms` : "in progress";
+            console.log(`\n  Run ${run.id.slice(0, 8)}...`);
+            console.log(`    Status:   ${run.status}`);
+            console.log(`    Trigger:  ${run.trigger}`);
+            console.log(`    Started:  ${started}`);
+            console.log(`    Duration: ${duration}`);
+            if (run.error) {
+                console.log(`    Error:    ${run.error}`);
             }
-
-            // Summary
-            const succeeded = runs.filter((r) => r.status === "success").length;
-            const failed = runs.filter((r) => r.status === "failed").length;
-            const pending = runs.filter((r) =>
-                r.status === "pending" || r.status === "running",
-            ).length;
-            console.log(`\n  Summary: ${succeeded} succeeded, ${failed} failed, ${pending} pending`);
         }
 
+        // Summary
+        const succeeded = runs.filter((r: AutomationRun) => r.status === "success").length;
+        const failed = runs.filter((r: AutomationRun) => r.status === "failed").length;
+        const pending = runs.filter((r: AutomationRun) =>
+            r.status === "pending" || r.status === "running",
+        ).length;
+        console.log(`\n  Summary: ${succeeded} succeeded, ${failed} failed, ${pending} pending`);
+
         // ── 4. Fetch a single run (if any exist) ────────────────────
-        const runs = runsRes.data?.runs ?? [];
         if (runs.length > 0) {
             const runId = runs[0].id;
             console.log(`\n--- Fetching run detail: ${runId.slice(0, 8)}... ---`);
 
-            const runRes = await client.http.get<AutomationRun>(
+            const run = await client.http.get<AutomationRun>(
                 `/v1/automations/${automationId}/runs/${runId}`,
             );
 
-            if (runRes.error) {
-                console.error("Failed to get run:", runRes.error.message);
-            } else {
-                const run = runRes.data!;
-                console.log(`  Status: ${run.status}`);
-                if (run.output) {
-                    console.log(`  Output: ${JSON.stringify(run.output, null, 2)}`);
-                }
+            console.log(`  Status: ${run.status}`);
+            if (run.output) {
+                console.log(`  Output: ${JSON.stringify(run.output, null, 2)}`);
             }
         }
     } finally {
         // ── 5. Clean up ─────────────────────────────────────────────
         if (automationId) {
             console.log("\n--- Cleaning up ---");
-            const delRes = await client.http.delete(`/v1/automations/${automationId}`);
-            if (!delRes.error) {
+            try {
+                await client.http.delete(`/v1/automations/${automationId}`);
                 console.log("Automation deleted.");
-            } else {
-                console.error("Failed to delete:", delRes.error.message);
+            } catch (e) {
+                console.error("Failed to delete:", e);
             }
         }
     }

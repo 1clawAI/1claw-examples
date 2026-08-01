@@ -58,22 +58,18 @@ async function main() {
             available: boolean;
         }>(`/v1/runtimes/slug-check/${encodeURIComponent(slug)}`);
 
-        if (slugCheck.error) {
-            console.error("Slug check failed:", slugCheck.error.message);
-        } else {
-            console.log(`  Slug: ${slugCheck.data!.slug}`);
-            console.log(`  Available: ${slugCheck.data!.available}`);
+        console.log(`  Slug: ${slugCheck.slug}`);
+        console.log(`  Available: ${slugCheck.available}`);
 
-            if (!slugCheck.data!.available) {
-                console.error("  Slug is taken. Try a different one.");
-                return;
-            }
+        if (!slugCheck.available) {
+            console.error("  Slug is taken. Try a different one.");
+            return;
         }
 
         // ── 2. Create a runtime with HTTP exposure ──────────────────
         console.log("\n--- Creating runtime with HTTP endpoint ---");
 
-        const createRes = await client.http.post<Runtime>("/v1/runtimes", {
+        const runtime = await client.http.post<Runtime>("/v1/runtimes", {
             name: "http-agent",
             agent_id: AGENT_ID,
             preset: "small",
@@ -90,12 +86,6 @@ async function main() {
             },
         });
 
-        if (createRes.error) {
-            console.error("Failed to create runtime:", createRes.error.message);
-            return;
-        }
-
-        const runtime = createRes.data!;
         runtimeId = runtime.id;
 
         console.log(`Runtime created: ${runtime.name} (${runtime.id})`);
@@ -110,67 +100,58 @@ async function main() {
         // ── 3. Start the runtime ────────────────────────────────────
         console.log("\n--- Starting runtime ---");
 
-        const startRes = await client.http.post<Runtime>(
+        const started = await client.http.post<Runtime>(
             `/v1/runtimes/${runtimeId}/start`,
         );
 
-        if (startRes.error) {
-            console.error("Failed to start:", startRes.error.message);
-        } else {
-            console.log(`  Status: ${startRes.data!.status}`);
-            if (startRes.data!.public_url) {
-                console.log(`  Public URL: ${startRes.data!.public_url}`);
-                console.log("  (URL will be live once status is 'running')");
-            }
+        console.log(`  Status: ${started.status}`);
+        if (started.public_url) {
+            console.log(`  Public URL: ${started.public_url}`);
+            console.log("  (URL will be live once status is 'running')");
         }
 
         // ── 4. Update HTTP settings ─────────────────────────────────
         console.log("\n--- Updating to public auth ---");
 
-        const updateRes = await client.http.patch<Runtime>(
+        const updated = await client.http.patch<Runtime>(
             `/v1/runtimes/${runtimeId}`,
             { inbound_auth: "public" },
         );
 
-        if (updateRes.error) {
-            console.error("Failed to update:", updateRes.error.message);
-        } else {
-            console.log(`  Inbound auth: ${updateRes.data!.inbound_auth}`);
-        }
+        console.log(`  Inbound auth: ${updated.inbound_auth}`);
 
         // ── 5. Verify the runtime ───────────────────────────────────
         console.log("\n--- Runtime details ---");
 
-        const getRes = await client.http.get<Runtime>(
+        const r = await client.http.get<Runtime>(
             `/v1/runtimes/${runtimeId}`,
         );
 
-        if (getRes.error) {
-            console.error("Failed:", getRes.error.message);
-        } else {
-            const r = getRes.data!;
-            console.log(`  Name: ${r.name}`);
-            console.log(`  Status: ${r.status}`);
-            console.log(`  HTTP: ${r.expose_http}`);
-            console.log(`  Slug: ${r.slug ?? "none"}`);
-            console.log(`  Auth: ${r.inbound_auth}`);
-            if (r.public_url) {
-                console.log(`  URL: ${r.public_url}`);
-            }
+        console.log(`  Name: ${r.name}`);
+        console.log(`  Status: ${r.status}`);
+        console.log(`  HTTP: ${r.expose_http}`);
+        console.log(`  Slug: ${r.slug ?? "none"}`);
+        console.log(`  Auth: ${r.inbound_auth}`);
+        if (r.public_url) {
+            console.log(`  URL: ${r.public_url}`);
         }
     } finally {
         // ── 6. Clean up ─────────────────────────────────────────────
         if (runtimeId) {
             console.log("\n--- Cleaning up ---");
 
-            await client.http.post(`/v1/runtimes/${runtimeId}/stop`);
-            console.log("  Runtime stopped.");
+            try {
+                await client.http.post(`/v1/runtimes/${runtimeId}/stop`);
+                console.log("  Runtime stopped.");
+            } catch (e) {
+                console.error("  Failed to stop:", e instanceof Error ? e.message : e);
+            }
 
-            const delRes = await client.http.delete(`/v1/runtimes/${runtimeId}`);
-            if (!delRes.error) {
+            try {
+                await client.http.delete(`/v1/runtimes/${runtimeId}`);
                 console.log("  Runtime deleted.");
-            } else {
-                console.error("  Failed to delete:", delRes.error.message);
+            } catch (e) {
+                console.error("  Failed to delete:", e instanceof Error ? e.message : e);
             }
         }
     }

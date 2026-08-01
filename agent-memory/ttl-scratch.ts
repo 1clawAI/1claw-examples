@@ -37,11 +37,7 @@ interface MemoryEntry {
 async function main() {
     console.log("Authenticating...");
     const client = createClient({ baseUrl: BASE_URL });
-    const authRes = await client.auth.apiKeyToken({ api_key: API_KEY! });
-    if (authRes.error) {
-        console.error("Auth failed:", authRes.error.message);
-        process.exit(1);
-    }
+    await client.auth.apiKeyToken({ api_key: API_KEY! });
 
     const namespace = "scratch";
 
@@ -61,14 +57,9 @@ async function main() {
             },
         );
 
-        if (putCache.error) {
-            console.error("Failed:", putCache.error.message);
-            return;
-        }
-
-        console.log(`  Stored: ${putCache.data!.key}`);
-        console.log(`  Value: ${JSON.stringify(putCache.data!.value)}`);
-        console.log(`  Expires at: ${putCache.data!.ttl_expires_at ?? "never"}`);
+        console.log(`  Stored: ${putCache.key}`);
+        console.log(`  Value: ${JSON.stringify(putCache.value)}`);
+        console.log(`  Expires at: ${putCache.ttl_expires_at ?? "never"}`);
 
         // ── 2. Store a rate-limit counter with 300s TTL ─────────────
         console.log("\n--- Storing rate-limit counter (300s TTL) ---");
@@ -81,12 +72,8 @@ async function main() {
             },
         );
 
-        if (putCounter.error) {
-            console.error("Failed:", putCounter.error.message);
-        } else {
-            console.log(`  Stored: ${putCounter.data!.key}`);
-            console.log(`  Expires at: ${putCounter.data!.ttl_expires_at ?? "never"}`);
-        }
+        console.log(`  Stored: ${putCounter.key}`);
+        console.log(`  Expires at: ${putCounter.ttl_expires_at ?? "never"}`);
 
         // ── 3. Store session state with 1800s (30 min) TTL ──────────
         console.log("\n--- Storing session state (30 min TTL) ---");
@@ -104,43 +91,34 @@ async function main() {
             },
         );
 
-        if (putSession.error) {
-            console.error("Failed:", putSession.error.message);
-        } else {
-            console.log(`  Stored: ${putSession.data!.key}`);
-            console.log(`  Expires at: ${putSession.data!.ttl_expires_at ?? "never"}`);
-        }
+        console.log(`  Stored: ${putSession.key}`);
+        console.log(`  Expires at: ${putSession.ttl_expires_at ?? "never"}`);
 
         // ── 4. Read back and check TTL ──────────────────────────────
         console.log("\n--- Reading entries back ---");
 
-        const getRes = await client.http.get<MemoryEntry>(
+        const entry = await client.http.get<MemoryEntry>(
             `/v1/agents/${AGENT_ID}/memory/${namespace}/eth-price`,
         );
 
-        if (getRes.error) {
-            console.error("Failed (may have expired):", getRes.error.message);
-        } else {
-            const entry = getRes.data!;
-            const expiresAt = entry.ttl_expires_at
-                ? new Date(entry.ttl_expires_at)
-                : null;
-            const remainingSecs = expiresAt
-                ? Math.max(0, Math.round((expiresAt.getTime() - Date.now()) / 1000))
-                : null;
+        const expiresAt = entry.ttl_expires_at
+            ? new Date(entry.ttl_expires_at)
+            : null;
+        const remainingSecs = expiresAt
+            ? Math.max(0, Math.round((expiresAt.getTime() - Date.now()) / 1000))
+            : null;
 
-            console.log(`  Key: ${entry.key}`);
-            console.log(`  Value: ${JSON.stringify(entry.value)}`);
-            console.log(`  Expires at: ${entry.ttl_expires_at ?? "never"}`);
-            if (remainingSecs != null) {
-                console.log(`  Remaining: ${remainingSecs}s`);
-            }
+        console.log(`  Key: ${entry.key}`);
+        console.log(`  Value: ${JSON.stringify(entry.value)}`);
+        console.log(`  Expires at: ${entry.ttl_expires_at ?? "never"}`);
+        if (remainingSecs != null) {
+            console.log(`  Remaining: ${remainingSecs}s`);
         }
 
         // ── 5. Update an entry (refreshes TTL) ──────────────────────
         console.log("\n--- Updating counter (new TTL) ---");
 
-        const updateRes = await client.http.put<MemoryEntry>(
+        const updated = await client.http.put<MemoryEntry>(
             `/v1/agents/${AGENT_ID}/memory/${namespace}/api-calls-count`,
             {
                 value: { count: 2, window_start: new Date().toISOString() },
@@ -148,12 +126,8 @@ async function main() {
             },
         );
 
-        if (updateRes.error) {
-            console.error("Failed:", updateRes.error.message);
-        } else {
-            console.log(`  Updated: ${updateRes.data!.key}`);
-            console.log(`  New expiry: ${updateRes.data!.ttl_expires_at ?? "never"}`);
-        }
+        console.log(`  Updated: ${updated.key}`);
+        console.log(`  New expiry: ${updated.ttl_expires_at ?? "never"}`);
 
         // ── 6. List all scratch entries ─────────────────────────────
         console.log("\n--- Listing scratch entries ---");
@@ -162,15 +136,11 @@ async function main() {
             `/v1/agents/${AGENT_ID}/memory/${namespace}`,
         );
 
-        if (listRes.error) {
-            console.error("Failed:", listRes.error.message);
-        } else {
-            const entries = listRes.data!.entries;
-            console.log(`  Entries in '${namespace}': ${entries.length}`);
-            for (const e of entries) {
-                const expires = e.ttl_expires_at ?? "permanent";
-                console.log(`    ${e.key} (expires: ${expires})`);
-            }
+        const entries = listRes.entries;
+        console.log(`  Entries in '${namespace}': ${entries.length}`);
+        for (const e of entries) {
+            const expires = e.ttl_expires_at ?? "permanent";
+            console.log(`    ${e.key} (expires: ${expires})`);
         }
 
         // ── 7. Store a durable entry (no TTL) for comparison ────────
@@ -181,10 +151,8 @@ async function main() {
             { value: "This entry has no TTL and will not auto-expire." },
         );
 
-        if (!putPerm.error) {
-            console.log(`  Stored: ${putPerm.data!.key}`);
-            console.log(`  Expires at: ${putPerm.data!.ttl_expires_at ?? "never (permanent)"}`);
-        }
+        console.log(`  Stored: ${putPerm.key}`);
+        console.log(`  Expires at: ${putPerm.ttl_expires_at ?? "never (permanent)"}`);
     } finally {
         // ── 8. Clean up ─────────────────────────────────────────────
         console.log("\n--- Cleaning up ---");

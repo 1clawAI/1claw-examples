@@ -36,16 +36,10 @@ interface MemoryEntry {
 async function main() {
     console.log("Authenticating...");
     const client = createClient({ baseUrl: BASE_URL });
-    const authRes = await client.auth.apiKeyToken({ api_key: API_KEY! });
-    if (authRes.error) {
-        console.error("Auth failed:", authRes.error.message);
-        process.exit(1);
-    }
+    await client.auth.apiKeyToken({ api_key: API_KEY! });
 
     const namespace = "knowledge";
 
-    // Knowledge entries to store — each represents a fact or insight
-    // the agent has learned over time
     const knowledgeEntries = [
         {
             key: "defi-aave-v3",
@@ -86,16 +80,11 @@ async function main() {
         console.log("\n--- Storing knowledge entries ---");
 
         for (const entry of knowledgeEntries) {
-            const putRes = await client.http.put<MemoryEntry>(
+            await client.http.put<MemoryEntry>(
                 `/v1/agents/${AGENT_ID}/memory/${namespace}/${entry.key}`,
                 { value: entry.value },
             );
-
-            if (putRes.error) {
-                console.error(`  Failed to store ${entry.key}:`, putRes.error.message);
-            } else {
-                console.log(`  Stored: ${entry.key} (${(entry.value as any).topic})`);
-            }
+            console.log(`  Stored: ${entry.key} (${(entry.value as any).topic})`);
         }
 
         // ── 2. List all entries in the knowledge namespace ──────────
@@ -105,54 +94,42 @@ async function main() {
             `/v1/agents/${AGENT_ID}/memory/${namespace}`,
         );
 
-        if (listRes.error) {
-            console.error("Failed:", listRes.error.message);
-        } else {
-            const entries = listRes.data!.entries;
-            console.log(`  Found ${entries.length} knowledge entries:\n`);
+        const entries = listRes.entries;
+        console.log(`  Found ${entries.length} knowledge entries:\n`);
 
-            for (const entry of entries) {
-                const val = entry.value as {
-                    topic: string;
-                    content: string;
-                    tags: string[];
-                };
-                console.log(`  [${entry.key}]`);
-                console.log(`    Topic: ${val.topic}`);
-                console.log(`    Content: ${val.content.slice(0, 80)}...`);
-                console.log(`    Tags: ${val.tags.join(", ")}`);
-                console.log();
-            }
+        for (const entry of entries) {
+            const val = entry.value as {
+                topic: string;
+                content: string;
+                tags: string[];
+            };
+            console.log(`  [${entry.key}]`);
+            console.log(`    Topic: ${val.topic}`);
+            console.log(`    Content: ${val.content.slice(0, 80)}...`);
+            console.log(`    Tags: ${val.tags.join(", ")}`);
+            console.log();
         }
 
         // ── 3. Retrieve a specific entry by key ─────────────────────
         console.log("--- Retrieving specific entry ---");
 
-        const getRes = await client.http.get<MemoryEntry>(
+        const entry = await client.http.get<MemoryEntry>(
             `/v1/agents/${AGENT_ID}/memory/${namespace}/security-reentrancy`,
         );
 
-        if (getRes.error) {
-            console.error("Failed:", getRes.error.message);
-        } else {
-            const entry = getRes.data!;
-            const val = entry.value as { topic: string; content: string };
-            console.log(`  Key: ${entry.key}`);
-            console.log(`  Topic: ${val.topic}`);
-            console.log(`  Content: ${val.content}`);
-        }
+        const val = entry.value as { topic: string; content: string };
+        console.log(`  Key: ${entry.key}`);
+        console.log(`  Topic: ${val.topic}`);
+        console.log(`  Content: ${val.content}`);
 
         // ── 4. Use multiple namespaces for organization ─────────────
         console.log("\n--- Storing in a second namespace ---");
 
-        const putRes = await client.http.put<MemoryEntry>(
+        await client.http.put<MemoryEntry>(
             `/v1/agents/${AGENT_ID}/memory/session/last-query`,
             { value: { query: "What is reentrancy?", timestamp: new Date().toISOString() } },
         );
-
-        if (!putRes.error) {
-            console.log(`  Stored session/last-query`);
-        }
+        console.log(`  Stored session/last-query`);
 
         // List all namespaces
         console.log("\n--- All namespaces ---");
@@ -160,10 +137,7 @@ async function main() {
         const nsRes = await client.http.get<{ namespaces: string[] }>(
             `/v1/agents/${AGENT_ID}/memory`,
         );
-
-        if (!nsRes.error) {
-            console.log(`  Namespaces: ${nsRes.data!.namespaces.join(", ")}`);
-        }
+        console.log(`  Namespaces: ${nsRes.namespaces.join(", ")}`);
     } finally {
         // ── 5. Clean up ─────────────────────────────────────────────
         console.log("\n--- Cleaning up ---");

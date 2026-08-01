@@ -37,11 +37,7 @@ interface MemoryEntry {
 async function main() {
     console.log("Authenticating...");
     const client = createClient({ baseUrl: BASE_URL });
-    const authRes = await client.auth.apiKeyToken({ api_key: API_KEY! });
-    if (authRes.error) {
-        console.error("Auth failed:", authRes.error.message);
-        process.exit(1);
-    }
+    await client.auth.apiKeyToken({ api_key: API_KEY! });
 
     const namespace = "preferences";
 
@@ -54,11 +50,7 @@ async function main() {
             { value: "TypeScript" },
         );
 
-        if (putStr.error) {
-            console.error("Failed:", putStr.error.message);
-            return;
-        }
-        console.log(`  Stored: ${putStr.data!.namespace}/${putStr.data!.key} = ${JSON.stringify(putStr.data!.value)}`);
+        console.log(`  Stored: ${putStr.namespace}/${putStr.key} = ${JSON.stringify(putStr.value)}`);
 
         // ── 2. Store a structured JSON object ───────────────────────
         console.log("\n--- Storing JSON object ---");
@@ -75,42 +67,29 @@ async function main() {
             },
         );
 
-        if (putObj.error) {
-            console.error("Failed:", putObj.error.message);
-        } else {
-            console.log(`  Stored: ${putObj.data!.namespace}/${putObj.data!.key}`);
-            console.log(`  Value: ${JSON.stringify(putObj.data!.value, null, 2)}`);
-        }
+        console.log(`  Stored: ${putObj.namespace}/${putObj.key}`);
+        console.log(`  Value: ${JSON.stringify(putObj.value, null, 2)}`);
 
         // ── 3. Retrieve an entry ────────────────────────────────────
         console.log("\n--- Retrieving entry ---");
 
-        const getRes = await client.http.get<MemoryEntry>(
+        const entry = await client.http.get<MemoryEntry>(
             `/v1/agents/${AGENT_ID}/memory/${namespace}/config`,
         );
 
-        if (getRes.error) {
-            console.error("Failed:", getRes.error.message);
-        } else {
-            const entry = getRes.data!;
-            console.log(`  Key: ${entry.key}`);
-            console.log(`  Value: ${JSON.stringify(entry.value)}`);
-            console.log(`  Updated: ${entry.updated_at}`);
-        }
+        console.log(`  Key: ${entry.key}`);
+        console.log(`  Value: ${JSON.stringify(entry.value)}`);
+        console.log(`  Updated: ${entry.updated_at}`);
 
         // ── 4. Overwrite an entry (upsert) ──────────────────────────
         console.log("\n--- Updating entry (upsert) ---");
 
-        const updateRes = await client.http.put<MemoryEntry>(
+        const updated = await client.http.put<MemoryEntry>(
             `/v1/agents/${AGENT_ID}/memory/${namespace}/language`,
             { value: "Rust" },
         );
 
-        if (updateRes.error) {
-            console.error("Failed:", updateRes.error.message);
-        } else {
-            console.log(`  Updated: ${updateRes.data!.key} = ${JSON.stringify(updateRes.data!.value)}`);
-        }
+        console.log(`  Updated: ${updated.key} = ${JSON.stringify(updated.value)}`);
 
         // ── 5. List all entries in the namespace ────────────────────
         console.log("\n--- Listing entries ---");
@@ -119,16 +98,12 @@ async function main() {
             `/v1/agents/${AGENT_ID}/memory/${namespace}`,
         );
 
-        if (listRes.error) {
-            console.error("Failed:", listRes.error.message);
-        } else {
-            const entries = listRes.data!.entries;
-            console.log(`  Entries in '${namespace}': ${entries.length}`);
-            for (const e of entries) {
-                const val = typeof e.value === "string" ? e.value : JSON.stringify(e.value);
-                const preview = val.length > 40 ? val.slice(0, 40) + "..." : val;
-                console.log(`    ${e.key} = ${preview}`);
-            }
+        const entries = listRes.entries;
+        console.log(`  Entries in '${namespace}': ${entries.length}`);
+        for (const e of entries) {
+            const val = typeof e.value === "string" ? e.value : JSON.stringify(e.value);
+            const preview = val.length > 40 ? val.slice(0, 40) + "..." : val;
+            console.log(`    ${e.key} = ${preview}`);
         }
 
         // ── 6. List all namespaces ──────────────────────────────────
@@ -138,21 +113,19 @@ async function main() {
             `/v1/agents/${AGENT_ID}/memory`,
         );
 
-        if (nsRes.error) {
-            console.error("Failed:", nsRes.error.message);
-        } else {
-            console.log(`  Namespaces: ${nsRes.data!.namespaces.join(", ")}`);
-        }
+        console.log(`  Namespaces: ${nsRes.namespaces.join(", ")}`);
     } finally {
         // ── 7. Clean up ─────────────────────────────────────────────
         console.log("\n--- Cleaning up ---");
 
         for (const key of ["language", "config"]) {
-            const delRes = await client.http.delete(
-                `/v1/agents/${AGENT_ID}/memory/${namespace}/${key}`,
-            );
-            if (!delRes.error) {
+            try {
+                await client.http.delete(
+                    `/v1/agents/${AGENT_ID}/memory/${namespace}/${key}`,
+                );
                 console.log(`  Deleted: ${namespace}/${key}`);
+            } catch {
+                // ignore cleanup errors
             }
         }
     }

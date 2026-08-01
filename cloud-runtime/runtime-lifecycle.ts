@@ -65,19 +65,21 @@ async function waitForStatus(
     for (let i = 0; i < maxAttempts; i++) {
         await new Promise((r) => setTimeout(r, 2000));
 
-        const res = await client.http.get<Runtime>(`/v1/runtimes/${runtimeId}`);
-        if (res.error) {
-            console.error(`  Poll failed: ${res.error.message}`);
+        try {
+            const runtime = await client.http.get<Runtime>(
+                `/v1/runtimes/${runtimeId}`,
+            );
+
+            console.log(`  Status: ${runtime.status} (${i + 1}/${maxAttempts})`);
+
+            if (runtime.status === target) return runtime;
+            if (runtime.status === "failed") {
+                console.error("  Runtime entered failed state.");
+                return runtime;
+            }
+        } catch (e) {
+            console.error(`  Poll failed: ${e instanceof Error ? e.message : e}`);
             return null;
-        }
-
-        const status = res.data!.status;
-        console.log(`  Status: ${status} (${i + 1}/${maxAttempts})`);
-
-        if (status === target) return res.data!;
-        if (status === "failed") {
-            console.error("  Runtime entered failed state.");
-            return res.data!;
         }
     }
 
@@ -100,7 +102,7 @@ async function main() {
         // ── 1. CREATE ───────────────────────────────────────────────
         console.log("\n=== STEP 1: CREATE ===");
 
-        const createRes = await client.http.post<Runtime>("/v1/runtimes", {
+        const runtime = await client.http.post<Runtime>("/v1/runtimes", {
             name: "lifecycle-demo",
             agent_id: AGENT_ID,
             preset: "micro",
@@ -110,27 +112,17 @@ async function main() {
             },
         });
 
-        if (createRes.error) {
-            console.error("Failed:", createRes.error.message);
-            return;
-        }
-
-        const runtime = createRes.data!;
         runtimeId = runtime.id;
         printRuntime(runtime);
 
         // ── 2. START ────────────────────────────────────────────────
         console.log("\n=== STEP 2: START ===");
 
-        const startRes = await client.http.post<Runtime>(
+        const started = await client.http.post<Runtime>(
             `/v1/runtimes/${runtimeId}/start`,
         );
 
-        if (startRes.error) {
-            console.error("Failed to start:", startRes.error.message);
-        } else {
-            console.log(`  Status after start: ${startRes.data!.status}`);
-        }
+        console.log(`  Status after start: ${started.status}`);
 
         // ── 3. WAIT FOR RUNNING ─────────────────────────────────────
         console.log("\n=== STEP 3: POLL STATUS ===");
@@ -144,7 +136,7 @@ async function main() {
         // ── 4. UPDATE CONFIG ────────────────────────────────────────
         console.log("\n=== STEP 4: UPDATE ===");
 
-        const updateRes = await client.http.patch<Runtime>(
+        const updated = await client.http.patch<Runtime>(
             `/v1/runtimes/${runtimeId}`,
             {
                 idle_timeout_secs: 300,
@@ -152,24 +144,16 @@ async function main() {
             },
         );
 
-        if (updateRes.error) {
-            console.error("Failed to update:", updateRes.error.message);
-        } else {
-            console.log(`  Idle timeout: ${updateRes.data!.idle_timeout_secs}s`);
-        }
+        console.log(`  Idle timeout: ${updated.idle_timeout_secs}s`);
 
         // ── 5. STOP ─────────────────────────────────────────────────
         console.log("\n=== STEP 5: STOP ===");
 
-        const stopRes = await client.http.post<Runtime>(
+        const stopped = await client.http.post<Runtime>(
             `/v1/runtimes/${runtimeId}/stop`,
         );
 
-        if (stopRes.error) {
-            console.error("Failed to stop:", stopRes.error.message);
-        } else {
-            console.log(`  Status after stop: ${stopRes.data!.status}`);
-        }
+        console.log(`  Status after stop: ${stopped.status}`);
 
         // Wait for stopped status
         const stoppedRuntime = await waitForStatus(client, runtimeId, "stopped");
@@ -180,13 +164,9 @@ async function main() {
         // ── 6. DELETE ───────────────────────────────────────────────
         console.log("\n=== STEP 6: DELETE ===");
 
-        const delRes = await client.http.delete(`/v1/runtimes/${runtimeId}`);
-        if (delRes.error) {
-            console.error("Failed to delete:", delRes.error.message);
-        } else {
-            console.log("  Runtime deleted.");
-            runtimeId = null;
-        }
+        await client.http.delete(`/v1/runtimes/${runtimeId}`);
+        console.log("  Runtime deleted.");
+        runtimeId = null;
     } finally {
         // Safety net: delete the runtime if it wasn't cleaned up
         if (runtimeId) {

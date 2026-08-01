@@ -50,7 +50,7 @@ async function main() {
         // ── 1. Create a cloud runtime ───────────────────────────────
         console.log("\n--- Creating cloud runtime ---");
 
-        const createRes = await client.http.post<Runtime>("/v1/runtimes", {
+        const runtime = await client.http.post<Runtime>("/v1/runtimes", {
             name: "defi-bot-runtime",
             agent_id: AGENT_ID,
             preset: "small",
@@ -61,12 +61,6 @@ async function main() {
             idle_timeout_secs: 1800,
         });
 
-        if (createRes.error) {
-            console.error("Failed to create runtime:", createRes.error.message);
-            return;
-        }
-
-        const runtime = createRes.data!;
         runtimeId = runtime.id;
 
         console.log(`Runtime created: ${runtime.name} (${runtime.id})`);
@@ -78,33 +72,24 @@ async function main() {
         // ── 2. Start the runtime ────────────────────────────────────
         console.log("\n--- Starting runtime ---");
 
-        const startRes = await client.http.post<Runtime>(
+        const started = await client.http.post<Runtime>(
             `/v1/runtimes/${runtimeId}/start`,
         );
 
-        if (startRes.error) {
-            console.error("Failed to start:", startRes.error.message);
-        } else {
-            console.log(`  Status: ${startRes.data!.status}`);
-        }
+        console.log(`  Status: ${started.status}`);
 
         // ── 3. Poll status until running (or timeout) ───────────────
         console.log("\n--- Waiting for runtime to be ready ---");
 
-        let status = startRes.data?.status ?? "creating";
+        let status = started.status;
         for (let i = 0; i < 10 && status !== "running"; i++) {
             await new Promise((r) => setTimeout(r, 3000));
 
-            const getRes = await client.http.get<Runtime>(
+            const current = await client.http.get<Runtime>(
                 `/v1/runtimes/${runtimeId}`,
             );
 
-            if (getRes.error) {
-                console.error("  Status check failed:", getRes.error.message);
-                break;
-            }
-
-            status = getRes.data!.status;
+            status = current.status;
             console.log(`  Status: ${status} (attempt ${i + 1}/10)`);
 
             if (status === "failed") {
@@ -120,32 +105,32 @@ async function main() {
         // ── 4. List all runtimes ────────────────────────────────────
         console.log("\n--- Listing runtimes ---");
 
-        const listRes = await client.http.get<{ runtimes: Runtime[] }>(
+        const listResult = await client.http.get<{ runtimes: Runtime[] }>(
             "/v1/runtimes",
         );
 
-        if (listRes.error) {
-            console.error("Failed:", listRes.error.message);
-        } else {
-            const runtimes = listRes.data!.runtimes;
-            console.log(`  Found ${runtimes.length} runtime(s):`);
-            for (const r of runtimes) {
-                console.log(`    ${r.name} (${r.preset}, ${r.status})`);
-            }
+        const runtimes = listResult.runtimes;
+        console.log(`  Found ${runtimes.length} runtime(s):`);
+        for (const r of runtimes) {
+            console.log(`    ${r.name} (${r.preset}, ${r.status})`);
         }
     } finally {
         // ── 5. Clean up: stop and delete ────────────────────────────
         if (runtimeId) {
             console.log("\n--- Cleaning up ---");
 
-            await client.http.post(`/v1/runtimes/${runtimeId}/stop`);
-            console.log("  Runtime stopped.");
+            try {
+                await client.http.post(`/v1/runtimes/${runtimeId}/stop`);
+                console.log("  Runtime stopped.");
+            } catch (e) {
+                console.error("  Failed to stop:", e instanceof Error ? e.message : e);
+            }
 
-            const delRes = await client.http.delete(`/v1/runtimes/${runtimeId}`);
-            if (!delRes.error) {
+            try {
+                await client.http.delete(`/v1/runtimes/${runtimeId}`);
                 console.log("  Runtime deleted.");
-            } else {
-                console.error("  Failed to delete:", delRes.error.message);
+            } catch (e) {
+                console.error("  Failed to delete:", e instanceof Error ? e.message : e);
             }
         }
     }

@@ -59,7 +59,7 @@ async function main() {
         // ── 2. Enable discovery and set public profile ──────────────
         console.log("\n--- Enabling discovery ---");
 
-        const discoveryRes = await client.http.patch(
+        await client.http.patch(
             `/v1/agents/${AGENT_ID}/discovery`,
             {
                 discoverable: true,
@@ -71,83 +71,61 @@ async function main() {
             },
         );
 
-        if (discoveryRes.error) {
-            console.error("Failed to enable discovery:", discoveryRes.error.message);
-            return;
-        }
-
         console.log("  Discovery enabled.");
 
         // ── 3. Fetch the public agent card ──────────────────────────
         console.log("\n--- Agent card ---");
 
-        const cardRes = await client.http.get<AgentCard>(
+        const card = await client.http.get<AgentCard>(
             `/v1/agents/${AGENT_ID}/card`,
         );
 
-        if (cardRes.error) {
-            console.error("Failed to get card:", cardRes.error.message);
-        } else {
-            const card = cardRes.data!;
-            console.log(`  Name: ${card.name}`);
-            console.log(`  Description: ${card.description}`);
-            console.log(`  Tags: ${card.tags.join(", ")}`);
-            if (card.a2a_url) console.log(`  A2A URL: ${card.a2a_url}`);
-            if (card.mcp_url) console.log(`  MCP URL: ${card.mcp_url}`);
-            if (card.capabilities.length > 0) {
-                console.log(`  Capabilities: ${card.capabilities.join(", ")}`);
-            }
+        console.log(`  Name: ${card.name}`);
+        console.log(`  Description: ${card.description}`);
+        console.log(`  Tags: ${card.tags.join(", ")}`);
+        if (card.a2a_url) console.log(`  A2A URL: ${card.a2a_url}`);
+        if (card.mcp_url) console.log(`  MCP URL: ${card.mcp_url}`);
+        if (card.capabilities.length > 0) {
+            console.log(`  Capabilities: ${card.capabilities.join(", ")}`);
         }
 
         // ── 4. Verify in the directory ──────────────────────────────
         console.log("\n--- Searching directory ---");
 
-        const dirRes = await client.http.get<{
+        const dirResult = await client.http.get<{
             agents: AgentCard[];
             total: number;
         }>(`/v1/agents/directory?q=${encodeURIComponent(agent.name)}`);
 
-        if (dirRes.error) {
-            console.error("Directory search failed:", dirRes.error.message);
+        const found = dirResult.agents.find((a: AgentCard) => a.id === AGENT_ID);
+        if (found) {
+            console.log(`  Found in directory: ${found.name}`);
+            console.log(`  Tags: ${found.tags.join(", ")}`);
         } else {
-            const found = dirRes.data!.agents.find((a) => a.id === AGENT_ID);
-            if (found) {
-                console.log(`  Found in directory: ${found.name}`);
-                console.log(`  Tags: ${found.tags.join(", ")}`);
-            } else {
-                console.log("  Not yet visible in directory (may take a moment to index).");
-            }
+            console.log("  Not yet visible in directory (may take a moment to index).");
         }
 
         // ── 5. Update tags ──────────────────────────────────────────
         console.log("\n--- Updating tags ---");
 
-        const updateRes = await client.http.patch(
+        await client.http.patch(
             `/v1/agents/${AGENT_ID}/discovery`,
             {
                 public_tags: ["defi", "lending", "yield", "ethereum", "solana", "base", "aave"],
             },
         );
 
-        if (updateRes.error) {
-            console.error("Failed to update:", updateRes.error.message);
-        } else {
-            console.log("  Tags updated.");
-        }
+        console.log("  Tags updated.");
 
         // ── 6. Disable discovery (restore original state) ───────────
         console.log("\n--- Disabling discovery ---");
 
-        const disableRes = await client.http.patch(
+        await client.http.patch(
             `/v1/agents/${AGENT_ID}/discovery`,
             { discoverable: false },
         );
 
-        if (disableRes.error) {
-            console.error("Failed to disable:", disableRes.error.message);
-        } else {
-            console.log("  Discovery disabled. Agent removed from directory.");
-        }
+        console.log("  Discovery disabled. Agent removed from directory.");
     } catch (err) {
         console.error("Unexpected error:", err);
     }

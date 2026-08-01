@@ -26,11 +26,7 @@ if (!AGENT_ID) {
 async function main() {
     console.log("Authenticating...");
     const client = createClient({ baseUrl: BASE_URL });
-    const authRes = await client.auth.apiKeyToken({ api_key: API_KEY! });
-    if (authRes.error) {
-        console.error("Auth failed:", authRes.error.message);
-        process.exit(1);
-    }
+    await client.auth.apiKeyToken({ api_key: API_KEY! });
 
     let automationId: string | null = null;
 
@@ -38,7 +34,7 @@ async function main() {
         // ── 1. Create a webhook-triggered automation ────────────────
         console.log("\n--- Creating webhook automation ---");
 
-        const createRes = await client.http.post<{
+        const automation = await client.http.post<{
             id: string;
             name: string;
             trigger_type: string;
@@ -51,9 +47,7 @@ async function main() {
             agent_id: AGENT_ID,
             trigger_type: "webhook",
             trigger_config: {
-                // Optional: restrict which HTTP methods are accepted
                 allowed_methods: ["POST"],
-                // Optional: require a secret header for verification
                 secret_header: "X-Hub-Signature-256",
             },
             action_type: "agent_invoke",
@@ -64,20 +58,12 @@ async function main() {
             is_active: true,
         });
 
-        if (createRes.error) {
-            console.error("Failed to create automation:", createRes.error.message);
-            return;
-        }
-
-        const automation = createRes.data!;
         automationId = automation.id;
 
         console.log(`Automation created: ${automation.name} (${automation.id})`);
         console.log(`  Trigger: ${automation.trigger_type}`);
         console.log(`  Active: ${automation.is_active}`);
 
-        // The webhook URL can be found in the trigger_config or
-        // constructed from the automation ID:
         const webhookUrl = `${BASE_URL}/v1/automations/${automation.id}/trigger`;
         console.log(`  Webhook URL: ${webhookUrl}`);
         console.log("  (POST to this URL to trigger the automation)");
@@ -85,7 +71,7 @@ async function main() {
         // ── 2. List all automations ─────────────────────────────────
         console.log("\n--- Listing automations ---");
 
-        const listRes = await client.http.get<{
+        const listResult = await client.http.get<{
             automations: Array<{
                 id: string;
                 name: string;
@@ -95,21 +81,17 @@ async function main() {
             }>;
         }>("/v1/automations");
 
-        if (listRes.error) {
-            console.error("Failed to list:", listRes.error.message);
-        } else {
-            const automations = listRes.data!.automations;
-            console.log(`  Found ${automations.length} automation(s):`);
-            for (const a of automations) {
-                const status = a.is_active ? "active" : "paused";
-                console.log(`    ${a.name} (${a.trigger_type}, ${status}, ${a.run_count} runs)`);
-            }
+        const automations = listResult.automations;
+        console.log(`  Found ${automations.length} automation(s):`);
+        for (const a of automations) {
+            const status = a.is_active ? "active" : "paused";
+            console.log(`    ${a.name} (${a.trigger_type}, ${status}, ${a.run_count} runs)`);
         }
 
         // ── 3. Update the automation ────────────────────────────────
         console.log("\n--- Updating automation ---");
 
-        const updateRes = await client.http.patch<{
+        const updated = await client.http.patch<{
             id: string;
             name: string;
             description?: string;
@@ -121,20 +103,16 @@ async function main() {
             },
         });
 
-        if (updateRes.error) {
-            console.error("Failed to update:", updateRes.error.message);
-        } else {
-            console.log(`  Updated: ${updateRes.data!.name}`);
-        }
+        console.log(`  Updated: ${updated.name}`);
     } finally {
         // ── 4. Clean up ─────────────────────────────────────────────
         if (automationId) {
             console.log("\n--- Cleaning up ---");
-            const delRes = await client.http.delete(`/v1/automations/${automationId}`);
-            if (!delRes.error) {
+            try {
+                await client.http.delete(`/v1/automations/${automationId}`);
                 console.log("Automation deleted.");
-            } else {
-                console.error("Failed to delete:", delRes.error.message);
+            } catch (e) {
+                console.error("Failed to delete:", e);
             }
         }
     }
