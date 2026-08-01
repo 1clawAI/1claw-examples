@@ -1,0 +1,20 @@
+{
+    "name": "1claw-automations-example",
+    "version": "0.1.0",
+    "private": true,
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "scheduled": "npx tsx --env-file=.env create-scheduled-automation.ts",
+        "webhook": "npx tsx --env-file=.env webhook-automation.ts",
+        "runs": "npx tsx --env-file=.env list-runs.ts"
+    },
+    "dependencies": {
+        "@1claw/sdk": "^0.41.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.0.0",
+        "tsx": "^4.0.0",
+        "typescript": "^5.0.0"
+    }
+}

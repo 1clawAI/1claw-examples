@@ -1,0 +1,19 @@
+{
+    "name": "1claw-agent-discovery-example",
+    "version": "0.1.0",
+    "private": true,
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "discover": "npx tsx --env-file=.env make-discoverable.ts",
+        "browse": "npx tsx --env-file=.env browse-directory.ts"
+    },
+    "dependencies": {
+        "@1claw/sdk": "^0.41.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.0.0",
+        "tsx": "^4.0.0",
+        "typescript": "^5.0.0"
+    }
+}

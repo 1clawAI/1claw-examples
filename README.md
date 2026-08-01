@@ -2,7 +2,7 @@
 
 > **Reference only** — these examples are for educational and demo purposes. They are not production-ready and may contain hardcoded values, skip error handling, or use development-only configurations. Always review and adapt for your own security requirements.
 
-Thirty example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
+Thirty-four example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
 
 ## Quick reference
 
@@ -38,6 +38,10 @@ Thirty example applications demonstrating the [1Claw](https://1claw.xyz) SDK, AP
 | [payment-cards](./payment-cards/)             | Intermediate | 5 min  | **Payment Card Vault**: enable guardrails, order a prepaid card via x402, poll to ready, reveal    |
 | [execution-intents](./execution-intents/)     | Intermediate | 5 min  | **Execution Intents**: HTTP/GraphQL bindings — agents call external APIs without seeing credentials |
 | [python-sdk](./python-sdk/)                   | Beginner     | 5 min  | **Python SDK**: vault CRUD, secrets, billing, agent auth & audit (`pip install oneclaw`)            |
+| [automations](./automations/)                 | Beginner     | 5 min  | **Automations**: cron-scheduled, webhook-triggered automations and run history                      |
+| [agent-memory](./agent-memory/)               | Beginner     | 5 min  | **Agent Memory**: durable key-value storage, namespace browsing, TTL scratch entries                |
+| [cloud-runtime](./cloud-runtime/)             | Beginner     | 5 min  | **Cloud Runtimes**: deploy agents to managed runtimes with HTTP exposure and lifecycle management   |
+| [agent-discovery](./agent-discovery/)         | Beginner     | 5 min  | **Agent Discovery**: agent cards, public directory browsing, tag-based search                       |
 
 **Shroud LLM:** Examples that hit Shroud’s OpenAI-compatible surface (`shroud-demo`, `shroud-llm`) must send **`X-Shroud-Provider`** (e.g. `openai`, `anthropic`, `google`) on chat requests; omitting it returns **400** from Shroud.
 
@@ -128,6 +132,10 @@ If you're new to 1Claw, walk through the examples in this order:
 21. **[treasury-wallets](./treasury-wallets/)** — Generate multi-chain wallets, check balances, send
 22. **[arc-stablecoin](./arc-stablecoin/)** — Sign a USDC transfer on Arc Testnet (stablecoin-native L2)
 23. **[python-sdk](./python-sdk/)** — Python SDK: vault CRUD, secrets, billing, agent auth
+24. **[automations](./automations/)** — Schedule agents on cron or webhook triggers
+25. **[agent-memory](./agent-memory/)** — Durable and scratch memory with TTL expiry
+26. **[cloud-runtime](./cloud-runtime/)** — Deploy agents to managed cloud runtimes
+27. **[agent-discovery](./agent-discovery/)** — Make agents discoverable in the public directory
 
 ## What you need
 
