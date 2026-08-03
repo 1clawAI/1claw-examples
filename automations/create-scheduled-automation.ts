@@ -43,8 +43,11 @@ async function main() {
                 steps: [
                     {
                         type: "log",
-                        action: "run_agent_task",
                         message: "Rotate all API keys that are older than 7 days.",
+                    },
+                    {
+                        type: "wait",
+                        duration_secs: 1,
                     },
                 ],
             },

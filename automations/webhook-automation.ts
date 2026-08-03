@@ -1,8 +1,9 @@
 /**
  * 1Claw SDK — Create a Webhook-Triggered Automation
  *
- * Creates an automation that fires when its webhook URL receives a
- * POST request. Requires workflow_spec (+ agent_id).
+ * Creates an automation that fires when its public webhook URL receives a
+ * POST. Create returns a one-time `whk_` token + `webhook_url`
+ * (`/v1/automations/webhook/{id}/{token}`). Use rotateWebhookToken() to mint a new one.
  *
  * Run: npx tsx --env-file=.env webhook-automation.ts
  */
@@ -42,9 +43,13 @@ async function main() {
                 steps: [
                     {
                         type: "log",
-                        action: "run_agent_task",
                         message:
                             "A new deployment was detected. Verify secrets and rotate any expiring within 24 hours.",
+                    },
+                    {
+                        type: "http",
+                        method: "GET",
+                        url: "https://httpbin.org/status/200",
                     },
                 ],
             },
@@ -57,9 +62,15 @@ async function main() {
         console.log(`  Trigger: ${automation.trigger_type}`);
         console.log(`  Active: ${automation.is_active}`);
 
-        const webhookUrl = `${BASE_URL}/v1/automations/${automation.id}/trigger`;
-        console.log(`  Trigger URL: ${webhookUrl}`);
-        console.log("  (POST to this URL to trigger the automation)");
+        if (automation.webhook_url) {
+            console.log(`  Webhook URL: ${automation.webhook_url}`);
+        }
+        if (automation.webhook_token) {
+            console.log(
+                `  Webhook token (one-time): ${automation.webhook_token.slice(0, 12)}…`,
+            );
+        }
+        console.log("  (POST JSON to webhook URL — no Bearer auth required)");
 
         // ── 2. List all automations ─────────────────────────────────
         console.log("\n--- Listing automations ---");
