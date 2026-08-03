@@ -2,7 +2,7 @@
   "name": "@1claw/example-local-inspect",
   "version": "1.0.0",
   "private": true,
-  "description": "Detect prompt injection, PII, and threats in LLM output — no account needed",
+  "description": "Detect prompt injection, PII, and threats in LLM output \u2014 no account needed",
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@1claw/mcp": "^0.38.0",
-    "@1claw/sdk": "^0.38.0"
+    "@1claw/sdk": "^0.43.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",

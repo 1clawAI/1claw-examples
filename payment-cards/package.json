@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
-  "description": "Payment Card Vault — order a prepaid card via x402, poll to ready, reveal with human re-auth.",
+  "description": "Payment Card Vault \u2014 order a prepaid card via x402, poll to ready, reveal with human re-auth.",
   "type": "module",
   "scripts": {
     "start": "npx tsx --env-file=.env src/index.ts",
     "build": "tsc --noEmit"
   },
   "dependencies": {
-    "@1claw/sdk": "^0.41.0"
+    "@1claw/sdk": "^0.43.1"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

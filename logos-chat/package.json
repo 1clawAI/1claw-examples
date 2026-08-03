@@ -1,34 +1,34 @@
 {
-    "name": "1claw-logos-chat",
-    "version": "0.1.0",
-    "private": true,
-    "license": "MIT",
-    "type": "module",
-    "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start",
-        "cli": "npx tsx --env-file=.env src/start-demo.ts",
-        "cli:alice": "AGENT_NAME=Alice npx tsx --env-file=.env src/agent.ts",
-        "cli:bob": "AGENT_NAME=Bob npx tsx --env-file=.env src/agent.ts",
-        "bootstrap": "npx tsx scripts/bootstrap.ts"
-    },
-    "dependencies": {
-        "@1claw/sdk": "^0.38.0",
-        "@waku/sdk": "^0.0.35",
-        "lucide-react": "^0.469.0",
-        "next": "^15.2.0",
-        "protobufjs": "^8.0.0",
-        "react": "^19.0.0",
-        "react-dom": "^19.0.0"
-    },
-    "devDependencies": {
-        "@tailwindcss/postcss": "^4.0.0",
-        "@types/node": "^22.0.0",
-        "@types/react": "^19.0.0",
-        "@types/react-dom": "^19.0.0",
-        "tailwindcss": "^4.0.0",
-        "tsx": "^4.0.0",
-        "typescript": "^5.0.0"
-    }
+  "name": "1claw-logos-chat",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "cli": "npx tsx --env-file=.env src/start-demo.ts",
+    "cli:alice": "AGENT_NAME=Alice npx tsx --env-file=.env src/agent.ts",
+    "cli:bob": "AGENT_NAME=Bob npx tsx --env-file=.env src/agent.ts",
+    "bootstrap": "npx tsx scripts/bootstrap.ts"
+  },
+  "dependencies": {
+    "@1claw/sdk": "^0.43.1",
+    "@waku/sdk": "^0.0.35",
+    "lucide-react": "^0.469.0",
+    "next": "^15.2.0",
+    "protobufjs": "^8.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
 }

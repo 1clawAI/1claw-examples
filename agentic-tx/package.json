@@ -1,22 +1,22 @@
 {
-    "name": "1claw-agentic-tx",
-    "version": "0.1.0",
-    "private": true,
-    "license": "MIT",
-    "type": "module",
-    "scripts": {
-        "setup": "npx tsx --env-file=.env src/setup.ts",
-        "send-eth": "npx tsx --env-file=.env src/send-eth.ts",
-        "send-base": "npx tsx --env-file=.env src/send-base.ts",
-        "multi-chain": "npx tsx --env-file=.env src/multi-chain-demo.ts",
-        "start": "npx tsx --env-file=.env src/setup.ts"
-    },
-    "dependencies": {
-        "@1claw/sdk": "^0.39.0"
-    },
-    "devDependencies": {
-        "@types/node": "^22.0.0",
-        "tsx": "^4.0.0",
-        "typescript": "^5.0.0"
-    }
+  "name": "1claw-agentic-tx",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "setup": "npx tsx --env-file=.env src/setup.ts",
+    "send-eth": "npx tsx --env-file=.env src/send-eth.ts",
+    "send-base": "npx tsx --env-file=.env src/send-base.ts",
+    "multi-chain": "npx tsx --env-file=.env src/multi-chain-demo.ts",
+    "start": "npx tsx --env-file=.env src/setup.ts"
+  },
+  "dependencies": {
+    "@1claw/sdk": "^0.43.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
 }

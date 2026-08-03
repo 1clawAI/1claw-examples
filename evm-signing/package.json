@@ -1,25 +1,25 @@
 {
-    "name": "1claw-evm-signing",
-    "version": "0.1.0",
-    "private": true,
-    "license": "MIT",
-    "type": "module",
-    "scripts": {
-        "personal-sign": "npx tsx --env-file=.env src/personal-sign.ts",
-        "typed-data": "npx tsx --env-file=.env src/typed-data-sign.ts",
-        "legacy-tx": "npx tsx --env-file=.env src/legacy-tx.ts",
-        "eip1559-tx": "npx tsx --env-file=.env src/eip1559-tx.ts",
-        "sign-only": "npx tsx --env-file=.env src/sign-only.ts",
-        "access-list-tx": "npx tsx --env-file=.env src/access-list-tx.ts",
-        "token-transfer": "npx tsx --env-file=.env src/token-transfer.ts",
-        "start": "npx tsx --env-file=.env src/personal-sign.ts"
-    },
-    "dependencies": {
-        "@1claw/sdk": "^0.38.0"
-    },
-    "devDependencies": {
-        "@types/node": "^22.0.0",
-        "tsx": "^4.0.0",
-        "typescript": "^5.0.0"
-    }
+  "name": "1claw-evm-signing",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "personal-sign": "npx tsx --env-file=.env src/personal-sign.ts",
+    "typed-data": "npx tsx --env-file=.env src/typed-data-sign.ts",
+    "legacy-tx": "npx tsx --env-file=.env src/legacy-tx.ts",
+    "eip1559-tx": "npx tsx --env-file=.env src/eip1559-tx.ts",
+    "sign-only": "npx tsx --env-file=.env src/sign-only.ts",
+    "access-list-tx": "npx tsx --env-file=.env src/access-list-tx.ts",
+    "token-transfer": "npx tsx --env-file=.env src/token-transfer.ts",
+    "start": "npx tsx --env-file=.env src/personal-sign.ts"
+  },
+  "dependencies": {
+    "@1claw/sdk": "^0.43.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
 }

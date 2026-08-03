@@ -1,25 +1,25 @@
 {
-    "name": "1claw-non-evm-keys",
-    "version": "0.1.0",
-    "private": true,
-    "license": "MIT",
-    "type": "module",
-    "scripts": {
-        "bitcoin": "npx tsx --env-file=.env src/bitcoin-keys.ts",
-        "solana": "npx tsx --env-file=.env src/solana-keys.ts",
-        "xrp": "npx tsx --env-file=.env src/xrp-keys.ts",
-        "cardano": "npx tsx --env-file=.env src/cardano-keys.ts",
-        "tron": "npx tsx --env-file=.env src/tron-keys.ts",
-        "all": "npx tsx --env-file=.env src/all-chains.ts",
-        "sign": "npx tsx --env-file=.env src/sign-transaction.ts",
-        "start": "npx tsx --env-file=.env src/all-chains.ts"
-    },
-    "dependencies": {
-        "@1claw/sdk": "^0.38.0"
-    },
-    "devDependencies": {
-        "@types/node": "^22.0.0",
-        "tsx": "^4.0.0",
-        "typescript": "^5.0.0"
-    }
+  "name": "1claw-non-evm-keys",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "bitcoin": "npx tsx --env-file=.env src/bitcoin-keys.ts",
+    "solana": "npx tsx --env-file=.env src/solana-keys.ts",
+    "xrp": "npx tsx --env-file=.env src/xrp-keys.ts",
+    "cardano": "npx tsx --env-file=.env src/cardano-keys.ts",
+    "tron": "npx tsx --env-file=.env src/tron-keys.ts",
+    "all": "npx tsx --env-file=.env src/all-chains.ts",
+    "sign": "npx tsx --env-file=.env src/sign-transaction.ts",
+    "start": "npx tsx --env-file=.env src/all-chains.ts"
+  },
+  "dependencies": {
+    "@1claw/sdk": "^0.43.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
 }

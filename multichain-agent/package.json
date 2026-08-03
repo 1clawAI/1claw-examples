@@ -10,7 +10,7 @@
     "bootstrap": "npx tsx --env-file=.env.local scripts/bootstrap.ts"
   },
   "dependencies": {
-    "@1claw/sdk": "^0.38.0",
+    "@1claw/sdk": "^0.43.1",
     "@ai-sdk/google": "^1.2.0",
     "@radix-ui/react-scroll-area": "^1.2.3",
     "@radix-ui/react-slot": "^1.1.2",

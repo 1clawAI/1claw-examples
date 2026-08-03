@@ -2,7 +2,7 @@
   "name": "@1claw/example-shroud-security",
   "version": "1.0.0",
   "private": true,
-  "description": "Shroud security inspection — prompt injection, command injection, social engineering",
+  "description": "Shroud security inspection \u2014 prompt injection, command injection, social engineering",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@1claw/mcp": "^0.38.0",
-    "@1claw/sdk": "^0.38.0"
+    "@1claw/sdk": "^0.43.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",

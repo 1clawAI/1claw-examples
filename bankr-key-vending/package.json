@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
-  "description": "Bankr dynamic key vending — deny-by-default policy, agent vs human lease, Shroud routing.",
+  "description": "Bankr dynamic key vending \u2014 deny-by-default policy, agent vs human lease, Shroud routing.",
   "type": "module",
   "scripts": {
     "start": "npx tsx --env-file=.env src/index.ts",
     "build": "tsc --noEmit"
   },
   "dependencies": {
-    "@1claw/sdk": "^0.38.0"
+    "@1claw/sdk": "^0.43.1"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

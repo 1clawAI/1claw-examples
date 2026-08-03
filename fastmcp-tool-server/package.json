@@ -1,21 +1,21 @@
 {
-    "name": "1claw-fastmcp-tool-server",
-    "version": "0.1.0",
-    "private": true,
-    "license": "MIT",
-    "type": "module",
-    "scripts": {
-        "start": "npx tsx --env-file=.env src/server.ts",
-        "dev": "npx tsx --env-file=.env --watch src/server.ts"
-    },
-    "dependencies": {
-        "@1claw/sdk": "^0.38.0",
-        "fastmcp": "^3.33.0",
-        "zod": "^3.24.0"
-    },
-    "devDependencies": {
-        "tsx": "^4.0.0",
-        "typescript": "^5.0.0",
-        "@types/node": "^22.0.0"
-    }
+  "name": "1claw-fastmcp-tool-server",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "npx tsx --env-file=.env src/server.ts",
+    "dev": "npx tsx --env-file=.env --watch src/server.ts"
+  },
+  "dependencies": {
+    "@1claw/sdk": "^0.43.1",
+    "fastmcp": "^3.33.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "@types/node": "^22.0.0"
+  }
 }

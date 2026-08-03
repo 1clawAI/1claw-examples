@@ -10,7 +10,7 @@
     "build": "tsc --noEmit"
   },
   "dependencies": {
-    "@1claw/sdk": "^0.38.0"
+    "@1claw/sdk": "^0.43.1"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

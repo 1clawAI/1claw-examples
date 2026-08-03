@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
-  "description": "JWT theft via prompt injection — contained by a 3-second token TTL and scope/vault binding.",
+  "description": "JWT theft via prompt injection \u2014 contained by a 3-second token TTL and scope/vault binding.",
   "type": "module",
   "scripts": {
     "start": "npx tsx --env-file=.env src/index.ts",
@@ -11,7 +11,7 @@
     "build": "tsc --noEmit"
   },
   "dependencies": {
-    "@1claw/sdk": "^0.38.0"
+    "@1claw/sdk": "^0.43.1"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

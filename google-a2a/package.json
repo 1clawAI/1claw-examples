@@ -1,38 +1,38 @@
 {
-    "name": "1claw-google-a2a",
-    "version": "0.1.0",
-    "private": true,
-    "license": "MIT",
-    "type": "module",
-    "scripts": {
-        "worker": "npx tsx --env-file=.env src/worker-agent.ts",
-        "coordinator": "npx tsx --env-file=.env src/coordinator.ts",
-        "start": "npx tsx --env-file=.env src/start-all.ts",
-        "adk": "npx tsx --env-file=.env src/start-adk-demo.ts",
-        "adk:worker": "npx tsx src/adk-a2a-server.ts",
-        "ecdh:alice": "npx tsx src/ecdh-worker.ts",
-        "ecdh:bob": "AGENT_NAME=Bob PORT=4101 npx tsx src/ecdh-worker.ts",
-        "ecdh:coordinator": "npx tsx src/ecdh-coordinator.ts",
-        "ecdh": "npx tsx src/start-ecdh-demo.ts",
-        "ecdh:bootstrap": "npx tsx scripts/bootstrap-ecdh-keys.ts",
-        "ecdh:cleanup": "npx tsx scripts/cleanup-ecdh-keys.ts",
-        "ecdh:setup-agents": "npx tsx scripts/setup-ecdh-agents.ts",
-        "ecdh:test": "npx tsx scripts/test-ecdh-with-1claw.ts",
-        "intents:setup": "echo 'TODO: intents agent setup (see basic example)'",
-        "intents": "echo 'TODO: intents demo (see basic example)'",
-        "intents:worker": "echo 'TODO: intents worker (see basic example)'"
-    },
-    "dependencies": {
-        "@1claw/sdk": "^0.38.0",
-        "@google/adk": "^0.3.0",
-        "@google/genai": "^1.0.0",
-        "express": "^5.0.0",
-        "openai": "^4.0.0"
-    },
-    "devDependencies": {
-        "@types/express": "^5.0.0",
-        "@types/node": "^22.0.0",
-        "tsx": "^4.0.0",
-        "typescript": "^5.0.0"
-    }
+  "name": "1claw-google-a2a",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "worker": "npx tsx --env-file=.env src/worker-agent.ts",
+    "coordinator": "npx tsx --env-file=.env src/coordinator.ts",
+    "start": "npx tsx --env-file=.env src/start-all.ts",
+    "adk": "npx tsx --env-file=.env src/start-adk-demo.ts",
+    "adk:worker": "npx tsx src/adk-a2a-server.ts",
+    "ecdh:alice": "npx tsx src/ecdh-worker.ts",
+    "ecdh:bob": "AGENT_NAME=Bob PORT=4101 npx tsx src/ecdh-worker.ts",
+    "ecdh:coordinator": "npx tsx src/ecdh-coordinator.ts",
+    "ecdh": "npx tsx src/start-ecdh-demo.ts",
+    "ecdh:bootstrap": "npx tsx scripts/bootstrap-ecdh-keys.ts",
+    "ecdh:cleanup": "npx tsx scripts/cleanup-ecdh-keys.ts",
+    "ecdh:setup-agents": "npx tsx scripts/setup-ecdh-agents.ts",
+    "ecdh:test": "npx tsx scripts/test-ecdh-with-1claw.ts",
+    "intents:setup": "echo 'TODO: intents agent setup (see basic example)'",
+    "intents": "echo 'TODO: intents demo (see basic example)'",
+    "intents:worker": "echo 'TODO: intents worker (see basic example)'"
+  },
+  "dependencies": {
+    "@1claw/sdk": "^0.43.1",
+    "@google/adk": "^0.3.0",
+    "@google/genai": "^1.0.0",
+    "express": "^5.0.0",
+    "openai": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
 }
