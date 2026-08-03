@@ -2,8 +2,7 @@
  * 1Claw SDK — Create a Cron-Scheduled Automation
  *
  * Creates an automation that invokes an agent on a recurring schedule
- * using a cron expression. The automation is created in an active state,
- * verified, then cleaned up.
+ * using a cron expression. Requires workflow_spec (+ agent_id, cron_expr).
  *
  * Run: npx tsx --env-file=.env create-scheduled-automation.ts
  */
@@ -34,36 +33,29 @@ async function main() {
         // ── 1. Create a cron-scheduled automation ───────────────────
         console.log("\n--- Creating scheduled automation ---");
 
-        const automation = await client.http.post<{
-            id: string;
-            name: string;
-            trigger_type: string;
-            trigger_config: Record<string, unknown>;
-            action_type: string;
-            is_active: boolean;
-            next_run_at?: string;
-        }>("/v1/automations", {
+        const created = await client.automations.create({
             name: "rotate-api-keys",
-            description: "Rotate external API keys every 6 hours",
-            agent_id: AGENT_ID,
-            trigger_type: "schedule",
-            trigger_config: {
-                cron: "0 */6 * * *",
-                timezone: "UTC",
+            agent_id: AGENT_ID!,
+            trigger_type: "cron",
+            cron_expr: "0 */6 * * *",
+            timezone: "UTC",
+            workflow_spec: {
+                steps: [
+                    {
+                        type: "log",
+                        action: "run_agent_task",
+                        message: "Rotate all API keys that are older than 7 days.",
+                    },
+                ],
             },
-            action_type: "agent_invoke",
-            action_config: {
-                prompt: "Rotate all API keys that are older than 7 days.",
-                timeout_seconds: 120,
-            },
-            is_active: true,
         });
-
+        if (!created.data) throw new Error(created.error?.message ?? "create failed");
+        const automation = created.data;
         automationId = automation.id;
 
         console.log(`Automation created: ${automation.name} (${automation.id})`);
         console.log(`  Trigger: ${automation.trigger_type}`);
-        console.log(`  Cron: ${(automation.trigger_config as any)?.cron ?? "n/a"}`);
+        console.log(`  Cron: ${automation.cron_expr ?? "n/a"}`);
         console.log(`  Active: ${automation.is_active}`);
         if (automation.next_run_at) {
             console.log(`  Next run: ${automation.next_run_at}`);
@@ -72,43 +64,37 @@ async function main() {
         // ── 2. Verify by fetching it back ───────────────────────────
         console.log("\n--- Verifying automation ---");
 
-        const a = await client.http.get<{
-            id: string;
-            name: string;
-            trigger_type: string;
-            is_active: boolean;
-            run_count: number;
-        }>(`/v1/automations/${automationId}`);
+        const got = await client.automations.get(automationId);
+        if (!got.data) throw new Error(got.error?.message ?? "get failed");
+        const a = got.data;
 
         console.log(`  Name: ${a.name}`);
         console.log(`  Active: ${a.is_active}`);
-        console.log(`  Run count: ${a.run_count}`);
+        console.log(`  Workflow steps: ${JSON.stringify(a.workflow_spec)}`);
 
         // ── 3. Pause the automation ─────────────────────────────────
         console.log("\n--- Pausing automation ---");
 
-        const paused = await client.http.patch<{ is_active: boolean }>(
-            `/v1/automations/${automationId}`,
-            { is_active: false },
-        );
+        const paused = await client.automations.update(automationId, {
+            is_active: false,
+        });
+        if (!paused.data) throw new Error(paused.error?.message ?? "update failed");
 
-        console.log(`  Active: ${paused.is_active}`);
+        console.log(`  Active: ${paused.data.is_active}`);
 
         // ── 4. Trigger a manual run ─────────────────────────────────
         console.log("\n--- Triggering manual run ---");
 
-        await client.http.post<{ run_id: string; status: string }>(
-            `/v1/automations/${automationId}/trigger`,
-            {},
+        const run = await client.automations.trigger(automationId);
+        console.log(
+            `  Manual run: ${run.data?.id ?? "ok"} status=${run.data?.status ?? "triggered"}`,
         );
-
-        console.log("  Manual run triggered.");
     } finally {
         // ── 5. Clean up ─────────────────────────────────────────────
         if (automationId) {
             console.log("\n--- Cleaning up ---");
             try {
-                await client.http.delete(`/v1/automations/${automationId}`);
+                await client.automations.delete(automationId);
                 console.log("Automation deleted.");
             } catch (e) {
                 console.error("Failed to delete:", e);

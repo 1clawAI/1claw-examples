@@ -2,7 +2,8 @@
 
 > **Reference only** — not for production use. Review and adapt for your own security requirements.
 
-Three TypeScript scripts demonstrating the 1Claw Automations API: creating scheduled (cron) automations, webhook-triggered automations, and listing run history.
+TypeScript scripts demonstrating the 1Claw Automations API: cron and webhook
+automations using required `workflow_spec`, plus run history.
 
 ## Quick start
 
@@ -16,8 +17,8 @@ npx tsx create-scheduled-automation.ts
 
 ## What you'll learn
 
-- Create a cron-scheduled automation that runs an agent on a recurring cadence
-- Create a webhook-triggered automation that fires when a URL is called
+- Create a cron-scheduled automation (`trigger_type: "cron"`, `cron_expr`, `workflow_spec`)
+- Create a webhook-triggered automation
 - List and inspect automation run history
 - Manage the full automation lifecycle (create, trigger, pause, delete)
 
@@ -26,7 +27,7 @@ npx tsx create-scheduled-automation.ts
 - Node.js 20+
 - A [1Claw account](https://1claw.xyz) with an API key
 - An existing agent (create one at **Agents → Create Agent** in the dashboard)
-- **Pro plan or higher** — automations require a paid subscription
+- Automations are tier-gated (Free includes a small quota; paid plans raise limits)
 
 ## Environment variables
 
@@ -50,17 +51,17 @@ npx tsx create-scheduled-automation.ts
 
 | Type | Description |
 |------|-------------|
-| `schedule` | Runs on a cron expression (e.g. `*/15 * * * *` for every 15 minutes) |
-| `webhook` | Fires when the automation's webhook URL receives a POST request |
+| `cron` | Runs on a cron expression (e.g. `*/15 * * * *`). Dashboard may send `schedule`, which the API normalizes to `cron`. |
+| `webhook` | Fires when the automation trigger URL receives a POST |
 | `event` | Fires in response to vault/agent lifecycle events |
 | `manual` | Only runs when explicitly triggered via API or dashboard |
 
-### Action types
+### workflow_spec (required)
 
-The `action_type` field defines what happens when the automation fires. Common values include `agent_invoke`, `webhook_call`, and `secret_rotate`.
+Create requests must include `workflow_spec`. Accepts either:
 
-## Next steps
+```json
+{ "steps": [ { "type": "log", "action": "run_agent_task", "message": "..." } ] }
+```
 
-- [Agent Memory](../agent-memory/) — Store and search durable agent memory
-- [Cloud Runtime](../cloud-runtime/) — Deploy agents to hosted runtimes
-- [1Claw Docs](https://docs.1claw.xyz)
+or a bare step array `[...]`. The dashboard maps legacy `action_type` UI fields onto this shape.
