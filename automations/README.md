@@ -88,6 +88,19 @@ Reference previous step outputs or webhook payloads using `{{...}}` syntax:
 }
 ```
 
+To deliver to a messaging channel (Telegram, WhatsApp, Discord):
+
+```json
+{
+  "type": "notify",
+  "params": {
+    "channel": "channel",
+    "channel_id": "<uuid of the agent channel>",
+    "message": "Automation complete: {{steps.0.output}}"
+  }
+}
+```
+
 Available variable roots:
 
 | Syntax | Description |
@@ -133,6 +146,6 @@ Supported operators:
 | `memory_get` | Read agent memory |
 | `memory_put` | Write agent memory |
 | `memory_search` | Semantic search over agent memory |
-| `notify` | Send notification (webhook/slack/email) |
+| `notify` | Send notification (webhook/slack/email/channel) |
 | `approval_request` | Pause run for human approval |
 | `condition` | If/else branching with sub-steps |
