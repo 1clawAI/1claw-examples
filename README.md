@@ -2,7 +2,7 @@
 
 > **Reference only** — these examples are for educational and demo purposes. They are not production-ready and may contain hardcoded values, skip error handling, or use development-only configurations. Always review and adapt for your own security requirements.
 
-Thirty-six example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
+Thirty-seven example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
 
 ## Quick reference
 
@@ -44,6 +44,7 @@ Thirty-six example applications demonstrating the [1Claw](https://1claw.xyz) SDK
 | [agent-discovery](./agent-discovery/)         | Beginner     | 5 min  | **Agent Discovery**: agent cards, public directory browsing, tag-based search                       |
 | [langchain-1claw](./langchain-1claw/)         | Beginner     | 5 min  | **LangChain (Python)**: tool-calling agent, persistent chat memory, RAG retriever (`pip install langchain-1claw`) |
 | [crewai-tools](./crewai-tools/)               | Beginner     | 5 min  | **CrewAI (Python)**: multi-agent crew with vault, memory, signing, and automation tools (`pip install 1claw-crewai-tools`) |
+| [sign-in-with-1claw](./sign-in-with-1claw/)   | Beginner     | 5 min  | **OAuth**: "Sign in with 1Claw" flow with PKCE — plain HTML, no build step                                                 |
 
 **Shroud LLM:** Examples that hit Shroud’s OpenAI-compatible surface (`shroud-demo`, `shroud-llm`) must send **`X-Shroud-Provider`** (e.g. `openai`, `anthropic`, `google`) on chat requests; omitting it returns **400** from Shroud.
 
@@ -140,6 +141,7 @@ If you're new to 1Claw, walk through the examples in this order:
 27. **[agent-discovery](./agent-discovery/)** — Make agents discoverable in the public directory
 28. **[langchain-1claw](./langchain-1claw/)** — Python LangChain: tools, persistent chat memory, RAG retriever
 29. **[crewai-tools](./crewai-tools/)** — Python CrewAI: multi-agent crews with vault, memory, and signing
+30. **[sign-in-with-1claw](./sign-in-with-1claw/)** — "Sign in with 1Claw" OAuth 2.0 + PKCE (plain HTML, no build step)
 
 ## What you need
 

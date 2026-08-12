@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OAuth Callback — Sign in with 1Claw</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+      color: #111;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 40px;
+      max-width: 480px;
+      width: 100%;
+    }
+    h1 { font-size: 20px; margin: 0 0 16px; }
+    .loading { color: #666; font-size: 14px; }
+    .error { color: #d32f2f; font-size: 14px; margin-top: 8px; }
+    .success { margin-top: 16px; }
+    .user-info {
+      background: #f8f8f8;
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .user-info dt { font-weight: 600; display: inline; }
+    .user-info dt::after { content: ": "; }
+    .user-info dd { display: inline; margin: 0; color: #333; }
+    .user-info .row { margin-bottom: 4px; }
+    .token-box {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #f0fdf0;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      font-size: 12px;
+      word-break: break-all;
+    }
+    .token-box strong { display: block; margin-bottom: 4px; font-size: 13px; }
+    .back-link { display: inline-block; margin-top: 20px; font-size: 13px; color: #0066cc; text-decoration: none; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>OAuth Callback</h1>
+    <div id="loading" class="loading">Exchanging authorization code for tokens…</div>
+    <div id="error" class="error" hidden></div>
+    <div id="result" class="success" hidden></div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="oauth.js"></script>
+  <script>
+    (async () => {
+      const loadingEl = document.getElementById("loading");
+      const errorEl = document.getElementById("error");
+      const resultEl = document.getElementById("result");
+
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      const state = params.get("state");
+      const errorParam = params.get("error");
+
+      if (errorParam) {
+        loadingEl.hidden = true;
+        errorEl.textContent = `Authorization denied: ${errorParam} — ${params.get("error_description") || ""}`;
+        errorEl.hidden = false;
+        return;
+      }
+
+      if (!code) {
+        loadingEl.hidden = true;
+        errorEl.textContent = "No authorization code found in URL. Did the user deny the request?";
+        errorEl.hidden = false;
+        return;
+      }
+
+      try {
+        const tokenResponse = await handleCallback({ code, state, config: CONFIG });
+        loadingEl.hidden = true;
+
+        // Decode the id_token to show user info (JWT payload is base64url)
+        let userInfo = {};
+        if (tokenResponse.id_token) {
+          try {
+            const payload = tokenResponse.id_token.split(".")[1];
+            const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+            userInfo = JSON.parse(decoded);
+          } catch (_) {}
+        }
+
+        resultEl.innerHTML = `
+          <div class="user-info">
+            <div class="row"><dt>Subject (sub)</dt><dd>${userInfo.sub || "—"}</dd></div>
+            <div class="row"><dt>Email</dt><dd>${userInfo.email || "—"}</dd></div>
+            <div class="row"><dt>Name</dt><dd>${userInfo.name || "—"}</dd></div>
+            <div class="row"><dt>Wallet</dt><dd>${userInfo.wallet_address || "—"}</dd></div>
+          </div>
+          <div class="token-box">
+            <strong>access_token (first 40 chars)</strong>
+            ${tokenResponse.access_token?.substring(0, 40)}…
+          </div>
+          <a href="index.html" class="back-link">← Sign in again</a>
+        `;
+        resultEl.hidden = false;
+      } catch (err) {
+        loadingEl.hidden = true;
+        errorEl.textContent = err.message;
+        errorEl.hidden = false;
+      }
+    })();
+  </script>
+</body>
+</html>

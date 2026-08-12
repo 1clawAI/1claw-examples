@@ -1,0 +1,10 @@
+{
+  "name": "1claw-sign-in-example",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Minimal 'Sign in with 1Claw' OAuth 2.0 + PKCE demo (plain HTML, no build step)",
+  "scripts": {
+    "start": "npx serve -l 8080"
+  }
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign in with 1Claw — Demo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+      color: #111;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 48px 40px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 { font-size: 22px; margin: 0 0 8px; }
+    p { color: #555; font-size: 14px; line-height: 1.5; margin: 0 0 28px; }
+    .signin-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #0f0f0f;
+      color: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      transition: background 0.15s;
+    }
+    .signin-btn:hover { background: #1a1a1a; }
+    .signin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .signin-btn svg { flex-shrink: 0; }
+    .config-note {
+      margin-top: 24px;
+      padding: 12px 16px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #666;
+      text-align: left;
+    }
+    .config-note code { background: #e8e8e8; padding: 1px 4px; border-radius: 3px; font-size: 11px; }
+    .error { color: #d32f2f; font-size: 13px; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Sign in with 1Claw</h1>
+    <p>OAuth 2.0 + PKCE demo — click below to authenticate with your 1Claw account.</p>
+
+    <button class="signin-btn" id="signin-btn" disabled>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2L4 6v6c0 5.25 3.4 10.15 8 11.35C16.6 22.15 20 17.25 20 12V6l-8-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 8v4m0 0v4m0-4h4m-4 0H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Sign in with 1Claw
+    </button>
+
+    <div id="error" class="error" hidden></div>
+
+    <div class="config-note">
+      <strong>Configuration:</strong> Edit <code>config.js</code> to set your
+      <code>CLIENT_ID</code> and <code>REDIRECT_URI</code>.
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="oauth.js"></script>
+  <script>
+    const btn = document.getElementById("signin-btn");
+    const errorEl = document.getElementById("error");
+
+    if (!CONFIG.CLIENT_ID || CONFIG.CLIENT_ID === "YOUR_PLATFORM_APP_SLUG") {
+      errorEl.textContent = "⚠ Set CLIENT_ID in config.js to your platform app slug.";
+      errorEl.hidden = false;
+    } else {
+      btn.disabled = false;
+    }
+
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      errorEl.hidden = true;
+      try {
+        await startSignIn(CONFIG);
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.hidden = false;
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
