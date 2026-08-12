@@ -516,6 +516,40 @@ else
 fi
 echo ""
 
+# --- 31. langchain-1claw (pip install + syntax check) ---
+echo "[31/36] langchain-1claw"
+LC_DIR="$EXAMPLES_ROOT/langchain-1claw"
+if [ -d "$LC_DIR" ]; then
+  if python3 -c "import ast; [ast.parse(open(f).read()) for f in ['$LC_DIR/agent_tools.py','$LC_DIR/chat_memory.py','$LC_DIR/rag_retriever.py']]" 2>&1; then
+    echo "  ✓ langchain-1claw syntax check passed"
+    ((PASS++)) || true
+  else
+    echo "  ✗ langchain-1claw syntax check failed"
+    ((FAIL++)) || true
+  fi
+else
+  echo "  ○ langchain-1claw skipped (directory not found)"
+  ((PASS++)) || true
+fi
+echo ""
+
+# --- 32. crewai-tools (pip install + syntax check) ---
+echo "[32/36] crewai-tools"
+CT_DIR="$EXAMPLES_ROOT/crewai-tools"
+if [ -d "$CT_DIR" ]; then
+  if python3 -c "import ast; [ast.parse(open(f).read()) for f in ['$CT_DIR/crew_demo.py','$CT_DIR/single_tool.py']]" 2>&1; then
+    echo "  ✓ crewai-tools syntax check passed"
+    ((PASS++)) || true
+  else
+    echo "  ✗ crewai-tools syntax check failed"
+    ((FAIL++)) || true
+  fi
+else
+  echo "  ○ crewai-tools skipped (directory not found)"
+  ((PASS++)) || true
+fi
+echo ""
+
 echo "── Post-run: cleanup test-pattern agents (protects /demo) ──"
 run_agent_cleanup
 
