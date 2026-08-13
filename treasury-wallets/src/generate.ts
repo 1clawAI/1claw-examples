@@ -1,8 +1,9 @@
 /**
  * Generate treasury wallets across all supported chains.
  *
- * Treasury wallets are human-only and require a Pro or higher plan.
- * Private keys are stored in the per-org __treasury-keys vault with MPC custody.
+ * Treasury wallets are human-only and count toward the org wallet quota
+ * (available on all tiers). Private keys are stored in the per-org
+ * __treasury-keys vault with MPC custody.
  */
 
 import { createClient } from "@1claw/sdk";
