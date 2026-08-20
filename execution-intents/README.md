@@ -70,6 +70,23 @@ npm run demo
 
 ## Scripts
 
+### Production regression (optional real services)
+
+The main script `scripts/test-execution-intents-prod.sh` runs the full Execution Intents regression by default. To also exercise **your** databases and APIs (not just httpbin):
+
+1. Copy `examples/execution-intents/.env.example` → `.env` and fill `GITHUB_TOKEN`, `EXEC_POSTGRES_*`, etc.
+2. Run with human test credentials (`.env` is auto-loaded when `ONECLAW_ENV_FILE` is unset):
+
+```bash
+EXEC_INTENTS_REAL_SERVICES=1 ONECLAW_TEST_EMAIL=you@example.com ONECLAW_TEST_PASSWORD=… \
+  ./scripts/test-execution-intents-prod.sh
+```
+
+If any `EXEC_*` or `GITHUB_TOKEN` variable is set, section **30** runs automatically even without `EXEC_INTENTS_REAL_SERVICES=1`. Set `EXEC_INTENTS_REAL_SERVICES=0` to disable.
+
+Setup-only binding creation (no smoke execute): `./scripts/bootstrap-execution-intents-bindings.sh`
+
+
 - **`npm start`** — Full walkthrough: create agent, bindings, test, execute, guardrail demo, audit, cleanup
 - **`npm run demo`** — Presentation-friendly version with colored output and real API calls
 
