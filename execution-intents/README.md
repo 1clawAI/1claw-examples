@@ -73,18 +73,28 @@ npm run demo
 - **`npm start`** — Full walkthrough: create agent, bindings, test, execute, guardrail demo, audit, cleanup
 - **`npm run demo`** — Presentation-friendly version with colored output and real API calls
 
-## Binding types supported
+## Binding types supported (Pro+)
 
 | Type | Status | Description |
 |------|--------|-------------|
 | `http` | Live | REST API calls with bearer/header/query/basic credential injection |
 | `graphql` | Live | GraphQL queries with `{ query, variables, operationName }` |
-| `postgres` | Planned | Database queries (Business+) |
-| `mysql` | Planned | Database queries (Business+) |
-| `redis` | Planned | Cache operations (Business+) |
-| `grpc` | Planned | gRPC calls (Business+) |
-| `smtp` | Planned | Email sending (Business+) |
-| `s3` | Planned | Object storage (Business+) |
+| `postgres` | Live | SQL queries via sqlx (set `read_only` guardrail for safe testing) |
+| `mysql` | Live | MySQL queries via sqlx |
+| `redis` | Live | Redis commands (`PING`, `GET`, …) |
+| `grpc` | Live | gRPC-JSON transcoding (Connect-style POST) |
+| `smtp` | Live | Plain TCP SMTP + AUTH PLAIN (no STARTTLS — use HTTP for TLS email APIs) |
+| `cloud_sdk` | Live | AWS SigV4 / GCP SA / Azure client credentials → signed HTTPS |
+| `s3` | Live | S3-compatible get/put/list/delete (R2, AWS, B2) |
+| `custom` | Live | Flexible HTTP with configurable credential injection |
+
+### Testing with real services
+
+1. Copy `examples/execution-intents/.env.example` → `.env` and fill credentials (Neon, Upstash, R2, etc.).
+2. Bootstrap bindings: `./scripts/bootstrap-execution-intents-bindings.sh`
+3. Run prod regression: `./scripts/test-execution-intents-prod.sh`
+
+Production Vault blocks `localhost` and private IPs — use managed services with **public hostnames** even when testing locally.
 
 ## TEE enforcement
 
