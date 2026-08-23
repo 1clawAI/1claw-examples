@@ -21,6 +21,11 @@ PASS=0
 FAIL=0
 SKIP="${SKIP_INSTALL:-0}"
 
+# Optional email report: ONECLAW_TEST_REPORT_EMAIL + RESEND_API_KEY (falls back to ADMIN_EMAIL)
+# shellcheck source=scripts/lib/test-report-email.sh
+source "$ROOT/scripts/lib/test-report-email.sh"
+init_test_report_tracking "$ROOT"
+
 API_URL="${ONECLAW_BASE_URL:-https://api.1claw.xyz}"
 API_URL="${API_URL%/}"
 
@@ -562,4 +567,9 @@ run_account_cleanup
 echo "=============================================="
 echo " Done: $PASS passed, $FAIL failed"
 echo "=============================================="
+
+export TEST_REPORT_PASSED="$PASS"
+export TEST_REPORT_FAILED="$FAIL"
+send_test_report_email "examples" || true
+
 exit "$FAIL"
