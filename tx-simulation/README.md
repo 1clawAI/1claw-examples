@@ -31,7 +31,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.example` →
 - A [1Claw account](https://1claw.xyz) with an agent that has:
   - `intents_api_enabled: true`
   - Transaction guardrails configured (allowed chains, value limits, address allowlist)
-  - A signing key stored in a vault at `keys/{chain}-signer`
+  - A signing key provisioned via `POST /v1/agents/{id}/signing-keys` (stored at `agents/{id}/chains/{chain}/private_key` in `__agent-keys`) or legacy path `keys/{chain}-signer`
   - An access policy granting the agent `read` on `keys/**`
 - A [Google Gemini API key](https://aistudio.google.com/apikey)
 

@@ -29,7 +29,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.local.exampl
 - Node.js 20+
 - A [1Claw account](https://1claw.xyz) with a vault and at least one secret
 - An [Anthropic API key](https://console.anthropic.com/) for Claude
-- Uses `@1claw/sdk@^0.23.0` (npm install will fetch it)
+- Uses `@1claw/sdk@^0.56.2` (see `package.json`)
 
 ## Demo walkthrough (5 min)
 
