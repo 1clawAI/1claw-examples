@@ -1,0 +1,12 @@
+{
+  "name": "1claw-guardrail-hitl-example",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@1claw/sdk": "^0.55.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
