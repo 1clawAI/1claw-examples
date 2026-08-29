@@ -1,4 +1,4 @@
-export type ChainKey = "ethereum" | "bitcoin" | "solana" | "xrp" | "cardano" | "tron";
+export type ChainKey = "ethereum" | "bitcoin" | "solana" | "xrp" | "cardano" | "tron" | "midnight";
 
 export type ChainConfig = {
   key: ChainKey;
@@ -102,6 +102,24 @@ export const SUPPORTED_CHAINS: ChainConfig[] = [
     },
     explorerAddress: (a) => `https://shasta.tronscan.org/#/address/${a}`,
     explorerTx: (h) => `https://shasta.tronscan.org/#/transaction/${h}`,
+  },
+  {
+    key: "midnight",
+    label: "Midnight Preprod",
+    signingKeyChain: "midnight",
+    testnetChain: "midnight-preprod",
+    nativeSymbol: "NIGHT",
+    demoAmount: "1",
+    // The agent's own unshielded address: NIGHT is scarce on Preprod and the
+    // faucet is rate limited, so a demo transfer should not burn it.
+    demoRecipient: "mn_addr_preprod1z9w85pl08f8gpyn0ge0zja9wedfy50r9qxv85wjl4znj9t6eyreq3ue2py",
+    faucet: {
+      label: "Preprod Faucet",
+      url: "https://faucet.preprod.midnight.network/",
+      note: "Use the unshielded mn_addr_preprod1… address. NIGHT must then be registered for DUST generation before it can pay a fee — see packages/midnight/README.md.",
+    },
+    explorerAddress: (a) => `https://preprod.midnightexplorer.com/address/${a}`,
+    explorerTx: (h) => `https://preprod.midnightexplorer.com/tx/${h}`,
   },
 ];
 
