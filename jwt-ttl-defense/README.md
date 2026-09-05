@@ -88,7 +88,7 @@ Expected output (abbreviated):
 ## Prerequisites
 
 - Node.js 20+
-- A **1Claw user API key** (prefix `1ck_`). Agent keys (`ocv_`) cannot create other agents, which this demo needs. Get one at [1claw.xyz → Settings → API Keys](https://1claw.xyz/settings/api-keys).
+- A **1Claw user API key** (prefix `1ck_`). Agent keys (`ocv_`) cannot create other agents, which this demo needs. Get one at [1claw.co → Settings → API Keys](https://1claw.co/settings/api-keys).
 - Uses `@1claw/sdk@^0.20.2`.
 
 ## How the "prompt injection" is simulated
@@ -107,7 +107,7 @@ The exfiltration path — in-process `EventEmitter` — stands in for a Discord 
 | Variable                      | Required | Description                                                                                                    |
 | ----------------------------- | -------- | -------------------------------------------------------------------------------------------------------------- |
 | `ONECLAW_API_KEY`             | Yes      | A USER key (`1ck_…`). Used to provision the vault, secrets, agent, and policy.                                 |
-| `ONECLAW_BASE_URL`            | No       | API URL (default: `https://api.1claw.xyz`).                                                                    |
+| `ONECLAW_BASE_URL`            | No       | API URL (default: `https://api.1claw.co`).                                                                    |
 | `DEMO_OPENWEATHER_KEY`        | No       | Real OpenWeather key. If set, the victim agent makes a real call to [openweathermap.org](https://openweathermap.org/api) after retrieving the secret. |
 | `DEMO_WEATHER_CITY`           | No       | City for the weather call (default: `Malibu,US`).                                                              |
 | `ATTACKER_SLOW_DELAY_SECONDS` | No       | Seconds the "slow attacker" waits before trying its leaked JWT (default: `4`, i.e. just past the 3-second TTL). |
@@ -133,4 +133,4 @@ The exfiltration path — in-process `EventEmitter` — stands in for a Discord 
 
 - [shroud-security](../shroud-security/) — Shroud threat detectors that *prevent* a prompt injection from reaching the agent in the first place.
 - [basic / intents-api](../basic/src/intents-api.ts) — Alternative design: never give the agent the raw key, proxy the signing instead.
-- [1Claw docs](https://docs.1claw.xyz) — JWT scopes, policies, token revocation, audit log.
+- [1Claw docs](https://docs.1claw.co) — JWT scopes, policies, token revocation, audit log.

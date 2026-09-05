@@ -24,7 +24,7 @@ from oneclaw import AuthError, NotFoundError, OneclawError, create_client
 
 load_dotenv()
 
-BASE_URL = os.getenv("ONECLAW_BASE_URL", "https://api.1claw.xyz")
+BASE_URL = os.getenv("ONECLAW_BASE_URL", "https://api.1claw.co")
 API_KEY = os.getenv("ONECLAW_API_KEY")
 AGENT_ID = os.getenv("ONECLAW_AGENT_ID")
 VAULT_ID = os.getenv("ONECLAW_VAULT_ID")

@@ -35,7 +35,7 @@ npm run demo
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `ONECLAW_API_KEY` | Yes | Human API key (`1ck_…`) with Pro+ subscription |
-| `ONECLAW_BASE_URL` | No | API base (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | API base (default: `https://api.1claw.co`) |
 | `GITHUB_TOKEN` | No | GitHub PAT for the credential injection demo |
 | `EXEC_THEGRAPH_API_KEY` | No | The Graph Subgraph Studio key (real-service smoke: Uniswap V3 `_meta` query) |
 | `EXEC_POSTGRES_NEON` | No | Neon **connection URL** from Connect (`postgresql://…@ep-….neon.tech/…`) — not the `napi_` API key |

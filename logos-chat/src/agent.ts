@@ -43,7 +43,7 @@ import {
 const AGENT_NAME = process.env.AGENT_NAME ?? "Alice";
 const API_KEY = process.env.ONECLAW_API_KEY;
 const AGENT_ID = process.env.ONECLAW_AGENT_ID;
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 
 function ipc(msg: Record<string, unknown>): void {
     if (process.send) {

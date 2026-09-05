@@ -5,6 +5,6 @@ import { createClient } from "@1claw/sdk";
  * Authenticated via a user API key stored in the environment.
  */
 export const oneclaw = createClient({
-  baseUrl: process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz",
+  baseUrl: process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co",
   apiKey: process.env.ONECLAW_API_KEY!,
 });

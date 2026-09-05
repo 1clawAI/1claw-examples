@@ -405,7 +405,7 @@ export default function MultichainDemoPage() {
             </div>
           </div>
           <a
-            href="https://1claw.xyz/brand-kit"
+            href="https://1claw.co/brand-kit"
             target="_blank"
             rel="noreferrer"
             className="text-[11px] text-[#6b6b73] hover:text-zinc-300"

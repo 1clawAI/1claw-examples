@@ -29,7 +29,7 @@ npx tsx create-scheduled-automation.ts
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw account](https://1claw.xyz) with an API key
+- A [1Claw account](https://1claw.co) with an API key
 - An existing agent (create one at **Agents → Create Agent** in the dashboard)
 - Automations are tier-gated (Free includes a small quota; paid plans raise limits)
 
@@ -37,9 +37,9 @@ npx tsx create-scheduled-automation.ts
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ONECLAW_API_KEY` | Yes | Your API key (`1ck_...`). Get one at [Settings → API Keys](https://1claw.xyz/settings/api-keys). |
+| `ONECLAW_API_KEY` | Yes | Your API key (`1ck_...`). Get one at [Settings → API Keys](https://1claw.co/settings/api-keys). |
 | `ONECLAW_AGENT_ID` | Yes | UUID of the agent to attach automations to. |
-| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.co`) |
 
 ## Scripts
 

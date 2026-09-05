@@ -7,7 +7,7 @@ End-to-end example: create an AI agent, provision signing keys, and execute fund
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw](https://1claw.xyz) account with a `1ck_` API key
+- A [1Claw](https://1claw.co) account with a `1ck_` API key
 - ETH on the chain(s) you want to transact on
 
 ## Setup
@@ -58,7 +58,7 @@ Violations return a 403 with a descriptive error. Adjust limits in the dashboard
 
 | Variable | Required | Description |
 |---|---|---|
-| `ONECLAW_BASE_URL` | No | API base URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | API base URL (default: `https://api.1claw.co`) |
 | `ONECLAW_API_KEY` | Yes (setup) | Your `1ck_` user API key |
 | `ONECLAW_AGENT_ID` | Yes (send) | Agent UUID from setup |
 | `ONECLAW_AGENT_API_KEY` | Yes (send) | Agent `ocv_` API key from setup |

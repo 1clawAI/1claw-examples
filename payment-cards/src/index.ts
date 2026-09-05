@@ -15,7 +15,7 @@ import { createClient } from "@1claw/sdk";
 
 type SdkError = { status: number; detail?: string };
 
-const BASE_URL = (process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz").replace(/\/$/, "");
+const BASE_URL = (process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co").replace(/\/$/, "");
 const USER_KEY = process.env.ONECLAW_API_KEY?.trim();
 const REVEAL_PASSWORD = process.env.ONECLAW_ACCOUNT_PASSWORD?.trim();
 const ORDER_AMOUNT = process.env.CARD_ORDER_AMOUNT?.trim() || "5.00";

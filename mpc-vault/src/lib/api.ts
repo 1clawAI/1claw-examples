@@ -3,7 +3,7 @@
  * surface optional fields (e.g. client_share on PUT) or headers (X-Client-Share on GET).
  */
 
-const BASE = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 
 export async function bearerFromApiKey(apiKey: string): Promise<string> {
     const res = await fetch(`${BASE.replace(/\/$/, "")}/v1/auth/api-key-token`, {

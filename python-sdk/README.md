@@ -9,7 +9,7 @@
 ## Prerequisites
 
 - Python 3.9+
-- A 1Claw API key ([1claw.xyz/settings/api-keys](https://1claw.xyz/settings/api-keys))
+- A 1Claw API key ([1claw.co/settings/api-keys](https://1claw.co/settings/api-keys))
 
 ## Setup
 
@@ -61,7 +61,7 @@ This will:
 | Variable              | Required | Description                              |
 | --------------------- | -------- | ---------------------------------------- |
 | `ONECLAW_API_KEY`     | Yes      | `1ck_` (user) or `ocv_` (agent) API key |
-| `ONECLAW_BASE_URL`    | No       | API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL`    | No       | API URL (default: `https://api.1claw.co`) |
 | `ONECLAW_AGENT_ID`    | No       | Agent UUID (auto-discovered for `ocv_` keys) |
 | `ONECLAW_VAULT_ID`    | No       | Skip vault creation, use an existing vault |
 | `ONECLAW_SECRET_PATH` | No       | Secret path for agent reads (default: `demo/api-key`) |
@@ -88,4 +88,4 @@ Install from PyPI:
 pip install oneclaw
 ```
 
-Full docs: [docs.1claw.xyz](https://docs.1claw.xyz) | SDK source: [github.com/1clawAI/1claw-python-sdk](https://github.com/1clawAI/1claw-python-sdk)
+Full docs: [docs.1claw.co](https://docs.1claw.co) | SDK source: [github.com/1clawAI/1claw-python-sdk](https://github.com/1clawAI/1claw-python-sdk)

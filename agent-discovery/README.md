@@ -24,7 +24,7 @@ npx tsx make-discoverable.ts
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw account](https://1claw.xyz) with an API key
+- A [1Claw account](https://1claw.co) with an API key
 - An existing agent (for `make-discoverable.ts`)
 - **No plan required** for browsing the directory — it's public
 
@@ -34,7 +34,7 @@ npx tsx make-discoverable.ts
 |----------|----------|-------------|
 | `ONECLAW_API_KEY` | Yes* | Your API key (`1ck_...`). Required for `make-discoverable.ts` only. |
 | `ONECLAW_AGENT_ID` | Yes* | UUID of the agent to make discoverable. Required for `make-discoverable.ts` only. |
-| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.co`) |
 
 *Not required for `browse-directory.ts` — the directory endpoint is public.
 
@@ -78,4 +78,4 @@ The public directory at `GET /v1/agents/directory` lists all discoverable agents
 
 - [Cloud Runtime](../cloud-runtime/) — Deploy discoverable agents to hosted runtimes
 - [Automations](../automations/) — Schedule recurring agent tasks
-- [1Claw Docs](https://docs.1claw.xyz)
+- [1Claw Docs](https://docs.1claw.co)

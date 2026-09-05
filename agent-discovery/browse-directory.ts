@@ -7,7 +7,7 @@
  * Run: npx tsx --env-file=.env browse-directory.ts
  */
 
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 
 interface DirectoryEntry {
     id: string;

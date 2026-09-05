@@ -2,7 +2,7 @@
 
 > **Reference only** — these examples are for educational and demo purposes. They are not production-ready and may contain hardcoded values, skip error handling, or use development-only configurations. Always review and adapt for your own security requirements.
 
-Thirty-seven example applications demonstrating the [1Claw](https://1claw.xyz) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
+Thirty-seven example applications demonstrating the [1Claw](https://1claw.co) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
 
 ## Quick reference
 
@@ -91,7 +91,7 @@ npm run bootstrap
 - Bootstrap one folder only: `./examples/scripts/bootstrap-env.sh basic`
 - Preview: `./examples/scripts/bootstrap-env.sh --dry-run`
 
-Then edit each file with your API keys and vault IDs from [1claw.xyz](https://1claw.xyz).
+Then edit each file with your API keys and vault IDs from [1claw.co](https://1claw.co).
 
 Every example also follows the same per-folder pattern:
 
@@ -147,12 +147,12 @@ If you're new to 1Claw, walk through the examples in this order:
 
 | Credential                  | Where to get it                                                         | Which examples                                                                      |
 | --------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| 1Claw API key (`1ck_` / `ocv_`) | [1claw.xyz/settings/api-keys](https://1claw.xyz/settings/api-keys)   | Human `1ck_` for mpc-vault; agent `ocv_` for most agent demos; all except local-inspect |
-| 1Claw vault + secrets       | [1claw.xyz](https://1claw.xyz) dashboard                                | All except basic (creates its own)                                                  |
+| 1Claw API key (`1ck_` / `ocv_`) | [1claw.co/settings/api-keys](https://1claw.co/settings/api-keys)   | Human `1ck_` for mpc-vault; agent `ocv_` for most agent demos; all except local-inspect |
+| 1Claw vault + secrets       | [1claw.co](https://1claw.co) dashboard                                | All except basic (creates its own)                                                  |
 | Gemini API key              | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) (free) | langchain, google-a2a, tx-simulation                                                |
 | Anthropic API key           | [console.anthropic.com](https://console.anthropic.com)                  | nextjs-agent-secret                                                                 |
 | OpenAI API key              | [platform.openai.com](https://platform.openai.com)                      | langchain (alternative to Gemini); shroud-demo / shroud-llm (optional if key in Vault) |
-| 1Claw agent (ID + API key)  | [1claw.xyz](https://1claw.xyz) — create agent, Shroud enabled for LLM   | shroud-demo, shroud-llm, tx-simulation                                                |
+| 1Claw agent (ID + API key)  | [1claw.co](https://1claw.co) — create agent, Shroud enabled for LLM   | shroud-demo, shroud-llm, tx-simulation                                                |
 | Smart account + session key | [Ampersend docs](https://docs.ampersend.ai)                             | ampersend-x402                                                                      |
 | EOA private key (Base USDC) | Generate hex key, fund with USDC on Base                                | x402-payments                                                                       |
 
@@ -161,8 +161,8 @@ If you're new to 1Claw, walk through the examples in this order:
 1Claw is an HSM-backed secrets manager for AI agents and humans. It provides encrypted vaults, granular access policies, an Intents API with guardrails, human-in-the-loop approvals, subscription billing with prepaid credits, and x402 micropayments.
 
 - **SDK**: [@1claw/sdk](https://www.npmjs.com/package/@1claw/sdk)
-- **MCP**: [@1claw/mcp](https://mcp.1claw.xyz) — vault, secrets, sharing, simulate/submit transaction tools
+- **MCP**: [@1claw/mcp](https://mcp.1claw.co) — vault, secrets, sharing, simulate/submit transaction tools
 - **CLI**: [@1claw/cli](https://www.npmjs.com/package/@1claw/cli)
-- **Docs**: [docs.1claw.xyz](https://docs.1claw.xyz)
-- **Dashboard**: [1claw.xyz](https://1claw.xyz)
-- **Pricing**: [1claw.xyz/pricing](https://1claw.xyz/pricing)
+- **Docs**: [docs.1claw.co](https://docs.1claw.co)
+- **Dashboard**: [1claw.co](https://1claw.co)
+- **Pricing**: [1claw.co/pricing](https://1claw.co/pricing)

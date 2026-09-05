@@ -26,7 +26,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.example` →
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw account](https://1claw.xyz) with a vault and agent
+- A [1Claw account](https://1claw.co) with a vault and agent
 - Uses `@1claw/sdk@^0.56.2` (see `package.json`)
 
 ## Demo walkthrough (5–10 min)
@@ -65,7 +65,7 @@ Make sure you have at least one secret in your vault:
 1claw secret put demo/api-key --vault YOUR_VAULT_ID --value "sk-test-12345" --type api_key
 ```
 
-Or create one via the [1Claw dashboard](https://1claw.xyz).
+Or create one via the [1Claw dashboard](https://1claw.co).
 
 ### Step 3 — Start the server (HTTP streaming)
 
@@ -155,7 +155,7 @@ Now ask Claude: *"Rotate the API key at demo/api-key"* and it will call the tool
 | `ONECLAW_VAULT_ID` | Yes | UUID of the vault to operate on |
 | `ONECLAW_AGENT_API_KEY` | Yes | Agent API key (`ocv_...`). Auto-refreshes JWT. |
 | `ONECLAW_AGENT_ID` | No | Agent UUID. Auto-discovered from API key if omitted. |
-| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.co`) |
 | `MCP_TRANSPORT` | No | `stdio` (default) or `httpStream` |
 | `PORT` | No | HTTP port for streaming mode (default: `3001`) |
 
@@ -185,4 +185,4 @@ Standard tools are thin pass-throughs. Domain tools compose multiple SDK calls i
 - [LangChain Agent](../langchain-agent/) — Connect LangChain to this server
 - [Google A2A](../google-a2a/) — Agent-to-Agent with 1Claw
 - [Next.js Agent Secret](../nextjs-agent-secret/) — AI chat app with vault access
-- [1Claw Docs](https://docs.1claw.xyz)
+- [1Claw Docs](https://docs.1claw.co)

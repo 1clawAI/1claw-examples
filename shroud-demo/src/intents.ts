@@ -6,11 +6,11 @@
 import { fileURLToPath } from "node:url";
 import "./load-env.js";
 
-const SHROUD_URL = (process.env.ONECLAW_SHROUD_URL || "https://shroud.1claw.xyz").trim().replace(
+const SHROUD_URL = (process.env.ONECLAW_SHROUD_URL || "https://shroud.1claw.co").trim().replace(
   /\/$/,
   ""
 );
-const API_URL = (process.env.ONECLAW_BASE_URL || "https://api.1claw.xyz").trim().replace(/\/$/, "");
+const API_URL = (process.env.ONECLAW_BASE_URL || "https://api.1claw.co").trim().replace(/\/$/, "");
 
 function getAgentCreds(): { agentId: string; apiKey: string } | null {
   const id = (process.env.ONECLAW_AGENT_ID ?? "").trim();

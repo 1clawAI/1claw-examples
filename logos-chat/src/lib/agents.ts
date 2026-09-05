@@ -141,7 +141,7 @@ export async function initAgents(): Promise<InitAgentsResult> {
         };
     }
 
-    const baseUrl = process.env.ONECLAW_BASE_URL || "https://api.1claw.xyz";
+    const baseUrl = process.env.ONECLAW_BASE_URL || "https://api.1claw.co";
     const hasFullAgentEnv = Boolean(
         process.env.ONECLAW_ALICE_AGENT_ID &&
             process.env.ONECLAW_ALICE_API_KEY &&

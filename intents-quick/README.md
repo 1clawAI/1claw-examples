@@ -5,7 +5,7 @@ Sign an on-chain transaction without ever touching a private key. One API key, o
 ## Prerequisites
 
 - Node.js 20+
-- A free [1Claw](https://1claw.xyz) account
+- A free [1Claw](https://1claw.co) account
 
 ## Setup
 
@@ -20,7 +20,7 @@ Open `.env` and paste your human API key:
 ONECLAW_API_KEY=1ck_your_key_here
 ```
 
-Get one from [1claw.xyz](https://1claw.xyz) → Settings → API Keys.
+Get one from [1claw.co](https://1claw.co) → Settings → API Keys.
 
 ## Run
 

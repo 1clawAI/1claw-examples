@@ -6,7 +6,7 @@
 
 import { createClient } from "@1claw/sdk";
 
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 const API_KEY = process.env.ONECLAW_AGENT_API_KEY;
 const AGENT_ID = process.env.ONECLAW_AGENT_ID;
 const TO_ADDRESS =

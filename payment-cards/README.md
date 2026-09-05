@@ -1,6 +1,6 @@
 # Payment Card Vault
 
-Demonstrates the [Payment Card Vault](https://docs.1claw.xyz/guides/payment-cards) end to end:
+Demonstrates the [Payment Card Vault](https://docs.1claw.co/guides/payment-cards) end to end:
 
 1. **Card-enabled agent** — create an agent with ordering guardrails (`cards_enabled`, `card_max_order_usd`, `card_daily_limit_usd`)
 2. **Ethereum signing key** — the x402 payer; fund its Base address with USDC
@@ -30,7 +30,7 @@ npm start
 | Var | Required | Description |
 | --- | --- | --- |
 | `ONECLAW_API_KEY` | yes | Human key (`1ck_…`) |
-| `ONECLAW_BASE_URL` | no | Defaults to `https://api.1claw.xyz` |
+| `ONECLAW_BASE_URL` | no | Defaults to `https://api.1claw.co` |
 | `ONECLAW_AGENT_ID` | no | Reuse an existing agent instead of creating one |
 | `ONECLAW_AGENT_API_KEY` | no | If set, the order is placed as the agent (else as the human owner) |
 | `ONECLAW_ACCOUNT_PASSWORD` | no | Enables the reveal step (password re-auth) |

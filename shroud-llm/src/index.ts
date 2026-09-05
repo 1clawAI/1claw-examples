@@ -11,11 +11,11 @@
  */
 import "./load-env.js";
 
-const SHROUD_URL = (process.env.ONECLAW_SHROUD_URL || "https://shroud.1claw.xyz").trim().replace(
+const SHROUD_URL = (process.env.ONECLAW_SHROUD_URL || "https://shroud.1claw.co").trim().replace(
   /\/$/,
   "",
 );
-const API_URL = (process.env.ONECLAW_BASE_URL || "https://api.1claw.xyz").trim().replace(/\/$/, "");
+const API_URL = (process.env.ONECLAW_BASE_URL || "https://api.1claw.co").trim().replace(/\/$/, "");
 const VERBOSE = process.env.SHROUD_LLM_VERBOSE === "1";
 
 const OPENAI_API_KEY = (process.env.OPENAI_API_KEY ?? "").trim();

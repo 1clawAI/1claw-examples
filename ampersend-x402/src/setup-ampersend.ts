@@ -10,7 +10,7 @@
  *   X402_SESSION_KEY — 0x... session key; if unset, a new key is generated
  *
  * Optional:
- *   ONECLAW_BASE_URL (default https://api.1claw.xyz)
+ *   ONECLAW_BASE_URL (default https://api.1claw.co)
  *   BUYER_KEY_PATH (default keys/x402-session-key)
  *   SETUP_VAULT_NAME (default ampersend-x402-demo)
  *   SETUP_AGENT_NAME (default ampersend-x402-agent)
@@ -21,7 +21,7 @@ import { stdin as input, stdout as output } from "node:process";
 import { createClient } from "@1claw/sdk";
 import { generatePrivateKey } from "viem/accounts";
 
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 
 const BUYER_KEY_PATH =
     process.env.BUYER_KEY_PATH?.trim() || "keys/x402-session-key";
@@ -94,7 +94,7 @@ async function promptInteractive(): Promise<{ userKey: string; sessionKey: strin
 
         const userLine = (
             await rl.question(
-                "1. User API key (1ck_... from 1claw.xyz → Settings → API Keys)\n   (leave empty to use ONECLAW_FULL_API_KEY / ONECLAW_API_KEY from env):\n   ",
+                "1. User API key (1ck_... from 1claw.co → Settings → API Keys)\n   (leave empty to use ONECLAW_FULL_API_KEY / ONECLAW_API_KEY from env):\n   ",
             )
         ).trim();
 

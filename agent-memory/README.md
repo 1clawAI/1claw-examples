@@ -24,7 +24,7 @@ npx tsx durable-memory.ts
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw account](https://1claw.xyz) with an API key
+- A [1Claw account](https://1claw.co) with an API key
 - An existing agent with **memory enabled** (`memory_enabled: true`)
 - **Pro plan or higher** — agent memory requires a paid subscription
 
@@ -40,9 +40,9 @@ await client.agents.update(agentId, { memory_enabled: true });
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ONECLAW_API_KEY` | Yes | Your API key (`1ck_...`). Get one at [Settings → API Keys](https://1claw.xyz/settings/api-keys). |
+| `ONECLAW_API_KEY` | Yes | Your API key (`1ck_...`). Get one at [Settings → API Keys](https://1claw.co/settings/api-keys). |
 | `ONECLAW_AGENT_ID` | Yes | UUID of the agent with memory enabled. |
-| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.co`) |
 
 ## Scripts
 
@@ -73,4 +73,4 @@ All memory values are encrypted at rest using envelope encryption (AES-256-GCM w
 
 - [Automations](../automations/) — Schedule agents to run on cron or webhook triggers
 - [Cloud Runtime](../cloud-runtime/) — Deploy agents to hosted runtimes
-- [1Claw Docs](https://docs.1claw.xyz)
+- [1Claw Docs](https://docs.1claw.co)

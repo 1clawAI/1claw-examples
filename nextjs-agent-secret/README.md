@@ -10,7 +10,7 @@ A Next.js chat app where an AI agent (Claude via Vercel AI SDK) accesses secrets
 cd examples/nextjs-agent-secret
 npm install
 cp .env.local.example .env.local
-# Edit .env.local: set ONECLAW_API_KEY (https://1claw.xyz/settings/api-keys) and ANTHROPIC_API_KEY
+# Edit .env.local: set ONECLAW_API_KEY (https://1claw.co/settings/api-keys) and ANTHROPIC_API_KEY
 npm run dev
 # Open http://localhost:3000
 ```
@@ -27,7 +27,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.local.exampl
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw account](https://1claw.xyz) with a vault and at least one secret
+- A [1Claw account](https://1claw.co) with a vault and at least one secret
 - An [Anthropic API key](https://console.anthropic.com/) for Claude
 - Uses `@1claw/sdk@^0.56.2` (see `package.json`)
 
@@ -45,14 +45,14 @@ Open `.env.local` and set:
 
 | Variable | Where to get it |
 |----------|-----------------|
-| `ONECLAW_API_KEY` | [1claw.xyz → Settings → API Keys](https://1claw.xyz/settings/api-keys) |
+| `ONECLAW_API_KEY` | [1claw.co → Settings → API Keys](https://1claw.co/settings/api-keys) |
 | `ANTHROPIC_API_KEY` | [console.anthropic.com](https://console.anthropic.com/) |
 
-Optional: `ONECLAW_BASE_URL` (default: `https://api.1claw.xyz`).
+Optional: `ONECLAW_BASE_URL` (default: `https://api.1claw.co`).
 
 ### Step 2 — Make sure you have a secret
 
-Create a test secret via the [dashboard](https://1claw.xyz) or CLI:
+Create a test secret via the [dashboard](https://1claw.co) or CLI:
 
 ```bash
 1claw secret put demo/greeting --vault YOUR_VAULT_ID --value "Hello from 1Claw!" --type note
@@ -133,7 +133,7 @@ The `getSecret` tool stores the decrypted value in a server-side `Map` keyed by 
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `ONECLAW_API_KEY` | Yes | Your 1Claw API key (`ocv_...`) |
-| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.co`) |
 | `ANTHROPIC_API_KEY` | Yes | Anthropic API key for Claude |
 
 ## Key code pattern
@@ -168,4 +168,4 @@ export const oneclawTools = {
 
 - [LangChain Agent](../langchain-agent/) — Same pattern with LangChain instead of Vercel AI SDK
 - [Transaction Simulation](../tx-simulation/) — AI agent with on-chain transactions and guardrails
-- [1Claw Docs](https://docs.1claw.xyz)
+- [1Claw Docs](https://docs.1claw.co)

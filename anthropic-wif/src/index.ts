@@ -12,7 +12,7 @@
 import { createClient, type OneclawClient } from "@1claw/sdk";
 
 const ONECLAW_API_KEY = required("ONECLAW_API_KEY");
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 const AUDIENCE = process.env.WIF_AUDIENCE ?? "https://api.anthropic.com";
 const SKIP_ANTHROPIC = process.env.DEMO_SKIP_ANTHROPIC === "1";
 const ANTHROPIC_TOKEN_URL =

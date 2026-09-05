@@ -16,7 +16,7 @@ import {
     exportSignPrivateKeyToBase64,
 } from "../src/ecdh-crypto.js";
 
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 const ALICE_VAULT_ID = process.env.ONECLAW_ALICE_VAULT_ID;
 const ALICE_API_KEY = process.env.ONECLAW_ALICE_API_KEY;
 const BOB_VAULT_ID = process.env.ONECLAW_BOB_VAULT_ID;

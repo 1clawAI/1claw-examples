@@ -25,7 +25,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.example` →
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw account](https://1claw.xyz) with a vault containing at least one secret
+- A [1Claw account](https://1claw.co) with a vault containing at least one secret
 - An LLM API key: **OpenAI** (`OPENAI_API_KEY`) or **Gemini free tier** ([aistudio.google.com/apikey](https://aistudio.google.com/apikey))
 - Uses `@1claw/sdk@^0.56.2` (see `package.json`)
 
@@ -54,7 +54,7 @@ GOOGLE_API_KEY=your-gemini-key     # or OPENAI_API_KEY=sk-...
 
 ### Step 2 — Make sure you have a secret in your vault
 
-If your vault is empty, create a quick test secret via the [1Claw dashboard](https://1claw.xyz) or CLI:
+If your vault is empty, create a quick test secret via the [1Claw dashboard](https://1claw.co) or CLI:
 
 ```bash
 # Using the CLI
@@ -98,7 +98,7 @@ I've retrieved it but I'm not displaying the value as instructed.
 npm run mcp
 ```
 
-This connects LangChain to the hosted 1Claw MCP server at `mcp.1claw.xyz`. The agent automatically gets all 27+ vault and security tools (list_secrets, get_secret, put_secret, etc.) without defining them manually.
+This connects LangChain to the hosted 1Claw MCP server at `mcp.1claw.co`. The agent automatically gets all 27+ vault and security tools (list_secrets, get_secret, put_secret, etc.) without defining them manually.
 
 > **Requires:** `ONECLAW_AGENT_API_KEY` (agent API key, `ocv_` prefix) and `OPENAI_API_KEY`.
 
@@ -119,7 +119,7 @@ This connects LangChain to the hosted 1Claw MCP server at `mcp.1claw.xyz`. The a
 | `OPENAI_API_KEY` | One LLM required | OpenAI API key |
 | `GOOGLE_API_KEY` | One LLM required | Gemini free tier key |
 | `ONECLAW_AGENT_API_KEY` | MCP only | Agent API key (`ocv_` prefix, auto-refreshes JWT) |
-| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.co`) |
 
 ## How it works
 
@@ -164,4 +164,4 @@ const listSecretsTool = new DynamicStructuredTool({
 - [FastMCP Tool Server](../fastmcp-tool-server/) — Build your own MCP server with domain-specific tools
 - [Google A2A](../google-a2a/) — Agent-to-Agent communication with 1Claw
 - [Next.js Agent Secret](../nextjs-agent-secret/) — AI chat app with vault access and approval gates
-- [1Claw Docs](https://docs.1claw.xyz)
+- [1Claw Docs](https://docs.1claw.co)

@@ -7,7 +7,7 @@ Three Python scripts showing how to use [`langchain-1claw`](https://pypi.org/pro
 ## Prerequisites
 
 - Python 3.10+
-- A [1Claw](https://1claw.xyz) account with a vault and at least one secret
+- A [1Claw](https://1claw.co) account with a vault and at least one secret
 - An agent registered in your org with an `ocv_` API key and a read policy on the vault
 - An LLM API key: `OPENAI_API_KEY` (or swap in any LangChain-supported model)
 
@@ -81,4 +81,4 @@ Secrets stay in the vault. Signing happens server-side. Memory is encrypted at r
 - [CrewAI tools example](../crewai-tools/) -- same tools in a CrewAI crew
 - [LangChain TypeScript example](../langchain-agent/) -- TypeScript + `@1claw/sdk` approach
 - [Python SDK example](../python-sdk/) -- raw SDK without LangChain
-- [1Claw docs](https://docs.1claw.xyz/docs/integrations/langchain)
+- [1Claw docs](https://docs.1claw.co/docs/integrations/langchain)

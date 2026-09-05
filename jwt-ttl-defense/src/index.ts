@@ -26,7 +26,7 @@ import { runAttacker, type AttackAttempt } from "./attacker.js";
 import { attacker, fail, note, ok, preview, section, step, warn } from "./pretty.js";
 import { hasLlmProviderKey, llmProviderName } from "./shroud.js";
 
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 const API_KEY = process.env.ONECLAW_API_KEY;
 const SLOW_DELAY_SECONDS = Number.parseInt(
     process.env.ATTACKER_SLOW_DELAY_SECONDS ?? "4",

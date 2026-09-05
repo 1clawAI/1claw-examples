@@ -23,7 +23,7 @@ import { createPublicClient, http } from "viem";
 import { base } from "viem/chains";
 import { createClient } from "@1claw/sdk";
 
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 const API_KEY = process.env.ONECLAW_API_KEY;
 const VAULT_ID = process.env.ONECLAW_VAULT_ID;
 const AGENT_ID = process.env.ONECLAW_AGENT_ID;

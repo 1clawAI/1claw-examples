@@ -5,7 +5,7 @@
  */
 import "./load-env.js";
 
-const SHROUD_URL = (process.env.ONECLAW_SHROUD_URL || "https://shroud.1claw.xyz").trim().replace(/\/$/, "");
+const SHROUD_URL = (process.env.ONECLAW_SHROUD_URL || "https://shroud.1claw.co").trim().replace(/\/$/, "");
 const OPENAI_API_KEY = (process.env.OPENAI_API_KEY ?? "").trim();
 const GEMINI_API_KEY = (process.env.GEMINI_API_KEY ?? process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? "").trim();
 

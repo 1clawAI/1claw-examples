@@ -7,8 +7,8 @@ Provision HSM-backed signing keys for 6 blockchains, view derived addresses, and
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw account](https://1claw.xyz) with an API key
-- An agent with the **Intents API enabled** (create one in the [dashboard](https://1claw.xyz/agents) or via the SDK)
+- A [1Claw account](https://1claw.co) with an API key
+- An agent with the **Intents API enabled** (create one in the [dashboard](https://1claw.co/agents) or via the SDK)
 
 ## Quick start
 
@@ -53,7 +53,7 @@ npm run rotate -- bitcoin
 |----------|----------|-------------|
 | `ONECLAW_AGENT_API_KEY` | Yes | Agent API key (`ocv_...`) |
 | `ONECLAW_AGENT_ID` | Yes | Agent UUID |
-| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.co`) |
 | `ONECLAW_API_KEY` | No | User API key (not used by these scripts) |
 
 ## Security
@@ -64,4 +64,4 @@ Private keys are generated and stored inside the HSM (Google Cloud KMS with hard
 
 - [Basic Example](../basic/) — Vault CRUD, secrets, billing
 - [Transaction Simulation](../tx-simulation/) — Submit transactions with Tenderly simulation
-- [1Claw Docs](https://docs.1claw.xyz)
+- [1Claw Docs](https://docs.1claw.co)

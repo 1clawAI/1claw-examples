@@ -25,7 +25,7 @@ import { createClient } from "@1claw/sdk";
 import { randomBytes } from "node:crypto";
 import { privateKeyToAccount } from "viem/accounts";
 
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 const args = process.argv.slice(2);
 const NO_CLEANUP = args.includes("--no-cleanup") || args.includes("-k");
 const positionalArgs = args.filter((a) => !a.startsWith("-"));
@@ -39,7 +39,7 @@ if (!API_KEY || API_KEY === "1ck_your_key_here") {
   console.error("  Flags:");
   console.error("    --no-cleanup, -k   Keep vault/agent after run");
   console.error("");
-  console.error("  Get a key at https://1claw.xyz → Settings → API Keys");
+  console.error("  Get a key at https://1claw.co → Settings → API Keys");
   console.error("");
   process.exit(1);
 }

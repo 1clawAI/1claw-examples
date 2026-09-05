@@ -26,7 +26,7 @@ npm install
 Set environment variables:
 
 ```bash
-export ONECLAW_BASE_URL=https://api.1claw.xyz
+export ONECLAW_BASE_URL=https://api.1claw.co
 export ONECLAW_PLATFORM_KEY=plt_your_key_here
 ```
 
@@ -103,7 +103,7 @@ await client.platform.revokeGrant(connectionId, grantId);
 - The end-user owns their vault, agent, and API key
 - The operator sees metadata and audit events but not secret values
 - Resource grants are user-initiated — only the connected user can grant or revoke access
-- **v0.59.4 plt_ routes:** `GET .../portfolio`, `POST .../pending-approvals`, connection-scoped `automations`/`memory`, `POST /v1/shroud/inspect-content` — see [Platform API overview](https://docs.1claw.xyz/docs/platform-api/overview)
+- **v0.59.4 plt_ routes:** `GET .../portfolio`, `POST .../pending-approvals`, connection-scoped `automations`/`memory`, `POST /v1/shroud/inspect-content` — see [Platform API overview](https://docs.1claw.co/docs/platform-api/overview)
 
 ### Bootstrap response details
 

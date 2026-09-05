@@ -8,7 +8,7 @@ import { createClient, type SignTransactionRequest } from "@1claw/sdk";
 import { mockSolverFillPlan } from "./mock-solver.js";
 import { fetch1inchSwapPlan, ONEINCH_ETH_PLACEHOLDER } from "./quote-1inch.js";
 
-const BASE_URL = (process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz").replace(/\/$/, "");
+const BASE_URL = (process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co").replace(/\/$/, "");
 const AGENT_ID = (process.env.ONECLAW_AGENT_ID ?? "").trim();
 const AGENT_KEY = (process.env.ONECLAW_AGENT_API_KEY ?? "").trim();
 const DEMO_TO = (process.env.DEMO_TO_ADDRESS ?? "0x0000000000000000000000000000000000000000").trim();

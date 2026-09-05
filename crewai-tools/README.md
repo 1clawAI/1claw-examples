@@ -7,7 +7,7 @@ Two Python scripts showing how to use [`1claw-crewai-tools`](https://pypi.org/pr
 ## Prerequisites
 
 - Python 3.10+
-- A [1Claw](https://1claw.xyz) account with a vault and at least one secret
+- A [1Claw](https://1claw.co) account with a vault and at least one secret
 - An agent registered in your org with an `ocv_` API key and a read policy on the vault
 - An LLM API key: `OPENAI_API_KEY` or `GOOGLE_API_KEY` (Gemini)
 
@@ -79,4 +79,4 @@ Each tool talks to the 1Claw Vault API over HTTPS with auto-refreshing JWT auth.
 
 - [LangChain example](../langchain-1claw/) -- same tools using LangChain
 - [Python SDK example](../python-sdk/) -- raw SDK without a framework
-- [1Claw docs](https://docs.1claw.xyz/docs/integrations/crewai)
+- [1Claw docs](https://docs.1claw.co/docs/integrations/crewai)

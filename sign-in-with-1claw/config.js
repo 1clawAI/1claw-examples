@@ -1,7 +1,7 @@
 /**
  * Configuration for the "Sign in with 1Claw" demo.
  *
- * 1. Register a Platform App at https://1claw.xyz/platform
+ * 1. Register a Platform App at https://1claw.co/platform
  * 2. Copy the app's slug (the client_id for OAuth)
  * 3. Add your redirect URI to the app's allowed redirect_uris
  * 4. Update the values below
@@ -16,10 +16,10 @@ const CONFIG = {
   REDIRECT_URI: "http://localhost:8080/callback.html",
 
   // 1Claw API base URL (default: production)
-  BASE_URL: "https://api.1claw.xyz",
+  BASE_URL: "https://api.1claw.co",
 
   // 1Claw Dashboard URL (where the consent page lives)
-  DASHBOARD_URL: "https://1claw.xyz",
+  DASHBOARD_URL: "https://1claw.co",
 
   // OAuth scopes to request
   SCOPES: ["openid", "profile", "email"],

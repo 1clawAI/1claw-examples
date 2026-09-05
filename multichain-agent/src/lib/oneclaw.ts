@@ -1,4 +1,4 @@
-const API_URL = process.env.ONECLAW_BASE_URL || "https://api.1claw.xyz";
+const API_URL = process.env.ONECLAW_BASE_URL || "https://api.1claw.co";
 
 function requireAgentConfig() {
   const agentId = process.env.ONECLAW_AGENT_ID;

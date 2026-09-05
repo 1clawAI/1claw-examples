@@ -105,7 +105,7 @@ export async function runVictimAgent(
     );
 
     if (options.shroudEnabled) {
-        // ── Real Shroud TEE path: route through shroud.1claw.xyz ──
+        // ── Real Shroud TEE path: route through shroud.1claw.co ──
         if (hasLlmProviderKey()) {
             shroud(
                 `Routing LLM request through Shroud TEE \u2192 ${llmProviderName()}`,

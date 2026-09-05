@@ -15,7 +15,7 @@ Reference-only demos for **Multi-Party Computation** vault modes on 1Claw:
 cd examples/mpc-vault
 npm install
 cp .env.example .env
-# Edit .env: ONECLAW_API_KEY=1ck_... (https://1claw.xyz/settings/api-keys — human key for vault create)
+# Edit .env: ONECLAW_API_KEY=1ck_... (https://1claw.co/settings/api-keys — human key for vault create)
 npm run 2of2    # Pro+ — 2-of-2 client custody (X-Client-Share on GET)
 npm run 2of3    # Business+ — 2-of-3 multi-HSM (needs triple-HSM backend)
 npm start       # runs both flows (each may skip or fail if tier/backend missing)
@@ -37,6 +37,6 @@ MPC_SKIP_CLEANUP=1 npm run 2of2
 
 ## Links
 
-- [Pricing / MPC tiers](https://1claw.xyz/pricing)
-- [Security & MPC](https://1claw.xyz/security)
-- [Docs](https://docs.1claw.xyz)
+- [Pricing / MPC tiers](https://1claw.co/pricing)
+- [Security & MPC](https://1claw.co/security)
+- [Docs](https://docs.1claw.co)

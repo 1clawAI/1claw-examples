@@ -53,7 +53,7 @@ Humans approve in the dashboard **Approvals** inbox or via:
 Owner/admin can halt all agent tx/execution:
 
 ```bash
-curl -X POST https://api.1claw.xyz/v1/org/freeze \
+curl -X POST https://api.1claw.co/v1/org/freeze \
   -H "Authorization: Bearer $ONECLAW_TOKEN"
 ```
 

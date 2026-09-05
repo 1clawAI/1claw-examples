@@ -3,7 +3,7 @@
  * Performs unauthenticated GETs to see 401/402 and prints status + 402 body when present.
  */
 
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 
 const endpoints: { name: string; url: string }[] = [
     {

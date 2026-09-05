@@ -25,7 +25,7 @@ cp .env.example .env
 | Variable | Required | Description |
 | -------- | -------- | ----------- |
 | `ONECLAW_API_KEY` | Yes | User API key (`1ck_...`) — treasury wallets are human-only |
-| `ONECLAW_BASE_URL` | No | API base URL (defaults to `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | API base URL (defaults to `https://api.1claw.co`) |
 | `SEND_TO` | For send | Recipient address |
 | `SEND_AMOUNT` | For send | Amount in ETH |
 | `SEND_PASSWORD` | For send | Account password for re-authentication |

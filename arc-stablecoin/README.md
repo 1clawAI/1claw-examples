@@ -86,7 +86,7 @@ npm start
 |----------|----------|-------------|
 | `ONECLAW_API_KEY` | Yes | Human API key (`1ck_...`) |
 | `ARC_RECIPIENT` | No | Recipient address (default: burn address) |
-| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.co`) |
 
 ## Flags
 
@@ -125,7 +125,7 @@ Explorer: https://testnet.arcscan.app/tx/0xabc...
 
 ## Next steps
 
-- [Intents API guide](https://docs.1claw.xyz/docs/guides/intents-api) — full documentation
+- [Intents API guide](https://docs.1claw.co/docs/guides/intents-api) — full documentation
 - [Arc docs](https://docs.arc.io) — network details, contract addresses, App Kits
 - [Arc MCP Server](https://docs.arc.io/ai/mcp) — complement with Arc's agent tooling
 - [Transaction Simulation example](../tx-simulation/) — simulate before signing

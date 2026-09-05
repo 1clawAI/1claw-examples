@@ -4,7 +4,7 @@
 
 **Difficulty: Advanced**
 
-This example shows how [1Claw](https://1claw.xyz) (secrets management) and [Ampersend](https://ampersend.ai) (x402 smart-account payments) work together so an AI agent can call paid APIs without ever storing payment keys in the environment.
+This example shows how [1Claw](https://1claw.co) (secrets management) and [Ampersend](https://ampersend.ai) (x402 smart-account payments) work together so an AI agent can call paid APIs without ever storing payment keys in the environment.
 
 An x402 paywall server charges $0.001 USDC per request on Base mainnet. When the client hits **402 Payment Required**, Ampersend's SDK signs the payment through a smart account (ERC-6492), and a local facilitator settles it on-chain. The session key lives in a 1Claw vault — never in `.env`.
 
@@ -41,7 +41,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.example` →
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw account](https://1claw.xyz) with an API key, vault, and agent
+- A [1Claw account](https://1claw.co) with an API key, vault, and agent
 - An [Ampersend smart account](https://docs.ampersend.ai) with a registered session key
 - ~$0.01 ETH on Base in the facilitator wallet (for gas)
 - USDC on Base in the smart account (for payments)
@@ -90,7 +90,7 @@ Payment successful!
 
 ## Automated setup
 
-Use a **human** API key (`1ck_...`) from [Settings → API Keys](https://1claw.xyz/settings/api-keys) to create the vault, agent, policies, and store the session key automatically:
+Use a **human** API key (`1ck_...`) from [Settings → API Keys](https://1claw.co/settings/api-keys) to create the vault, agent, policies, and store the session key automatically:
 
 ```bash
 npm run setup
@@ -151,7 +151,7 @@ x402-server.ts          x402-client.ts
 | `BUYER_KEY_PATH` | No | Vault path for session key (default: `keys/x402-session-key`) |
 | `X402_FACILITATOR_KEY` | No | Facilitator EOA key; if unset, uses session key from vault |
 | `AMPERSEND_API_URL` | No | Ampersend API (default: `https://api.ampersend.ai`) |
-| `ONECLAW_BASE_URL` | No | 1Claw API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | 1Claw API URL (default: `https://api.1claw.co`) |
 | `X402_SERVER_PORT` | No | Paywall server port (default: `4021`) |
 | `BASE_RPC_URL` | No | Base RPC endpoint for balance checks and facilitator settle |
 | `X402_CLIENT_DEBUG` | No | Set to `1` for verbose x402 fetch logging |
@@ -176,4 +176,4 @@ If `PAYMENT-RESPONSE` shows `invalid_exact_evm_transaction_failed` with an empty
 
 - [Basic Examples](../basic/) — Core SDK flows without payment complexity
 - [Transaction Simulation](../tx-simulation/) — On-chain transactions with guardrails
-- [1Claw Docs](https://docs.1claw.xyz) · [Ampersend Docs](https://docs.ampersend.ai) · [x402 Spec](https://x402.org)
+- [1Claw Docs](https://docs.1claw.co) · [Ampersend Docs](https://docs.ampersend.ai) · [x402 Spec](https://x402.org)

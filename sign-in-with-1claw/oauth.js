@@ -46,7 +46,7 @@ async function startSignIn(config) {
   sessionStorage.setItem(STORAGE_KEY, codeVerifier);
   sessionStorage.setItem(STATE_KEY, state);
 
-  const dashboardUrl = (config.DASHBOARD_URL || "https://1claw.xyz").replace(/\/$/, "");
+  const dashboardUrl = (config.DASHBOARD_URL || "https://1claw.co").replace(/\/$/, "");
   const url = new URL("/oauth/authorize", dashboardUrl);
   url.searchParams.set("client_id", config.CLIENT_ID);
   url.searchParams.set("redirect_uri", config.REDIRECT_URI);
@@ -77,7 +77,7 @@ async function handleCallback({ code, state, config }) {
   sessionStorage.removeItem(STORAGE_KEY);
   sessionStorage.removeItem(STATE_KEY);
 
-  const baseUrl = (config.BASE_URL || "https://api.1claw.xyz").replace(/\/$/, "");
+  const baseUrl = (config.BASE_URL || "https://api.1claw.co").replace(/\/$/, "");
   const resp = await fetch(`${baseUrl}/v1/oauth/token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

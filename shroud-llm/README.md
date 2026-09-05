@@ -8,7 +8,7 @@
 cd examples/shroud-llm
 npm install
 cp .env.example .env
-# Edit .env: ONECLAW_API_KEY (user key from https://1claw.xyz/settings/api-keys)
+# Edit .env: ONECLAW_API_KEY (user key from https://1claw.co/settings/api-keys)
 npm run setup   # creates a Shroud-enabled agent; writes ONECLAW_AGENT_ID + ONECLAW_AGENT_API_KEY to .env
 # Dashboard: Settings → Billing → enable LLM Token Billing for the org (if you want Stripe-metered path)
 npm start       # exchanges agent token, checks JWT claims, hits OpenAI / Anthropic / Google via Shroud
@@ -39,7 +39,7 @@ npm install
 cp .env.example .env
 ```
 
-Edit `.env`: set `ONECLAW_API_KEY` (user key from [1claw.xyz/settings/api-keys](https://1claw.xyz/settings/api-keys)). For `npm start` you also need agent credentials: set `ONECLAW_AGENT_ID` and `ONECLAW_AGENT_API_KEY` (or run `npm run setup` to create an agent and have it written to `.env`).
+Edit `.env`: set `ONECLAW_API_KEY` (user key from [1claw.co/settings/api-keys](https://1claw.co/settings/api-keys)). For `npm start` you also need agent credentials: set `ONECLAW_AGENT_ID` and `ONECLAW_AGENT_API_KEY` (or run `npm run setup` to create an agent and have it written to `.env`).
 
 ### Step 2 — Create an agent (if needed)
 
@@ -82,8 +82,8 @@ When claims are present, **Shroud** routes to Stripe's AI Gateway (`llm.stripe.c
 | `ONECLAW_AGENT_ID` | Yes | Agent UUID |
 | `ONECLAW_AGENT_API_KEY` | Yes | Agent key (`ocv_...`) |
 | `ONECLAW_API_KEY` | Optional | User API key — org billing check + `npm run setup` |
-| `ONECLAW_BASE_URL` | No | Default `https://api.1claw.xyz` |
-| `ONECLAW_SHROUD_URL` | No | Default `https://shroud.1claw.xyz` |
+| `ONECLAW_BASE_URL` | No | Default `https://api.1claw.co` |
+| `ONECLAW_SHROUD_URL` | No | Default `https://shroud.1claw.co` |
 | `OPENAI_API_KEY` | No | Only if billing disabled (or use vault `providers/openai/api-key`). |
 | `ANTHROPIC_API_KEY` | No | Only if billing disabled (or vault `providers/anthropic/api-key`). |
 | `GOOGLE_API_KEY` / `GEMINI_API_KEY` | No | Only if billing disabled (or vault `providers/google/api-key`). |

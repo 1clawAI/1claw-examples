@@ -14,7 +14,7 @@ export async function POST() {
     );
   }
 
-  const baseUrl = process.env.ONECLAW_BASE_URL || "https://api.1claw.xyz";
+  const baseUrl = process.env.ONECLAW_BASE_URL || "https://api.1claw.co";
   const client = createClient({ baseUrl, apiKey });
 
   const auth = await client.auth.apiKeyToken({ api_key: apiKey });

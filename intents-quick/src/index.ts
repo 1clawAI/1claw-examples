@@ -23,8 +23,8 @@ import { randomBytes } from "node:crypto";
 import { readFileSync, writeFileSync, unlinkSync, existsSync } from "node:fs";
 import { privateKeyToAccount } from "viem/accounts";
 
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
-const SHROUD_URL = process.env.ONECLAW_SHROUD_URL ?? "https://shroud.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
+const SHROUD_URL = process.env.ONECLAW_SHROUD_URL ?? "https://shroud.1claw.co";
 const args = process.argv.slice(2);
 const NO_CLEANUP = args.includes("--no-cleanup") || args.includes("-k");
 const positionalArgs = args.filter(a => !a.startsWith("-"));
@@ -40,7 +40,7 @@ if (!API_KEY || API_KEY === "1ck_your_key_here") {
     console.error("    --no-cleanup, -k   Keep vault/agent after run (fund the address, then rerun)");
     console.error("");
     console.error("  You can also set ONECLAW_API_KEY in .env instead.");
-    console.error("  Get a key at https://1claw.xyz → Settings → API Keys");
+    console.error("  Get a key at https://1claw.co → Settings → API Keys");
     console.error("");
     process.exit(1);
 }

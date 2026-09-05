@@ -1,6 +1,6 @@
 import { createClient } from "@1claw/sdk";
 
-const API_URL = process.env.ONECLAW_BASE_URL || "https://api.1claw.xyz";
+const API_URL = process.env.ONECLAW_BASE_URL || "https://api.1claw.co";
 const PLATFORM_KEY = process.env.ONECLAW_PLATFORM_KEY;
 
 if (!PLATFORM_KEY) {

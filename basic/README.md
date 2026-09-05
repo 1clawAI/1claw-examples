@@ -10,7 +10,7 @@ Four TypeScript scripts that walk through the core 1Claw workflows: vault CRUD, 
 cd examples/basic
 npm install
 cp .env.example .env
-# Edit .env: set ONECLAW_API_KEY (from https://1claw.xyz/settings/api-keys)
+# Edit .env: set ONECLAW_API_KEY (from https://1claw.co/settings/api-keys)
 npm start
 ```
 
@@ -28,7 +28,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.example` →
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw account](https://1claw.xyz) with an API key (get one at **Settings → API Keys**)
+- A [1Claw account](https://1claw.co) with an API key (get one at **Settings → API Keys**)
 - Uses `@1claw/sdk@^0.56.2` (see `package.json`; npm install will fetch it)
 
 ## Demo walkthrough (5 min)
@@ -44,7 +44,7 @@ cp .env.example .env
 Open `.env` and fill in your API key:
 
 ```env
-ONECLAW_BASE_URL=https://api.1claw.xyz
+ONECLAW_BASE_URL=https://api.1claw.co
 ONECLAW_API_KEY=1ck_your_key_here
 ```
 
@@ -153,8 +153,8 @@ This runs `src/execution-intents.ts`, which:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ONECLAW_API_KEY` | Yes* | Your API key (`ocv_...`). Get one at [1claw.xyz → Settings → API Keys](https://1claw.xyz/settings/api-keys). Not needed for signup script. |
-| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_API_KEY` | Yes* | Your API key (`ocv_...`). Get one at [1claw.co → Settings → API Keys](https://1claw.co/settings/api-keys). Not needed for signup script. |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.co`) |
 | `ONECLAW_AGENT_ID` | No | Agent UUID. When set, `npm start` authenticates as an agent. |
 
 ## Key code patterns
@@ -164,7 +164,7 @@ This runs `src/execution-intents.ts`, which:
 ```typescript
 import { createClient } from "@1claw/sdk";
 
-const client = createClient({ baseUrl: "https://api.1claw.xyz" });
+const client = createClient({ baseUrl: "https://api.1claw.co" });
 await client.auth.apiKeyToken({ api_key: "ocv_..." });
 ```
 
@@ -185,4 +185,4 @@ console.log(data.value); // sk-live-xxx
 - [LangChain Agent](../langchain-agent/) — Use an LLM to decide when to fetch secrets
 - [FastMCP Tool Server](../fastmcp-tool-server/) — Build a custom MCP server with 1Claw
 - [Transaction Simulation](../tx-simulation/) — AI agent with guardrails and Tenderly simulation
-- [1Claw Docs](https://docs.1claw.xyz)
+- [1Claw Docs](https://docs.1claw.co)

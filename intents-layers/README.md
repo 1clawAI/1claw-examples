@@ -70,6 +70,6 @@ npm start
 
 ## See also
 
-- [Intents API](https://docs.1claw.xyz/docs/guides/intents-api) (1Claw docs)
+- [Intents API](https://docs.1claw.co/docs/guides/intents-api) (1Claw docs)
 - [Transaction simulation](../tx-simulation/) (Tenderly + guardrails)
 - [Shroud demo](../shroud-demo/) (TEE path for the same API surface)

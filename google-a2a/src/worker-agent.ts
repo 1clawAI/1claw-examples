@@ -21,7 +21,7 @@ import type {
 } from "./a2a-types.js";
 
 const PORT = parseInt(process.env.WORKER_PORT ?? "4100", 10);
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 const API_KEY = process.env.ONECLAW_API_KEY;
 const VAULT_ID = process.env.ONECLAW_VAULT_ID;
 // Only use agent token when ONECLAW_AGENT_ID is set; otherwise use user API key auth.

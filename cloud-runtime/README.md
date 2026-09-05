@@ -24,7 +24,7 @@ npx tsx deploy-agent.ts
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw account](https://1claw.xyz) with an API key
+- A [1Claw account](https://1claw.co) with an API key
 - An existing agent (create one at **Agents → Create Agent** in the dashboard)
 - **Pro plan or higher** — cloud runtimes require a paid subscription
 
@@ -32,9 +32,9 @@ npx tsx deploy-agent.ts
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ONECLAW_API_KEY` | Yes | Your API key (`1ck_...`). Get one at [Settings → API Keys](https://1claw.xyz/settings/api-keys). |
+| `ONECLAW_API_KEY` | Yes | Your API key (`1ck_...`). Get one at [Settings → API Keys](https://1claw.co/settings/api-keys). |
 | `ONECLAW_AGENT_ID` | Yes | UUID of the agent to deploy. |
-| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.co`) |
 
 ## Scripts
 
@@ -61,7 +61,7 @@ Presets define the compute resources allocated to a runtime:
 
 Runtimes can optionally expose an HTTP endpoint with a custom slug:
 
-- **Slug**: Unique subdomain (e.g. `my-agent` → `my-agent.runtime.1claw.xyz`)
+- **Slug**: Unique subdomain (e.g. `my-agent` → `my-agent.runtime.1claw.co`)
 - **Inbound auth**: `api_key` (default), `jwt`, or `public`
 - **Port**: The container port to forward (default: 8080)
 
@@ -73,4 +73,4 @@ Runtimes auto-stop after a period of inactivity to save costs. The `idle_timeout
 
 - [Automations](../automations/) — Trigger agent actions on a schedule or webhook
 - [Agent Discovery](../agent-discovery/) — Make your agent discoverable in the public directory
-- [1Claw Docs](https://docs.1claw.xyz)
+- [1Claw Docs](https://docs.1claw.co)

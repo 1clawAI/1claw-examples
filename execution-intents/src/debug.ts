@@ -1,5 +1,5 @@
 async function main() {
-    const BASE_URL = "https://api.1claw.xyz";
+    const BASE_URL = "https://api.1claw.co";
     const res = await fetch(`${BASE_URL}/v1/auth/token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

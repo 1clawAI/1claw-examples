@@ -9,7 +9,7 @@
  * - **BYOK:** set `LLM_API_KEY` to pass a provider key as `X-Shroud-Api-Key` (direct upstream).
  */
 
-const SHROUD_URL = process.env.SHROUD_URL || "https://shroud.1claw.xyz";
+const SHROUD_URL = process.env.SHROUD_URL || "https://shroud.1claw.co";
 const LLM_PROVIDER = process.env.LLM_PROVIDER || "google";
 const LLM_API_KEY = process.env.LLM_API_KEY || "";
 /** Overrides the default model for the chosen provider (e.g. `gemini-2.5-flash`). */

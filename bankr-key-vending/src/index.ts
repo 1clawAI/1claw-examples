@@ -9,11 +9,11 @@ import { createClient } from "@1claw/sdk";
 
 type SdkError = { status: number; detail?: string };
 
-const BASE_URL = (process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz").replace(
+const BASE_URL = (process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co").replace(
   /\/$/,
   "",
 );
-const SHROUD_URL = (process.env.ONECLAW_SHROUD_URL ?? "https://shroud.1claw.xyz").replace(
+const SHROUD_URL = (process.env.ONECLAW_SHROUD_URL ?? "https://shroud.1claw.co").replace(
   /\/$/,
   "",
 );

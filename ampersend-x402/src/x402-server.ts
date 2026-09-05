@@ -24,7 +24,7 @@ const PORT = Number(process.env.X402_SERVER_PORT ?? 4021);
 
 const API_KEY = process.env.ONECLAW_API_KEY;
 const VAULT_ID = process.env.ONECLAW_VAULT_ID;
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 const AGENT_ID = process.env.ONECLAW_AGENT_ID;
 
 if (!PAY_TO) {

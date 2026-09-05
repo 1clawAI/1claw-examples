@@ -56,7 +56,7 @@ KNOWLEDGE_ENTRIES = {
         "Use the audit log to determine scope. Notify affected users within 1 hour."
     ),
     "onboarding": (
-        "New team members: 1) Create a 1Claw account at 1claw.xyz. "
+        "New team members: 1) Create a 1Claw account at 1claw.co. "
         "2) Ask a team admin to add you to the org. "
         "3) Set up 2FA under Settings > Security. "
         "4) Install the CLI: brew install 1clawAI/tap/1claw."

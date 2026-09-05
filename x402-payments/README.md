@@ -11,7 +11,7 @@ cd examples/x402-payments
 npm install
 cp .env.example .env
 # Edit .env:
-#   ONECLAW_API_KEY, ONECLAW_VAULT_ID (from https://1claw.xyz)
+#   ONECLAW_API_KEY, ONECLAW_VAULT_ID (from https://1claw.co)
 #   X402_PRIVATE_KEY=0x... (generate with: node -e "console.log('0x'+require('crypto').randomBytes(32).toString('hex'))")
 # For real payments: fund the wallet with USDC on Base (chain 8453)
 npm start
@@ -33,7 +33,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.example` →
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw account](https://1claw.xyz) with an API key and vault
+- A [1Claw account](https://1claw.co) with an API key and vault
 - For real payments: an EOA private key with **USDC on Base** (chain 8453)
 
 ## Demo walkthrough (5 min)
@@ -46,7 +46,7 @@ npm install
 cp .env.example .env
 ```
 
-Set `ONECLAW_API_KEY` and `ONECLAW_VAULT_ID` from [1claw.xyz](https://1claw.xyz). For **probe only** (see 402 without paying), leave `X402_PRIVATE_KEY` unset and run `npm run probe`.
+Set `ONECLAW_API_KEY` and `ONECLAW_VAULT_ID` from [1claw.co](https://1claw.co). For **probe only** (see 402 without paying), leave `X402_PRIVATE_KEY` unset and run `npm run probe`.
 
 ### Step 2 — Generate an EOA key (for real payments)
 
@@ -119,14 +119,14 @@ No `X402_PRIVATE_KEY` needed; it only performs GET requests and prints status co
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ONECLAW_API_KEY` | Yes | 1Claw API key from [1claw.xyz/settings/api-keys](https://1claw.xyz/settings/api-keys) |
-| `ONECLAW_VAULT_ID` | Yes | Vault UUID from the [dashboard](https://1claw.xyz) |
+| `ONECLAW_API_KEY` | Yes | 1Claw API key from [1claw.co/settings/api-keys](https://1claw.co/settings/api-keys) |
+| `ONECLAW_VAULT_ID` | Yes | Vault UUID from the [dashboard](https://1claw.co) |
 | `X402_PRIVATE_KEY` | For payment | EOA private key (hex). Must hold USDC on Base for real payments. |
 | `ONECLAW_AGENT_ID` | Optional | For transaction simulate in the demo |
-| `ONECLAW_BASE_URL` | No | Default: `https://api.1claw.xyz` |
+| `ONECLAW_BASE_URL` | No | Default: `https://api.1claw.co` |
 
 ## References
 
-- [1Claw billing & x402](https://docs.1claw.xyz/guides/billing-and-usage)
+- [1Claw billing & x402](https://docs.1claw.co/guides/billing-and-usage)
 - [x402 protocol](https://docs.x402.org/)
 - [Coinbase CDP x402 facilitator](https://docs.cdp.coinbase.com/)

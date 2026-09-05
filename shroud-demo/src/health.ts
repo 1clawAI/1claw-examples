@@ -5,7 +5,7 @@
 import { fileURLToPath } from "node:url";
 import "./load-env.js";
 
-const SHROUD_URL = (process.env.ONECLAW_SHROUD_URL || "https://shroud.1claw.xyz").trim() || "https://shroud.1claw.xyz";
+const SHROUD_URL = (process.env.ONECLAW_SHROUD_URL || "https://shroud.1claw.co").trim() || "https://shroud.1claw.co";
 
 async function fetchStatus(
   label: string,

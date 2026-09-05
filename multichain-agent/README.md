@@ -1,6 +1,6 @@
 # Multichain Agent Demo
 
-Chat UI for signing native transactions on **all six 1Claw chains** via the Intents API. Styled with the [1Claw brand kit](https://1claw.xyz/brand-kit) dark theme.
+Chat UI for signing native transactions on **all six 1Claw chains** via the Intents API. Styled with the [1Claw brand kit](https://1claw.co/brand-kit) dark theme.
 
 | Chain | Testnet | Auto-fund |
 | ----- | ------- | --------- |
@@ -18,7 +18,7 @@ cd examples/multichain-agent
 cp .env.example .env.local
 ```
 
-1. Set `ONECLAW_API_KEY` (`1ck_` human key from [Settings → API keys](https://1claw.xyz/settings/api-keys)).
+1. Set `ONECLAW_API_KEY` (`1ck_` human key from [Settings → API keys](https://1claw.co/settings/api-keys)).
 2. Set `GOOGLE_GENERATIVE_AI_API_KEY` from [Google AI Studio](https://aistudio.google.com/apikey).
 
 ```bash

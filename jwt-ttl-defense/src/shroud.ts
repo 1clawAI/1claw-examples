@@ -1,7 +1,7 @@
 /**
  * 1Claw Shroud integration for the demo.
  *
- * Shroud (`shroud.1claw.xyz`) is 1Claw's TEE-hosted LLM proxy. Agents
+ * Shroud (`shroud.1claw.co`) is 1Claw's TEE-hosted LLM proxy. Agents
  * route their chat traffic through it and Shroud inspects both
  * directions using a pipeline of filters — credential regexes, network
  * exfiltration patterns, prompt-injection scoring, tool-call argument
@@ -21,7 +21,7 @@
  *      response_filter + network_detection (fallback when no LLM key).
  *
  *   3. `callShroudLlm(opts)` — sends a *real* LLM request through
- *      `shroud.1claw.xyz` to a provider (Google Gemini or OpenAI).
+ *      `shroud.1claw.co` to a provider (Google Gemini or OpenAI).
  *      Shroud's TEE-side filters inspect the response before it reaches
  *      the agent. Requires GEMINI_API_KEY or OPENAI_API_KEY in .env.
  */
@@ -187,11 +187,11 @@ function buildInjectionPrompt(jwt: string): string {
  * URL and block.
  *
  * For Gemini: uses the native /v1beta/models/:generateContent path
- * and contents[] body (matching what shroud.1claw.xyz expects).
+ * and contents[] body (matching what shroud.1claw.co expects).
  * For OpenAI: uses /v1/chat/completions with messages[].
  */
 export async function callShroudLlm(opts: ShroudLlmOptions): Promise<ShroudLlmResult> {
-    const shroudUrl = (opts.shroudUrl ?? process.env.ONECLAW_SHROUD_URL ?? "https://shroud.1claw.xyz")
+    const shroudUrl = (opts.shroudUrl ?? process.env.ONECLAW_SHROUD_URL ?? "https://shroud.1claw.co")
         .trim().replace(/\/$/, "");
 
     const geminiKey = (process.env.GEMINI_API_KEY ?? process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? "").trim();

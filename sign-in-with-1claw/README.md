@@ -40,7 +40,7 @@ A minimal, zero-dependency demo of the "Sign in with 1Claw" OAuth flow. Plain HT
 ## Prerequisites
 
 1. **A 1Claw account** with a Pro or higher plan
-2. **A registered Platform App** — create one at [1claw.xyz/platform](https://1claw.xyz/platform)
+2. **A registered Platform App** — create one at [1claw.co/platform](https://1claw.co/platform)
 3. Your platform app's **slug** (this is the `client_id` for OAuth — set when you create the app)
 4. A **redirect URI** registered in the app's settings (e.g. `http://localhost:8080/callback.html`)
 
@@ -54,8 +54,8 @@ A minimal, zero-dependency demo of the "Sign in with 1Claw" OAuth flow. Plain HT
 const CONFIG = {
   CLIENT_ID: "your-app-slug",  // the slug you chose when creating the platform app
   REDIRECT_URI: "http://localhost:8080/callback.html",
-  BASE_URL: "https://api.1claw.xyz",
-  DASHBOARD_URL: "https://1claw.xyz",
+  BASE_URL: "https://api.1claw.co",
+  DASHBOARD_URL: "https://1claw.co",
   SCOPES: ["openid", "profile", "email"],
 };
 ```
@@ -99,7 +99,7 @@ sign-in-with-1claw/
 - Generates a random 32-byte **code_verifier** and its SHA-256 **code_challenge**
 - Generates a random **state** parameter (CSRF protection)
 - Stores `code_verifier` and `state` in `sessionStorage`
-- Redirects the browser to `https://1claw.xyz/oauth/authorize?...`
+- Redirects the browser to `https://1claw.co/oauth/authorize?...`
 
 ### 2. User authenticates on 1Claw
 
@@ -114,7 +114,7 @@ After approval, 1Claw redirects to your `REDIRECT_URI` with `?code=AUTH_CODE&sta
 `callback.html` calls `handleCallback()` which:
 - Validates `state` matches what was stored (CSRF check)
 - Retrieves `code_verifier` from `sessionStorage`
-- POSTs to `https://api.1claw.xyz/v1/oauth/token` with the code, verifier, and client_id
+- POSTs to `https://api.1claw.co/v1/oauth/token` with the code, verifier, and client_id
 - Receives `{ access_token, id_token, token_type, expires_in }`
 
 ### 5. Display user info

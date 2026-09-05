@@ -5,7 +5,7 @@
 import "./load-env.js";
 import { createClient } from "@1claw/sdk";
 
-const BASE_URL = (process.env.ONECLAW_BASE_URL || "https://api.1claw.xyz").trim();
+const BASE_URL = (process.env.ONECLAW_BASE_URL || "https://api.1claw.co").trim();
 const USER_API_KEY = (process.env.ONECLAW_API_KEY ?? "").trim();
 const AGENT_ID = (process.env.ONECLAW_AGENT_ID ?? "").trim();
 const KEY_PATH = "keys/base-signer";

@@ -13,16 +13,16 @@
  * Optional env:
  *   LLM_PROVIDER=google          (default: google)
  *   LLM_API_KEY=...              BYOK only; omit to use org LLM token billing via Shroud
- *   ONECLAW_BASE_URL=https://... (default: https://api.1claw.xyz)
- *   SHROUD_URL=https://...       (default: https://shroud.1claw.xyz)
+ *   ONECLAW_BASE_URL=https://... (default: https://api.1claw.co)
+ *   SHROUD_URL=https://...       (default: https://shroud.1claw.co)
  */
 
 import { writeFileSync } from "fs";
 import { createInterface } from "node:readline";
 import { provisionAliceAndBob } from "../src/lib/provision-agents";
 
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
-const SHROUD_URL = process.env.SHROUD_URL ?? "https://shroud.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
+const SHROUD_URL = process.env.SHROUD_URL ?? "https://shroud.1claw.co";
 const LLM_PROVIDER = process.env.LLM_PROVIDER ?? "google";
 const LLM_API_KEY = process.env.LLM_API_KEY ?? "";
 

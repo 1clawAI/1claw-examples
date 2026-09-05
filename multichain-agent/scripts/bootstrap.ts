@@ -15,7 +15,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 const envPath = join(root, ".env.local");
 
-const BASE_URL = (process.env.ONECLAW_BASE_URL || "https://api.1claw.xyz").trim();
+const BASE_URL = (process.env.ONECLAW_BASE_URL || "https://api.1claw.co").trim();
 const USER_API_KEY = (process.env.ONECLAW_API_KEY ?? "").trim();
 
 function loadEnvFile() {
@@ -40,7 +40,7 @@ async function main() {
 
   if (!apiKey || apiKey.includes("your")) {
     console.error("Set ONECLAW_API_KEY (1ck_...) in .env.local");
-    console.error("Get one at https://1claw.xyz/settings/api-keys");
+    console.error("Get one at https://1claw.co/settings/api-keys");
     process.exit(1);
   }
 

@@ -215,12 +215,12 @@ The demo connects to the live Logos/Waku network. If peers are not reachable (e.
 | `LLM_PROVIDER` | No | Shroud provider: `google`, `openai`, `anthropic`, etc. (default: `google`) |
 | `LLM_MODEL` | No | Model id sent in the chat request (defaults per provider, e.g. `gemini-2.5-flash` for Google) |
 | `LLM_API_KEY` | No | Omit for org **LLM token billing** via Shroud. Set only for **BYOK** (provider key as `X-Shroud-Api-Key`; skips Stripe LLM billing on Shroud) |
-| `ONECLAW_BASE_URL` | No | 1Claw API URL (default: `https://api.1claw.xyz`) |
-| `SHROUD_URL` | No | Shroud proxy URL (default: `https://shroud.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | 1Claw API URL (default: `https://api.1claw.co`) |
+| `SHROUD_URL` | No | Shroud proxy URL (default: `https://shroud.1claw.co`) |
 
 ## Related
 
 - [google-a2a example](../google-a2a/) — Same ECDH encryption over HTTP-based A2A protocol
 - [Logos/Waku JS SDK](https://docs.waku.org/build/javascript/) — Official JavaScript SDK documentation
 - [Logos Builder Hub](https://build.logos.co/) — Getting started with Logos
-- [1Claw Agent Keys](https://docs.1claw.xyz/) — Platform-managed ECDH and Ed25519 keys
+- [1Claw Agent Keys](https://docs.1claw.co/) — Platform-managed ECDH and Ed25519 keys

@@ -40,7 +40,7 @@ const AGENT_NAME = process.env.AGENT_NAME ?? "Alice";
 const PORT = parseInt(process.env.PORT ?? "4100", 10);
 const API_KEY = process.env.ONECLAW_API_KEY;
 const AGENT_ID = process.env.ONECLAW_AGENT_ID;
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 
 const AGENT_KEYS_VAULT_NAME = "__agent-keys";
 

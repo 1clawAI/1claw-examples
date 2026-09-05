@@ -15,7 +15,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const packageRoot = join(__dirname, "..");
 const envPath = join(packageRoot, ".env");
 
-const BASE_URL = (process.env.ONECLAW_BASE_URL || "https://api.1claw.xyz").trim();
+const BASE_URL = (process.env.ONECLAW_BASE_URL || "https://api.1claw.co").trim();
 const USER_API_KEY = (process.env.ONECLAW_API_KEY ?? "").trim();
 
 function isPlaceholder(key: string): boolean {
@@ -26,7 +26,7 @@ async function main() {
   console.log("shroud-llm example — env setup\n");
 
   if (!USER_API_KEY || isPlaceholder(USER_API_KEY)) {
-    console.log("Set ONECLAW_API_KEY in .env (user API key from https://1claw.xyz/settings/api-keys)");
+    console.log("Set ONECLAW_API_KEY in .env (user API key from https://1claw.co/settings/api-keys)");
     console.log("Then run: npm run setup\n");
     process.exit(1);
   }
@@ -61,7 +61,7 @@ async function main() {
   console.log("  API key:", api_key.slice(0, 12) + "...");
   console.log("");
   console.log("Next: enable LLM Token Billing for this org if you have not already:");
-  console.log("  https://1claw.xyz/settings/billing → LLM Token Billing → Enable");
+  console.log("  https://1claw.co/settings/billing → LLM Token Billing → Enable");
   console.log("");
 
   let envContent: string;

@@ -6,7 +6,7 @@ Four demos showing AI agents communicating via [Google's A2A protocol](https://g
 
 ## Quick start (30 seconds)
 
-All you need is a 1Claw human API key (`1ck_...`). Get one free at [1claw.xyz/settings/api-keys](https://1claw.xyz/settings/api-keys).
+All you need is a 1Claw human API key (`1ck_...`). Get one free at [1claw.co/settings/api-keys](https://1claw.co/settings/api-keys).
 
 ```bash
 cd examples/google-a2a
@@ -49,7 +49,7 @@ npm start
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw account](https://1claw.xyz) with a vault containing at least one secret
+- A [1Claw account](https://1claw.co) with a vault containing at least one secret
 - For the ADK demo: a [Gemini API key](https://aistudio.google.com/apikey)
 - Uses `@1claw/sdk@^0.56.2` (see `package.json`)
 
@@ -307,7 +307,7 @@ scripts/
 | `ONECLAW_ALICE_API_KEY` / `ONECLAW_BOB_API_KEY` | ECDH | Agent API keys (from `ecdh:setup-agents`) |
 | `GEMINI_API_KEY` | ADK demo | Google Gemini API key |
 | `OPENAI_API_KEY` | No | Optional — coordinator can summarize with OpenAI |
-| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | API URL (default: `https://api.1claw.co`) |
 
 ## How it works
 
@@ -344,4 +344,4 @@ ADK Worker receives task → Gemini reads prompt → calls FunctionTool(list_sec
 - [FastMCP Tool Server](../fastmcp-tool-server/) — Build a custom MCP server with domain tools
 - [LangChain Agent](../langchain-agent/) — LangChain + 1Claw with tool calling
 - [Transaction Simulation](../tx-simulation/) — AI agent with on-chain transactions
-- [1Claw Docs](https://docs.1claw.xyz)
+- [1Claw Docs](https://docs.1claw.co)

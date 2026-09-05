@@ -1,6 +1,6 @@
 # Bankr Dynamic Key Vending
 
-Demonstrates [Bankr dynamic key vending](https://docs.1claw.xyz/guides/bankr-key-vending) end to end:
+Demonstrates [Bankr dynamic key vending](https://docs.1claw.co/guides/bankr-key-vending) end to end:
 
 1. **Deny-by-default** — agent lease returns **403** without a policy on `__agent-keys`
 2. **Least-privilege policy** — `write` on `agents/{agent_id}/bankr/*` only

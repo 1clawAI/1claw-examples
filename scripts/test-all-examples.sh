@@ -4,7 +4,12 @@
 # Set SKIP_INSTALL=1 to skip npm install for faster re-runs.
 # First-time setup: ./examples/scripts/bootstrap-env.sh (copies .env.example → .env per example).
 
-set -e
+# Not `set -e`. This script counts PASS/FAIL across ~30 examples and exits with
+# the failure count, which only means something if it reaches the end — under
+# `set -e` the first example that failed aborted the whole run and the summary
+# never printed. `-u` and pipefail stay: an unset variable here is a bug, not a
+# skipped example.
+set -uo pipefail
 EXAMPLES_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ROOT="$(cd "$EXAMPLES_ROOT/.." && pwd)"
 cd "$ROOT"
@@ -26,7 +31,7 @@ SKIP="${SKIP_INSTALL:-0}"
 source "$ROOT/scripts/lib/test-report-email.sh"
 init_test_report_tracking "$ROOT"
 
-API_URL="${ONECLAW_BASE_URL:-https://api.1claw.xyz}"
+API_URL="${ONECLAW_BASE_URL:-https://api.1claw.co}"
 API_URL="${API_URL%/}"
 
 # Mint a live 1ck_ key from admin/test creds when example .env still has placeholders.
@@ -80,7 +85,14 @@ run_timeout() {
   local dir="$1" sec="$2" cmd="$3"
   # Background the whole subshell so $! in this shell is the real child PID
   # (a `&` inside `( )` does not update the parent's $!).
-  (cd "$dir" && eval "$cmd") &
+  #
+  # </dev/null matters. Without it the child inherits this script's stdin and
+  # reads from it, which moves the shared file offset and leaves bash parsing
+  # from the wrong position — the run died on
+  # `line 161: cho: command not found`, an echo missing its first byte. An
+  # example that waits on input also hangs for the full timeout instead of
+  # exiting.
+  (cd "$dir" && eval "$cmd") </dev/null &
   local pid=$!
   sleep "$sec"
   kill "$pid" 2>/dev/null || true
@@ -91,7 +103,7 @@ run_timeout() {
 run_one() {
   local dir="$1"
   local cmd="$2"
-  (cd "$dir" && eval "$cmd") && return 0 || return $?
+  (cd "$dir" && eval "$cmd") </dev/null && return 0 || return $?
 }
 
 echo "=============================================="

@@ -28,7 +28,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.example` →
 ## Prerequisites
 
 - Node.js 20+
-- A [1Claw account](https://1claw.xyz) with an agent that has:
+- A [1Claw account](https://1claw.co) with an agent that has:
   - `intents_api_enabled: true`
   - Transaction guardrails configured (allowed chains, value limits, address allowlist)
   - A signing key provisioned via `POST /v1/agents/{id}/signing-keys` (stored at `agents/{id}/chains/{chain}/private_key` in `__agent-keys`) or legacy path `keys/{chain}-signer`
@@ -48,7 +48,7 @@ cp .env.example .env
 Open `.env` and fill in your credentials:
 
 ```env
-ONECLAW_BASE_URL=https://api.1claw.xyz
+ONECLAW_BASE_URL=https://api.1claw.co
 ONECLAW_AGENT_ID=your-agent-uuid
 ONECLAW_AGENT_API_KEY=ocv_your_agent_api_key
 GOOGLE_GENERATIVE_AI_API_KEY=your-gemini-key
@@ -77,7 +77,7 @@ Using the [1Claw CLI](https://www.npmjs.com/package/@1claw/cli):
   --principal-type agent --principal-id <agent-id> --permissions read
 ```
 
-Or configure everything through the [1Claw dashboard](https://1claw.xyz).
+Or configure everything through the [1Claw dashboard](https://1claw.co).
 
 ### Step 3 — Start the app
 
@@ -148,7 +148,7 @@ The agent resolves `vitalik.eth` via ENS, encodes the ERC-20 `transfer()` callda
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ONECLAW_BASE_URL` | No | 1Claw API URL (default: `https://api.1claw.xyz`) |
+| `ONECLAW_BASE_URL` | No | 1Claw API URL (default: `https://api.1claw.co`) |
 | `ONECLAW_AGENT_ID` | Yes | UUID of the agent with Intents API enabled |
 | `ONECLAW_AGENT_API_KEY` | Yes | Agent API key (`ocv_...`) |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | Yes | Google Gemini API key |
@@ -185,10 +185,10 @@ The right sidebar shows **Agent Guardrails** (static config) and a **Transaction
 - [Vercel AI SDK](https://sdk.vercel.ai/) with [Google Gemini](https://ai.google.dev/)
 - [viem](https://viem.sh/) for ENS resolution and ERC-20 encoding
 - [shadcn/ui](https://ui.shadcn.com/) components
-- [1Claw](https://1claw.xyz) Intents API
+- [1Claw](https://1claw.co) Intents API
 
 ## Next steps
 
 - [Basic Examples](../basic/) — Core SDK flows (vault, secrets, billing)
 - [Ampersend x402](../ampersend-x402/) — x402 micropayments for API access
-- [1Claw Docs](https://docs.1claw.xyz)
+- [1Claw Docs](https://docs.1claw.co)

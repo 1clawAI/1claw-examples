@@ -14,7 +14,7 @@
 
 import { createClient } from "@1claw/sdk";
 
-const BASE_URL = (process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz").replace(/\/$/, "");
+const BASE_URL = (process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co").replace(/\/$/, "");
 const USER_KEY = process.env.ONECLAW_API_KEY?.trim();
 const USER_EMAIL = process.env.ONECLAW_EMAIL?.trim();
 const USER_PASSWORD = process.env.ONECLAW_PASSWORD?.trim();

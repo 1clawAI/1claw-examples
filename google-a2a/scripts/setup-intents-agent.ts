@@ -17,11 +17,11 @@ import { createInterface } from "readline";
 
 const API_KEY = process.argv.find((a) => a.startsWith("--api-key="))?.split("=")[1]
     ?? process.env.ONECLAW_API_KEY;
-const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 
 if (!API_KEY || !API_KEY.startsWith("1ck_")) {
     console.error("Provide a human API key (1ck_...) via ONECLAW_API_KEY or --api-key=");
-    console.error("Get one at: https://1claw.xyz/settings/api-keys");
+    console.error("Get one at: https://1claw.co/settings/api-keys");
     process.exit(1);
 }
 
@@ -108,7 +108,7 @@ async function main() {
         console.log(`  ✓ Guardrails: max ${maxValue} ETH/tx, ${dailyLimit} ETH/day, chain: ${chain}`);
     } catch (e: any) {
         if (e.message?.includes("limit") || e.message?.includes("quota")) {
-            console.error("\n  ✗ Agent limit reached. Delete unused agents at https://1claw.xyz/agents");
+            console.error("\n  ✗ Agent limit reached. Delete unused agents at https://1claw.co/agents");
             process.exit(1);
         }
         throw e;

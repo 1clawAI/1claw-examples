@@ -37,7 +37,7 @@ If your **organization** has opted into LLM token billing in the dashboard (**Se
 
 - Node.js 20+
 - **For health only:** nothing else (no keys).
-- **For Intents API:** A [1Claw](https://1claw.xyz) agent with `ONECLAW_AGENT_ID` and `ONECLAW_AGENT_API_KEY` (Intents API enabled if you want real signing).
+- **For Intents API:** A [1Claw](https://1claw.co) agent with `ONECLAW_AGENT_ID` and `ONECLAW_AGENT_API_KEY` (Intents API enabled if you want real signing).
 - **For LLM proxy:** Either store the provider key in the Vault at `providers/openai/api-key` with agent read access, or set `OPENAI_API_KEY` in `.env`.
 
 ## Quick start
@@ -48,14 +48,14 @@ If your **organization** has opted into LLM token billing in the dashboard (**Se
 cd examples/shroud-demo
 npm install
 cp .env.example .env
-# Edit .env: set ONECLAW_API_KEY (from https://1claw.xyz/settings/api-keys)
+# Edit .env: set ONECLAW_API_KEY (from https://1claw.co/settings/api-keys)
 npm run setup         # creates agent, writes ONECLAW_AGENT_ID and ONECLAW_AGENT_API_KEY to .env
 npm run setup-signing # optional: adds signing key at keys/base-signer and policy for agent
 npm start             # runs health, Intents API, and optional LLM proxy checks
 ```
 
 **Option B — Manual**  
-Create an agent in the [1Claw dashboard](https://1claw.xyz) (Agents → Create), copy the agent ID and API key, and set `ONECLAW_AGENT_ID` and `ONECLAW_AGENT_API_KEY` in `.env`. Then run `npm start`.
+Create an agent in the [1Claw dashboard](https://1claw.co) (Agents → Create), copy the agent ID and API key, and set `ONECLAW_AGENT_ID` and `ONECLAW_AGENT_API_KEY` in `.env`. Then run `npm start`.
 
 From the repo root: `cd examples && npm run bootstrap` copies `.env.example` → `.env` when missing.
 
@@ -79,8 +79,8 @@ Only `examples/shroud-demo/.env` is loaded (no sibling or shared env files).
 
 | Variable                | Required        | Description                                               |
 | ----------------------- | --------------- | --------------------------------------------------------- |
-| `ONECLAW_SHROUD_URL`    | No              | Shroud base URL (default: `https://shroud.1claw.xyz`)     |
-| `ONECLAW_BASE_URL`      | No              | 1Claw Vault API (default: `https://api.1claw.xyz`)        |
+| `ONECLAW_SHROUD_URL`    | No              | Shroud base URL (default: `https://shroud.1claw.co`)     |
+| `ONECLAW_BASE_URL`      | No              | 1Claw Vault API (default: `https://api.1claw.co`)        |
 | `ONECLAW_AGENT_ID`      | For Intents/LLM | Agent UUID                                                |
 | `ONECLAW_AGENT_API_KEY` | For Intents/LLM | Agent API key (`ocv_...`)                                 |
 | `OPENAI_API_KEY`        | Optional        | If not using Vault key for OpenAI, set for LLM proxy test |
