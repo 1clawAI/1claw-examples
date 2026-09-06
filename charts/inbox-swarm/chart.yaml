@@ -1,0 +1,71 @@
+# An inbox swarm: one vault, two agents, Gmail and Slack connectors.
+#
+# Preview what this would do before doing it:
+#
+#   1claw diff -f chart.yaml
+#
+# Names are the reconcile keys. Renaming an agent here does not rename the
+# agent — it makes a new one and leaves the old one alone, because apply never
+# deletes. That is deliberate: an apply that silently deletes is an apply
+# nobody runs twice.
+apiVersion: 1claw/v1
+kind: Chart
+
+metadata:
+  name: inbox-swarm
+  labels:
+    app: nanobots
+    env: production
+
+spec:
+  vaults:
+    - name: inbox-vault
+      description: Credentials and state for the inbox swarm
+
+  agents:
+    - name: inbox-triage
+      description: Reads incoming mail and decides what needs a human
+      system_prompt: |
+        You triage an inbox. Summarise what arrived, flag anything that looks
+        like it needs a person, and never send a reply without approval.
+      intents_api_enabled: true
+      execution_intents_enabled: true
+      connectors:
+        # Read-only: this agent decides, it does not send.
+        - preset: gmail
+          scopes:
+            - https://www.googleapis.com/auth/gmail.readonly
+
+    - name: inbox-responder
+      description: Drafts and sends replies that a human approved
+      system_prompt: |
+        You send replies that a human has already approved. Never compose and
+        send in one step.
+      intents_api_enabled: true
+      execution_intents_enabled: true
+      connectors:
+        - preset: gmail
+          binding_name: gmail-send
+          scopes:
+            - https://www.googleapis.com/auth/gmail.readonly
+            - https://www.googleapis.com/auth/gmail.send
+        - preset: slack
+          scopes:
+            - chat:write
+
+  policies:
+    # Triage reads; it does not write.
+    - vault_ref: inbox-vault
+      principal_ref: agent:inbox-triage
+      paths:
+        - integrations/**
+      permissions:
+        - read
+
+    - vault_ref: inbox-vault
+      principal_ref: agent:inbox-responder
+      paths:
+        - integrations/**
+      permissions:
+        - read
+        - write
