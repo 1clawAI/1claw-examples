@@ -26,7 +26,10 @@ const challenge = () => ({
             network: "base",
             maxAmountRequired: "1000", // 0.001 USDC, 6 decimals
             payTo: PAY_TO,
-            asset: "USDC",
+            // Real x402 challenges name the asset by contract address, not by
+            // symbol. This said "USDC" and that was wrong about the protocol —
+            // the vault refused every genuine paywall while this mock passed.
+            asset: process.env.ASSET ?? "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
             maxTimeoutSeconds: WINDOW_SECS,
             resource: "/premium",
         },
