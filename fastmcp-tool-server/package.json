@@ -9,7 +9,7 @@
     "dev": "npx tsx --env-file=.env --watch src/server.ts"
   },
   "dependencies": {
-    "@1claw/sdk": "^0.43.1",
+    "@1claw/sdk": "^0.61.0",
     "fastmcp": "^3.33.0",
     "zod": "^3.24.0"
   },

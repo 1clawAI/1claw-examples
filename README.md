@@ -21,6 +21,7 @@ Thirty-seven example applications demonstrating the [1Claw](https://1claw.co) SD
 | [shroud-security](./shroud-security/)         | Intermediate | 5 min  | Shroud threat detection: Unicode, command injection, social engineering, encoding, network |
 | [logos-chat](./logos-chat/)                    | Intermediate | 10 min | E2E encrypted agent-to-agent chat over Logos/Waku with AI auto-chat via Shroud              |
 | [ampersend-x402](./ampersend-x402/)           | Advanced     | 10 min | x402 micropayments via Ampersend — MCP/HTTP clients, hybrid billing, paywall server        |
+| [x402-pay-cli](./x402-pay-cli/)               | Beginner     | 2 min  | Mock x402 paywall for `1claw pay` — runs offline; `ONECLAW_PAY_DEV=1` needs no vault or funds |
 | [x402-payments](./x402-payments/)             | Advanced     | 5 min  | Real x402 payments for 1Claw endpoints — EOA key in .env, GET/PUT secrets, audit, simulate |
 | [jwt-ttl-defense](./jwt-ttl-defense/)         | Intermediate | 5 min  | Prompt-injection steals an agent JWT — 3s TTL + scope/vault binding contain the blast radius |
 | [intents-layers](./intents-layers/)           | Beginner     | 5 min  | **Two “intents”**: mock solver execution plan → 1Claw sign-only (agent never holds the key) |
