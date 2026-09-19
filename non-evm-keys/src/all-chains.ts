@@ -1,7 +1,7 @@
 /**
  * 1Claw SDK — Non-EVM Chain Keys: Provision All
  *
- * Provisions HSM-backed signing keys for all 5 non-EVM chains and prints
+ * Provisions server-custody signing keys (KMS-wrapped, never returned to the agent) for all 5 non-EVM chains and prints
  * a summary table. Private keys never leave the HSM boundary.
  */
 

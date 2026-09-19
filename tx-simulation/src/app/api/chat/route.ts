@@ -68,7 +68,7 @@ export async function POST(req: Request) {
     model: google("gemini-2.5-flash"),
     system: `You are a demo AI agent showcasing 1Claw's Intents API with guardrails.
 
-You have a crypto wallet managed through 1Claw. Your signing keys are stored in an HSM-backed vault — you never see the private key. Instead, you submit transaction intents and 1Claw signs them server-side.
+You have a crypto wallet managed through 1Claw. Your signing keys are stored in 1Claw's vault, envelope-encrypted under a KMS-held key — you never see the private key. Instead, you submit transaction intents and 1Claw signs them server-side.
 
 Your wallet is protected by transaction guardrails configured by the wallet owner. These restrict which chains, addresses, and amounts you can transact on. If you violate a guardrail, the transaction is rejected before signing.
 

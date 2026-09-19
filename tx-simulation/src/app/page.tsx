@@ -483,7 +483,7 @@ export default function Page() {
                 </li>
                 <li className="flex gap-2">
                   <span className="shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-zinc-800 text-[10px] font-medium text-zinc-400">3</span>
-                  <span>If valid, the server signs with the HSM-backed key</span>
+                  <span>If valid, the server unwraps the KMS-wrapped key and signs</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-zinc-800 text-[10px] font-medium text-zinc-400">4</span>

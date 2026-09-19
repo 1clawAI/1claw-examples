@@ -48,7 +48,7 @@ Bootstrap creates an agent with `intents_api_enabled: true` and provisions signi
 
 ## Demo flow
 
-1. **Bootstrap** → six HSM-backed addresses appear in Funding.
+1. **Bootstrap** → six server-custody addresses appear in Funding.
 2. **Fund** → Solana/XRP one-click; ETH via [sepoliafaucet.com](https://sepoliafaucet.com/); BTC Signet via [signet.bc-2.jp](https://signet.bc-2.jp/); ADA via [Cardano faucet](https://docs.cardano.org/cardano-testnets/tools/faucet/); TRX via [Shasta faucet](https://shasta.tronex.io/join/getJoinPage).
 3. **Chat** → agent uses tools: `list_signing_keys`, `list_balances`, `submit_transaction`, `check_guardrails`.
 

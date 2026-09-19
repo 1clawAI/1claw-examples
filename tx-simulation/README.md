@@ -124,7 +124,7 @@ Type:
 
 > Send 0.0001 ETH to the burn address on base
 
-The agent calls `submit_transaction`. 1Claw validates the guardrails, signs the transaction server-side with the HSM-backed key, and broadcasts it to Base mainnet. The UI shows a green "Transaction Broadcast" card with a **block explorer link**.
+The agent calls `submit_transaction`. 1Claw validates the guardrails, signs the transaction server-side with the KMS-wrapped key, and broadcasts it to Base mainnet. The UI shows a green "Transaction Broadcast" card with a **block explorer link**.
 
 ### Step 8 — Try ENS and token transfers (bonus)
 

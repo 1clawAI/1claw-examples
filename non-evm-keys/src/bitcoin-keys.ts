@@ -1,7 +1,7 @@
 /**
  * 1Claw SDK — Bitcoin Signing Key
  *
- * Provisions an HSM-backed secp256k1 key and derives a P2WPKH (native SegWit)
+ * Provisions a server-custody secp256k1 key and derives a P2WPKH (native SegWit)
  * Bitcoin address. The private key never leaves the HSM boundary.
  */
 

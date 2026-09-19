@@ -2,7 +2,7 @@
 
 > **Reference only** — not for production use. Review and adapt for your own security requirements.
 
-Provision HSM-backed signing keys for 6 blockchains, view derived addresses, and rotate keys — all without private keys ever leaving the HSM.
+Provision server-custody signing keys (KMS-wrapped, never returned to the agent) for 6 blockchains, view derived addresses, and rotate keys — all without private keys ever leaving the HSM.
 
 ## Prerequisites
 

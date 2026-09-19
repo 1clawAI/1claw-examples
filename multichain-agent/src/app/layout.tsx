@@ -7,7 +7,7 @@ const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono"
 
 export const metadata: Metadata = {
   title: "1Claw Multichain Agent Demo",
-  description: "Chat UI for HSM-backed signing on 6 blockchains via the Intents API",
+  description: "Chat UI for server-custody signing on 6 blockchains via the Intents API",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -27,7 +27,7 @@ Thirty-seven example applications demonstrating the [1Claw](https://1claw.co) SD
 | [intents-layers](./intents-layers/)           | Beginner     | 5 min  | **Two “intents”**: mock solver execution plan → 1Claw sign-only (agent never holds the key) |
 | [intents-quick](./intents-quick/)             | Beginner     | 3 min  | **One API key, full Intents flow**: bootstrap vault + agent + Shroud, sign tx on Base Sepolia    |
 | [anthropic-wif](./anthropic-wif/)             | Intermediate | 10 min | **OIDC federation**: 1claw mints RS256 JWT → Anthropic WIF → `sk-ant-oat01-…` (no static keys) |
-| [multi-chain-keys](./multi-chain-keys/)       | Beginner     | 5 min  | **Multi-chain**: provision HSM-backed signing keys for 6 blockchains (Ethereum, Bitcoin, Solana, XRP, Cardano, Tron) |
+| [multi-chain-keys](./multi-chain-keys/)       | Beginner     | 5 min  | **Multi-chain**: provision server-custody signing keys (KMS-wrapped, never returned to the agent) for 6 blockchains (Ethereum, Bitcoin, Solana, XRP, Cardano, Tron) |
 | [multichain-agent](./multichain-agent/)       | Intermediate | 10 min | **Multichain chat demo**: brand-kit UI, bootstrap all 6 keys, testnet funding panel, Intents API chat on every chain |
 | [evm-signing](./evm-signing/)                 | Intermediate | 5 min  | **EVM signing**: EIP-191 personal_sign, EIP-712 typed data, transaction types 0-2 (legacy, access list, EIP-1559) |
 | [agentic-tx](./agentic-tx/)                   | Advanced     | 10 min | **Real transactions**: end-to-end agent creation → fund → sign → broadcast on Ethereum and Base with guardrails |

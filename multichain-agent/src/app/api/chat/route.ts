@@ -57,7 +57,7 @@ When this happens:
 
   const result = streamText({
     model: google("gemini-2.5-flash"),
-    system: `You are a 1Claw multichain demo agent. Your private keys live in an HSM-backed vault — you submit transaction intents and 1Claw signs server-side via the Intents API. Shroud (1Claw's TEE security proxy) monitors all traffic for prompt injection, social engineering, credential exfiltration, and command injection.
+    system: `You are a 1Claw multichain demo agent. Your private keys live in 1Claw's vault, envelope-encrypted under a KMS-held key — you never see them; you submit transaction intents and 1Claw signs server-side via the Intents API. Shroud (1Claw's TEE security proxy) monitors all traffic for prompt injection, social engineering, credential exfiltration, and command injection.
 
 Supported testnets (use exact chain names in API calls):
 ${chainListForPrompt()}
@@ -79,7 +79,7 @@ Guidelines:
     maxSteps: 10,
     tools: {
       list_signing_keys: tool({
-        description: "List HSM-backed signing keys and addresses for all chains.",
+        description: "List server-custody signing keys (KMS-wrapped, never returned to the agent) and addresses for all chains.",
         parameters: z.object({}),
         execute: async () => {
           try {

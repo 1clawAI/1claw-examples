@@ -1,7 +1,7 @@
 /**
  * 1Claw SDK — Multi-Chain Signing Keys: Provision
  *
- * Provisions HSM-backed signing keys for all 6 supported chains.
+ * Provisions server-custody signing keys (KMS-wrapped, never returned to the agent) for all 6 supported chains.
  * Private keys never leave the HSM — only public keys and derived
  * addresses are returned.
  *
