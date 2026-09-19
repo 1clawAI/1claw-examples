@@ -26,6 +26,11 @@ that. A chart asking to change one is refused, and says so.
 still has to sign in. Apply returns the authorization URL rather than pretending
 the binding is usable.
 
+**Bindings come from the spec, credentials do not.** `spec.agents[].bindings` declares an
+execution-intent binding in full; `guardrails.allowed_hosts` is required and the credential is a
+`{vault_ref, path}` pointer into a chart vault. A binding whose secret is not stored yet is
+`skipped` as "waiting on secret …" and created by the next apply.
+
 **A typo is an error, not a silent no-op.** Unknown fields are rejected — a
 misspelled `system_promt` that got quietly dropped would produce an apply that
 reported success and did nothing you asked for.

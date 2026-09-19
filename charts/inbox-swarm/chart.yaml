@@ -52,6 +52,21 @@ spec:
         - preset: slack
           scopes:
             - chat:write
+      # An execution-intent binding declared in full: its egress is the
+      # declaration (allowed_hosts is required), and the credential is a
+      # pointer into a chart vault, never a value. On the first apply the
+      # binding waits until integrations/crm/token is stored; the next apply
+      # creates it.
+      bindings:
+        - name: crm
+          binding_type: http
+          config:
+            base_url: https://crm.example.com
+          guardrails:
+            allowed_hosts: [crm.example.com]
+          credential:
+            vault_ref: inbox-vault
+            path: integrations/crm/token
 
   policies:
     # Triage reads; it does not write.
