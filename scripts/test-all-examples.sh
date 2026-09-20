@@ -567,6 +567,18 @@ else
 fi
 echo ""
 
+# --- 33. shroud-router-key (typecheck; live run needs a 1ck_ key + ledger credits) ---
+echo "[33/36] shroud-router-key"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud-router-key" && npm install --silent); fi
+if (cd "$EXAMPLES_ROOT/shroud-router-key" && npx tsc --noEmit 2>&1); then
+  echo "  ✓ shroud-router-key (typecheck passed)"
+  ((PASS++)) || true
+else
+  echo "  ✗ shroud-router-key typecheck failed"
+  ((FAIL++)) || true
+fi
+echo ""
+
 echo "── Post-run: cleanup test-pattern agents (protects /demo) ──"
 run_agent_cleanup
 
