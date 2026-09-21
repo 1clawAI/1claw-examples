@@ -10,7 +10,8 @@
     "ai-generate": "npx tsx --env-file=.env ai-generate-automation.ts",
     "conditional": "npx tsx --env-file=.env conditional-automation.ts",
     "webhook-variables": "npx tsx --env-file=.env webhook-variables-automation.ts",
-    "runs": "npx tsx --env-file=.env list-runs.ts"
+    "runs": "npx tsx --env-file=.env list-runs.ts",
+    "engine-v2": "npx tsx --env-file=.env engine-v2-automation.ts"
   },
   "dependencies": {
     "@1claw/sdk": "file:../../packages/sdk"

@@ -149,3 +149,12 @@ Supported operators:
 | `notify` | Send notification (webhook/slack/email/channel) |
 | `approval_request` | Pause run for human approval |
 | `condition` | If/else branching with sub-steps |
+
+## Engine v2 tour (`npm run engine-v2`)
+
+`engine-v2-automation.ts` exercises everything added in vault 0.61.45–0.61.46 in one run:
+`on_error` retry/continue, a per-run `budget`, `wait_until`, `awaiting_callback` (the script
+plays the external system: it reads `{{run.callback_url}}` from the parked run and POSTs to
+it), `for_each` over the callback payload, idempotent triggers, dry run, versions + rollback,
+and re-run from a step. Requires `ONECLAW_API_KEY` (a `1ck_` user key — versions and re-runs
+are human-only) and `ONECLAW_AGENT_ID`.
