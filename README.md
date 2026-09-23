@@ -58,7 +58,7 @@ Use one org + user per example (no signup or email verification). Seed the DB on
 
 **1. Seed demo accounts** (run once, via Supabase MCP or psql against your 1Claw DB):
 
-- Open `scripts/seed-demo-accounts.sql` and run its `INSERT` statements (e.g. in Supabase SQL Editor or via MCP). This creates 7 organizations and 7 users (`demo-basic@1claw.xyz`, `demo-langchain@1claw.xyz`, …). Shared password: `Demo1claw!seed`.
+- Open `scripts/seed-demo-accounts.sql` and run its `INSERT` statements (e.g. in Supabase SQL Editor or via MCP). This creates 7 organizations and 7 users (`demo-basic@1claw.co`, `demo-langchain@1claw.co`, …). Shared password: `Demo1claw!seed`.
 
 **2. Per demo:** Log in as that user, create a vault (and optionally an agent and API keys), then set that example's `.env` (or `.env.local` for nextjs-agent-secret) with the vault ID and API key.
 

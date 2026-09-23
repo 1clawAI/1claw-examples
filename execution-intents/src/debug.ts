@@ -3,7 +3,7 @@ async function main() {
     const res = await fetch(`${BASE_URL}/v1/auth/token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: "enterprise-test@1claw.xyz", password: "Demo1claw!seed" }),
+        body: JSON.stringify({ email: "enterprise-test@1claw.co", password: "Demo1claw!seed" }),
     });
     const { access_token } = await res.json() as { access_token: string };
 
