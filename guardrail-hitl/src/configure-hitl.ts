@@ -6,6 +6,7 @@
 
 import { createClient } from "@1claw/sdk";
 
+const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.co";
 const API_KEY = process.env.ONECLAW_API_KEY;
 const AGENT_ID = process.argv[2];
 
@@ -14,7 +15,7 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-const client = createClient({ apiKey: API_KEY });
+const client = createClient({ baseUrl: BASE_URL, apiKey: API_KEY });
 
 const txApprovalPolicy = {
   require_above_native: { ethereum: "0.1", base: "0.05" },

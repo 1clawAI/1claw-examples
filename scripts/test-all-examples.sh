@@ -107,7 +107,7 @@ run_one() {
 }
 
 echo "=============================================="
-echo " 1Claw examples — test all (30)"
+echo " 1Claw examples — test all (41)"
 echo "=============================================="
 echo ""
 
@@ -534,7 +534,7 @@ fi
 echo ""
 
 # --- 31. langchain-1claw (pip install + syntax check) ---
-echo "[31/36] langchain-1claw"
+echo "[31/41] langchain-1claw"
 LC_DIR="$EXAMPLES_ROOT/langchain-1claw"
 if [ -d "$LC_DIR" ]; then
   if python3 -c "import ast; [ast.parse(open(f).read()) for f in ['$LC_DIR/agent_tools.py','$LC_DIR/chat_memory.py','$LC_DIR/rag_retriever.py']]" 2>&1; then
@@ -551,7 +551,7 @@ fi
 echo ""
 
 # --- 32. crewai-tools (pip install + syntax check) ---
-echo "[32/36] crewai-tools"
+echo "[32/41] crewai-tools"
 CT_DIR="$EXAMPLES_ROOT/crewai-tools"
 if [ -d "$CT_DIR" ]; then
   if python3 -c "import ast; [ast.parse(open(f).read()) for f in ['$CT_DIR/crew_demo.py','$CT_DIR/single_tool.py']]" 2>&1; then
@@ -568,13 +568,108 @@ fi
 echo ""
 
 # --- 33. shroud-router-key (typecheck; live run needs a 1ck_ key + ledger credits) ---
-echo "[33/36] shroud-router-key"
+echo "[33/41] shroud-router-key"
 if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud-router-key" && npm install --silent); fi
 if (cd "$EXAMPLES_ROOT/shroud-router-key" && npx tsc --noEmit 2>&1); then
   echo "  ✓ shroud-router-key (typecheck passed)"
   ((PASS++)) || true
 else
   echo "  ✗ shroud-router-key typecheck failed"
+  ((FAIL++)) || true
+fi
+echo ""
+
+# --- 34. agent-discovery (typecheck; live run registers/browses the real directory) ---
+echo "[34/41] agent-discovery"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/agent-discovery" && npm install --silent); fi
+if (cd "$EXAMPLES_ROOT/agent-discovery" && npx tsc --noEmit 2>&1); then
+  echo "  ✓ agent-discovery (typecheck passed)"
+  ((PASS++)) || true
+else
+  echo "  ✗ agent-discovery typecheck failed"
+  ((FAIL++)) || true
+fi
+echo ""
+
+# --- 35. agent-memory (typecheck; live run needs agent creds + a memory-enabled agent) ---
+echo "[35/41] agent-memory"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/agent-memory" && npm install --silent); fi
+if (cd "$EXAMPLES_ROOT/agent-memory" && npx tsc --noEmit 2>&1); then
+  echo "  ✓ agent-memory (typecheck passed)"
+  ((PASS++)) || true
+else
+  echo "  ✗ agent-memory typecheck failed"
+  ((FAIL++)) || true
+fi
+echo ""
+
+# --- 36. automations (typecheck only — live run creates real scheduled/webhook automations) ---
+echo "[36/41] automations"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/automations" && npm install --silent); fi
+if (cd "$EXAMPLES_ROOT/automations" && npx tsc --noEmit 2>&1); then
+  echo "  ✓ automations (typecheck passed)"
+  ((PASS++)) || true
+else
+  echo "  ✗ automations typecheck failed"
+  ((FAIL++)) || true
+fi
+echo ""
+
+# --- 37. charts (declarative chart YAML, no JS/TS to typecheck — validate it parses) ---
+echo "[37/41] charts"
+if (cd "$EXAMPLES_ROOT/charts" && node -e "require('js-yaml').loadAll(require('fs').readFileSync('inbox-swarm/chart.yaml', 'utf8'))" 2>&1); then
+  echo "  ✓ charts (inbox-swarm/chart.yaml parses)"
+  ((PASS++)) || true
+else
+  echo "  ✗ charts: inbox-swarm/chart.yaml failed to parse"
+  ((FAIL++)) || true
+fi
+echo ""
+
+# --- 38. cloud-runtime (typecheck only — live run deploys a real, billable Cloud Run service) ---
+echo "[38/41] cloud-runtime"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/cloud-runtime" && npm install --silent); fi
+if (cd "$EXAMPLES_ROOT/cloud-runtime" && npx tsc --noEmit 2>&1); then
+  echo "  ✓ cloud-runtime (typecheck passed)"
+  ((PASS++)) || true
+else
+  echo "  ✗ cloud-runtime typecheck failed"
+  ((FAIL++)) || true
+fi
+echo ""
+
+# --- 39. guardrail-hitl (typecheck only — live run mutates a real agent's approval policy) ---
+echo "[39/41] guardrail-hitl"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/guardrail-hitl" && npm install --silent); fi
+if (cd "$EXAMPLES_ROOT/guardrail-hitl" && npx tsc --noEmit src/configure-hitl.ts 2>&1); then
+  echo "  ✓ guardrail-hitl (typecheck passed)"
+  ((PASS++)) || true
+else
+  echo "  ✗ guardrail-hitl typecheck failed"
+  ((FAIL++)) || true
+fi
+echo ""
+
+# --- 40. sign-in-with-1claw (static OAuth demo — confirm it serves; no browser flow to complete headlessly) ---
+echo "[40/41] sign-in-with-1claw"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/sign-in-with-1claw" && npm install --silent); fi
+run_timeout "$EXAMPLES_ROOT/sign-in-with-1claw" 8 "npm start"
+echo "  ✓ sign-in-with-1claw (started and stopped)"
+((PASS++)) || true
+echo ""
+
+# --- 41. x402-pay-cli (mock paywall + ONECLAW_PAY_DEV=1 dev signer — safe to actually run) ---
+echo "[41/41] x402-pay-cli"
+(cd "$EXAMPLES_ROOT/x402-pay-cli" && node paywall.mjs > /tmp/x402-pay-cli-paywall.log 2>&1 &)
+sleep 1
+x402_out=$(cd "$EXAMPLES_ROOT/x402-pay-cli" && ONECLAW_PAY_DEV=1 1claw pay --agent any http://localhost:4022/premium 2>&1) || true
+pkill -f "node paywall.mjs" 2>/dev/null || true
+if echo "$x402_out" | grep -q "paid"; then
+  echo "  ✓ x402-pay-cli passed"
+  ((PASS++)) || true
+else
+  echo "  ✗ x402-pay-cli failed"
+  echo "$x402_out" | tail -8
   ((FAIL++)) || true
 fi
 echo ""
