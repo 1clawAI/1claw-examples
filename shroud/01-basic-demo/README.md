@@ -141,6 +141,6 @@ Use **sign-only** when you want Shroud to sign the transaction but **not** broad
 
 ## Next steps
 
-- [Basic example](../basic/) — Vault, secrets, billing with the SDK
-- [Transaction simulation](../tx-simulation/) — Full Intents API + guardrails in a chat UI
+- [Basic example](../../basic/) — Vault, secrets, billing with the SDK
+- [Transaction simulation](../../tx-simulation/) — Full Intents API + guardrails in a chat UI
 - [Shroud ops](https://github.com/1clawAI/shroud) — Deployment and operations

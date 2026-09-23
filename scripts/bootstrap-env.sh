@@ -61,9 +61,10 @@ MANIFEST=(
   "nextjs-agent-secret|.env.local.example|.env.local"
   "non-evm-keys|.env.example|.env"
   "platform-connect|.env.example|.env"
-  "shroud-demo|.env.example|.env"
-  "shroud-llm|.env.example|.env"
-  "shroud-security|.env.example|.env"
+  "shroud/01-basic-demo|.env.example|.env"
+  "shroud/02-llm-billing|.env.example|.env"
+  "shroud/03-router-key|.env.example|.env"
+  "shroud/04-security-offline|.env.example|.env"
   "treasury-wallets|.env.example|.env"
   "tx-simulation|.env.example|.env"
   "x402-payments|.env.example|.env"
@@ -126,6 +127,6 @@ else
 fi
 if [[ -n "$FILTER" && "$copied" -eq 0 && "$skipped" -eq 0 && "$missing_tpl" -eq 0 ]]; then
   echo "No matching example: $FILTER" >&2
-  echo "Try one of: agentic-tx ampersend-x402 anthropic-wif arc-stablecoin bankr-key-vending basic evm-signing execution-intents fastmcp-tool-server google-a2a intents-layers intents-quick jwt-ttl-defense langchain-agent local-inspect logos-chat mpc-vault multi-chain-keys multichain-agent nextjs-agent-secret non-evm-keys payment-cards platform-connect python-sdk shroud-demo shroud-llm shroud-security treasury-wallets tx-simulation x402-payments" >&2
+  echo "Try one of: agentic-tx ampersend-x402 anthropic-wif arc-stablecoin bankr-key-vending basic evm-signing execution-intents fastmcp-tool-server google-a2a intents-layers intents-quick jwt-ttl-defense langchain-agent local-inspect logos-chat mpc-vault multi-chain-keys multichain-agent nextjs-agent-secret non-evm-keys payment-cards platform-connect python-sdk shroud/01-basic-demo shroud/02-llm-billing shroud/03-router-key shroud/04-security-offline treasury-wallets tx-simulation x402-payments" >&2
   exit 1
 fi

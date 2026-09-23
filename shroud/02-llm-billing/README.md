@@ -20,7 +20,7 @@ From the repo root: `cd examples && npm run bootstrap` copies `.env.example` →
 
 - Confirm your org has **LLM Token Billing** enabled and your agent JWT includes `llm_token_billing` and `stripe_customer_id`
 - Send **OpenAI**, **Anthropic**, and **Google (Gemini)** requests through **Shroud** so traffic can be metered via Stripe AI Gateway when billing is on (no provider keys on the client)
-- Use the same Shroud LLM entrypoints as [shroud-demo](../shroud-demo/) but with a focus on billing claims and multi-provider coverage
+- Use the same Shroud LLM entrypoints as [01-basic-demo](../01-basic-demo/) but with a focus on billing claims and multi-provider coverage
 
 ## Prerequisites
 
@@ -98,4 +98,4 @@ Use any org where you have enabled **LLM Token Billing** (e.g. a staging org or 
 - **0** — Success, or missing agent credentials (skipped for CI).
 - **1** — Agent token exchange failed, JWT decode failed, or any provider call failed (non-401, or 401 when billing is on).
 
-See also **[shroud-demo](../shroud-demo/)** for health, Intents API, and LLM proxy without focusing on billing claims.
+See also **[01-basic-demo](../01-basic-demo/)** for health, Intents API, and LLM proxy without focusing on billing claims.

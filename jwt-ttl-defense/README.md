@@ -131,6 +131,6 @@ The exfiltration path — in-process `EventEmitter` — stands in for a Discord 
 
 ## Next steps
 
-- [shroud-security](../shroud-security/) — Shroud threat detectors that *prevent* a prompt injection from reaching the agent in the first place.
+- [shroud/04-security-offline](../shroud/04-security-offline/) — Shroud threat detectors that *prevent* a prompt injection from reaching the agent in the first place.
 - [basic / intents-api](../basic/src/intents-api.ts) — Alternative design: never give the agent the raw key, proxy the signing instead.
 - [1Claw docs](https://docs.1claw.co) — JWT scopes, policies, token revocation, audit log.

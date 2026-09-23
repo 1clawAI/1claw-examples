@@ -129,4 +129,4 @@ await client.agents.update(agentId, {
 
 - [`intents-quick`](../intents-quick/) — Transaction signing via Intents API
 - [`intents-layers`](../intents-layers/) — Multi-chain transaction guardrails
-- [`shroud-demo`](../shroud-demo/) — Shroud LLM proxy with threat detection
+- [`shroud/01-basic-demo`](../shroud/01-basic-demo/) — Shroud LLM proxy with threat detection

@@ -186,20 +186,20 @@ else
 fi
 echo ""
 
-# --- 6. shroud-demo ---
-echo "[7/30] shroud-demo"
-if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud-demo" && npm install --silent); fi
-out=$(cd "$EXAMPLES_ROOT/shroud-demo" && npm start 2>&1) || true
+# --- 6. shroud/01-basic-demo ---
+echo "[7/30] shroud/01-basic-demo"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud/01-basic-demo" && npm install --silent); fi
+out=$(cd "$EXAMPLES_ROOT/shroud/01-basic-demo" && npm start 2>&1) || true
 if echo "$out" | grep -q "ONECLAW_\|Error\|error\|failed"; then
   if echo "$out" | grep -q "Set ONECLAW_\|missing\|required"; then
-    echo "  ○ shroud-demo skipped (missing env; check .env)"
+    echo "  ○ shroud/01-basic-demo skipped (missing env; check .env)"
     ((PASS++)) || true
   else
-    echo "  ✓ shroud-demo (run completed; check output above)"
+    echo "  ✓ shroud/01-basic-demo (run completed; check output above)"
     ((PASS++)) || true
   fi
 else
-  echo "  ✓ shroud-demo passed"
+  echo "  ✓ shroud/01-basic-demo passed"
   ((PASS++)) || true
 fi
 echo ""
@@ -257,35 +257,35 @@ else
 fi
 echo ""
 
-# --- 10. shroud-security ---
-echo "[11/30] shroud-security"
-if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud-security" && npm install --silent); fi
-if (cd "$EXAMPLES_ROOT/shroud-security" && npx tsc --noEmit 2>&1); then
-  echo "  ✓ shroud-security (typecheck passed)"
+# --- 10. shroud/04-security-offline ---
+echo "[11/30] shroud/04-security-offline"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud/04-security-offline" && npm install --silent); fi
+if (cd "$EXAMPLES_ROOT/shroud/04-security-offline" && npx tsc --noEmit 2>&1); then
+  echo "  ✓ shroud/04-security-offline (typecheck passed)"
   ((PASS++)) || true
 else
-  echo "  ✗ shroud-security typecheck failed"
+  echo "  ✗ shroud/04-security-offline typecheck failed"
   ((FAIL++)) || true
 fi
 echo ""
 
-# --- 12. shroud-llm (LLM Token Billing + Shroud; skips without agent creds) ---
-echo "[12/30] shroud-llm"
-if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud-llm" && npm install --silent); fi
-[ -f "$EXAMPLES_ROOT/shroud-llm/.env" ] || cp "$EXAMPLES_ROOT/shroud-llm/.env.example" "$EXAMPLES_ROOT/shroud-llm/.env"
-out=$(cd "$EXAMPLES_ROOT/shroud-llm" && npm start 2>&1) || true
+# --- 12. shroud/02-llm-billing (LLM Token Billing + Shroud; skips without agent creds) ---
+echo "[12/30] shroud/02-llm-billing"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud/02-llm-billing" && npm install --silent); fi
+[ -f "$EXAMPLES_ROOT/shroud/02-llm-billing/.env" ] || cp "$EXAMPLES_ROOT/shroud/02-llm-billing/.env.example" "$EXAMPLES_ROOT/shroud/02-llm-billing/.env"
+out=$(cd "$EXAMPLES_ROOT/shroud/02-llm-billing" && npm start 2>&1) || true
 if echo "$out" | grep -q "Set ONECLAW_AGENT_ID"; then
-  echo "  ○ shroud-llm skipped (no agent creds in .env — see examples/shroud-llm/README.md)"
+  echo "  ○ shroud/02-llm-billing skipped (no agent creds in .env — see examples/shroud/02-llm-billing/README.md)"
   ((PASS++)) || true
 elif echo "$out" | grep -q "Agent token exchange failed\|Could not decode agent JWT"; then
-  echo "  ○ shroud-llm skipped (agent token exchange failed — check ONECLAW_AGENT_ID / ONECLAW_AGENT_API_KEY)"
+  echo "  ○ shroud/02-llm-billing skipped (agent token exchange failed — check ONECLAW_AGENT_ID / ONECLAW_AGENT_API_KEY)"
   ((PASS++)) || true
 elif echo "$out" | grep -q "\[FAIL\]"; then
-  echo "  ✗ shroud-llm failed"
+  echo "  ✗ shroud/02-llm-billing failed"
   echo "$out" | tail -12
   ((FAIL++)) || true
 else
-  echo "  ✓ shroud-llm passed (or soft-skip: billing claims / 401 key)"
+  echo "  ✓ shroud/02-llm-billing passed (or soft-skip: billing claims / 401 key)"
   ((PASS++)) || true
 fi
 echo ""
@@ -567,14 +567,14 @@ else
 fi
 echo ""
 
-# --- 33. shroud-router-key (typecheck; live run needs a 1ck_ key + ledger credits) ---
-echo "[33/41] shroud-router-key"
-if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud-router-key" && npm install --silent); fi
-if (cd "$EXAMPLES_ROOT/shroud-router-key" && npx tsc --noEmit 2>&1); then
-  echo "  ✓ shroud-router-key (typecheck passed)"
+# --- 33. shroud/03-router-key (typecheck; live run needs a 1ck_ key + ledger credits) ---
+echo "[33/41] shroud/03-router-key"
+if [ "$SKIP" != "1" ]; then (cd "$EXAMPLES_ROOT/shroud/03-router-key" && npm install --silent); fi
+if (cd "$EXAMPLES_ROOT/shroud/03-router-key" && npx tsc --noEmit 2>&1); then
+  echo "  ✓ shroud/03-router-key (typecheck passed)"
   ((PASS++)) || true
 else
-  echo "  ✗ shroud-router-key typecheck failed"
+  echo "  ✗ shroud/03-router-key typecheck failed"
   ((FAIL++)) || true
 fi
 echo ""

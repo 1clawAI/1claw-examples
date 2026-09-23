@@ -2,7 +2,7 @@
 
 > **Reference only** — these examples are for educational and demo purposes. They are not production-ready and may contain hardcoded values, skip error handling, or use development-only configurations. Always review and adapt for your own security requirements.
 
-Thirty-seven example applications demonstrating the [1Claw](https://1claw.co) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
+Forty-one example applications demonstrating the [1Claw](https://1claw.co) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
 
 ## Quick reference
 
@@ -15,11 +15,8 @@ Thirty-seven example applications demonstrating the [1Claw](https://1claw.co) SD
 | [nextjs-agent-secret](./nextjs-agent-secret/) | Intermediate | 5 min  | AI chat app (Claude) accesses vault secrets with approval gates                            |
 | [google-a2a](./google-a2a/)                   | Intermediate | 10 min | Two agents communicate via Google A2A protocol + 1Claw vaults (includes ADK demo)          |
 | [tx-simulation](./tx-simulation/)             | Intermediate | 10 min | AI agent signs on-chain transactions with guardrails and Tenderly simulation               |
-| [shroud-demo](./shroud-demo/)                 | Intermediate | 5 min  | Shroud TEE proxy: health, agent auth, Intents API, LLM proxy (key from Vault or header)    |
-| [shroud-llm](./shroud-llm/)                   | Intermediate | 5 min  | Shroud + **LLM Token Billing**: JWT claims + **OpenAI, Anthropic, Google** via Stripe (or direct keys if billing off) |
+| [shroud](./shroud/)                           | Intermediate | 5 min  | Shroud TEE proxy, 4 scenarios: basic demo (health/Intents/LLM), LLM Token Billing, router-key auth (unmodified OpenAI SDK), and offline threat detection |
 | [local-inspect](./local-inspect/)             | Beginner     | 2 min  | Detect prompt injection, PII, and threats — no account needed, runs offline |
-| [shroud-security](./shroud-security/)         | Intermediate | 5 min  | Shroud threat detection: Unicode, command injection, social engineering, encoding, network |
-| [shroud-router-key](./shroud-router-key/)     | Beginner     | 3 min  | Mint an `sk-shroud-v1` router key, stream through the gateway with the **unmodified OpenAI SDK**, revoke |
 | [logos-chat](./logos-chat/)                    | Intermediate | 10 min | E2E encrypted agent-to-agent chat over Logos/Waku with AI auto-chat via Shroud              |
 | [ampersend-x402](./ampersend-x402/)           | Advanced     | 10 min | x402 micropayments via Ampersend — MCP/HTTP clients, hybrid billing, paywall server        |
 | [x402-pay-cli](./x402-pay-cli/)               | Beginner     | 2 min  | Mock x402 paywall for `1claw pay` — runs offline; `ONECLAW_PAY_DEV=1` needs no vault or funds |
@@ -48,7 +45,7 @@ Thirty-seven example applications demonstrating the [1Claw](https://1claw.co) SD
 | [crewai-tools](./crewai-tools/)               | Beginner     | 5 min  | **CrewAI (Python)**: multi-agent crew with vault, memory, signing, and automation tools (`pip install 1claw-crewai-tools`) |
 | [sign-in-with-1claw](./sign-in-with-1claw/)   | Beginner     | 5 min  | **OAuth**: "Sign in with 1Claw" flow with PKCE — plain HTML, no build step                                                 |
 
-**Shroud LLM:** Examples that hit Shroud’s OpenAI-compatible surface (`shroud-demo`, `shroud-llm`) must send **`X-Shroud-Provider`** (e.g. `openai`, `anthropic`, `google`) on chat requests; omitting it returns **400** from Shroud.
+**Shroud LLM:** Examples that hit Shroud’s OpenAI-compatible surface (`shroud/01-basic-demo`, `shroud/02-llm-billing`) must send **`X-Shroud-Provider`** (e.g. `openai`, `anthropic`, `google`) on chat requests; omitting it returns **400** from Shroud.
 
 ## Getting started
 
@@ -72,7 +69,7 @@ npm start
 
 Add `GOOGLE_API_KEY` or `OPENAI_API_KEY` for langchain-agent, `ANTHROPIC_API_KEY` for nextjs-agent-secret, and `SMART_ACCOUNT_ADDRESS` (and optional wallet key) for ampersend-x402 as needed.
 
-**Test all examples:** From the repo root, run `./examples/scripts/test-all-examples.sh`. This installs deps (unless `SKIP_INSTALL=1`), runs each example’s main script or build, and reports pass/fail (30 examples). When `ADMIN_EMAIL`/`ADMIN_PASSWORD` or `ONECLAW_TEST_*` are set in the repo root `.env`, the script mints a ephemeral `1ck_` key for the **basic** and **python-sdk** examples. CLI-style examples are run to completion or stopped after a short delay; Next.js examples are build-only. **shroud-llm** skips unless `.env` has agent credentials; **shroud-router-key** is typecheck-only in the aggregate script (a live run mints a router key and needs ledger credits for the $0.005 inspection fee); use an org with LLM Token Billing enabled for full JWT checks. **mpc-vault**, **payment-cards**, and **execution-intents** are typecheck-only in the aggregate script (live runs need Pro+ keys and org settings). **intents-layers** is typecheck-only in CI; run `npm start` locally for the narrative + optional live `signTransaction`. **multi-chain-keys**, **evm-signing**, **agentic-tx**, **non-evm-keys**, **treasury-wallets**, **arc-stablecoin**, and **bankr-key-vending** are typecheck-only in CI (live runs need a `1ck_` key; Bankr lease also needs `BANKR_PARTNER_KEY` on Vault for full vending).
+**Test all examples:** From the repo root, run `./examples/scripts/test-all-examples.sh`. This installs deps (unless `SKIP_INSTALL=1`), runs each example’s main script or build, and reports pass/fail (30 examples). When `ADMIN_EMAIL`/`ADMIN_PASSWORD` or `ONECLAW_TEST_*` are set in the repo root `.env`, the script mints a ephemeral `1ck_` key for the **basic** and **python-sdk** examples. CLI-style examples are run to completion or stopped after a short delay; Next.js examples are build-only. **shroud/02-llm-billing** skips unless `.env` has agent credentials; **shroud/03-router-key** is typecheck-only in the aggregate script (a live run mints a router key and needs ledger credits for the $0.005 inspection fee); use an org with LLM Token Billing enabled for full JWT checks. **mpc-vault**, **payment-cards**, and **execution-intents** are typecheck-only in the aggregate script (live runs need Pro+ keys and org settings). **intents-layers** is typecheck-only in CI; run `npm start` locally for the narrative + optional live `signTransaction`. **multi-chain-keys**, **evm-signing**, **agentic-tx**, **non-evm-keys**, **treasury-wallets**, **arc-stablecoin**, and **bankr-key-vending** are typecheck-only in CI (live runs need a `1ck_` key; Bankr lease also needs `BANKR_PARTNER_KEY` on Vault for full vending).
 
 **Cleanup:** To delete all secrets in demo accounts (except ampersend-x402, so `keys/x402-session-key` is kept), run `./scripts/cleanup-demo-secrets.sh` from the repo root.
 
@@ -122,28 +119,26 @@ If you're new to 1Claw, walk through the examples in this order:
 6. **[google-a2a](./google-a2a/)** — Multi-agent communication with vault credentials
 7. **[tx-simulation](./tx-simulation/)** — On-chain transactions with guardrails and simulation
 8. **[local-inspect](./local-inspect/)** — Detect threats in LLM output locally — no account, no network
-9. **[shroud-demo](./shroud-demo/)** — Shroud TEE proxy: health, Intents API, LLM proxy (no LLM key required if stored in Vault)
-10. **[shroud-llm](./shroud-llm/)** — Same Shroud LLM path, focused on orgs with **LLM Token Billing** (JWT claims + optional org API check)
-11. **[shroud-security](./shroud-security/)** — Shroud threat detection filters: Unicode, injection, social engineering
-12. **[logos-chat](./logos-chat/)** — E2E encrypted agent-to-agent chat over Logos/Waku
-13. **[ampersend-x402](./ampersend-x402/)** — Payments and billing integration
-14. **[x402-payments](./x402-payments/)** — Real x402 payments for all supported endpoints (EOA key in .env)
-15. **[jwt-ttl-defense](./jwt-ttl-defense/)** — Prompt-injection JWT theft contained by a 3-second TTL + scope/vault binding
-16. **[multi-chain-keys](./multi-chain-keys/)** — Provision signing keys for 6 blockchains and view derived addresses
-17. **[multichain-agent](./multichain-agent/)** — Chat UI demo: bootstrap + fund all testnets + transact via Intents API
-18. **[evm-signing](./evm-signing/)** — EIP-191, EIP-712, and all EIP-2718 transaction types
-19. **[agentic-tx](./agentic-tx/)** — Real on-chain transactions with mainnet funds and guardrails
-20. **[non-evm-keys](./non-evm-keys/)** — Non-EVM signing + broadcast (Bitcoin, Solana, XRP, Cardano, Tron)
-21. **[treasury-wallets](./treasury-wallets/)** — Generate multi-chain wallets, check balances, send
-22. **[arc-stablecoin](./arc-stablecoin/)** — Sign a USDC transfer on Arc Testnet (stablecoin-native L2)
-23. **[python-sdk](./python-sdk/)** — Python SDK: vault CRUD, secrets, billing, agent auth
-24. **[automations](./automations/)** — Schedule agents on cron or webhook triggers
-25. **[agent-memory](./agent-memory/)** — Durable and scratch memory with TTL expiry
-26. **[cloud-runtime](./cloud-runtime/)** — Deploy agents to managed cloud runtimes
-27. **[agent-discovery](./agent-discovery/)** — Make agents discoverable in the public directory
-28. **[langchain-1claw](./langchain-1claw/)** — Python LangChain: tools, persistent chat memory, RAG retriever
-29. **[crewai-tools](./crewai-tools/)** — Python CrewAI: multi-agent crews with vault, memory, and signing
-30. **[sign-in-with-1claw](./sign-in-with-1claw/)** — "Sign in with 1Claw" OAuth 2.0 + PKCE (plain HTML, no build step)
+9. **[shroud](./shroud/)** — Shroud TEE proxy, 4 scenarios: basic demo, LLM Token Billing, router-key auth, offline threat detection
+10. **[logos-chat](./logos-chat/)** — E2E encrypted agent-to-agent chat over Logos/Waku
+11. **[ampersend-x402](./ampersend-x402/)** — Payments and billing integration
+12. **[x402-payments](./x402-payments/)** — Real x402 payments for all supported endpoints (EOA key in .env)
+13. **[jwt-ttl-defense](./jwt-ttl-defense/)** — Prompt-injection JWT theft contained by a 3-second TTL + scope/vault binding
+14. **[multi-chain-keys](./multi-chain-keys/)** — Provision signing keys for 6 blockchains and view derived addresses
+15. **[multichain-agent](./multichain-agent/)** — Chat UI demo: bootstrap + fund all testnets + transact via Intents API
+16. **[evm-signing](./evm-signing/)** — EIP-191, EIP-712, and all EIP-2718 transaction types
+17. **[agentic-tx](./agentic-tx/)** — Real on-chain transactions with mainnet funds and guardrails
+18. **[non-evm-keys](./non-evm-keys/)** — Non-EVM signing + broadcast (Bitcoin, Solana, XRP, Cardano, Tron)
+19. **[treasury-wallets](./treasury-wallets/)** — Generate multi-chain wallets, check balances, send
+20. **[arc-stablecoin](./arc-stablecoin/)** — Sign a USDC transfer on Arc Testnet (stablecoin-native L2)
+21. **[python-sdk](./python-sdk/)** — Python SDK: vault CRUD, secrets, billing, agent auth
+22. **[automations](./automations/)** — Schedule agents on cron or webhook triggers
+23. **[agent-memory](./agent-memory/)** — Durable and scratch memory with TTL expiry
+24. **[cloud-runtime](./cloud-runtime/)** — Deploy agents to managed cloud runtimes
+25. **[agent-discovery](./agent-discovery/)** — Make agents discoverable in the public directory
+26. **[langchain-1claw](./langchain-1claw/)** — Python LangChain: tools, persistent chat memory, RAG retriever
+27. **[crewai-tools](./crewai-tools/)** — Python CrewAI: multi-agent crews with vault, memory, and signing
+28. **[sign-in-with-1claw](./sign-in-with-1claw/)** — "Sign in with 1Claw" OAuth 2.0 + PKCE (plain HTML, no build step)
 
 ## What you need
 
@@ -153,8 +148,8 @@ If you're new to 1Claw, walk through the examples in this order:
 | 1Claw vault + secrets       | [1claw.co](https://1claw.co) dashboard                                | All except basic (creates its own)                                                  |
 | Gemini API key              | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) (free) | langchain, google-a2a, tx-simulation                                                |
 | Anthropic API key           | [console.anthropic.com](https://console.anthropic.com)                  | nextjs-agent-secret                                                                 |
-| OpenAI API key              | [platform.openai.com](https://platform.openai.com)                      | langchain (alternative to Gemini); shroud-demo / shroud-llm (optional if key in Vault) |
-| 1Claw agent (ID + API key)  | [1claw.co](https://1claw.co) — create agent, Shroud enabled for LLM   | shroud-demo, shroud-llm, tx-simulation                                                |
+| OpenAI API key              | [platform.openai.com](https://platform.openai.com)                      | langchain (alternative to Gemini); shroud/01-basic-demo / shroud/02-llm-billing (optional if key in Vault) |
+| 1Claw agent (ID + API key)  | [1claw.co](https://1claw.co) — create agent, Shroud enabled for LLM   | shroud/01-basic-demo, shroud/02-llm-billing, tx-simulation                                                |
 | Smart account + session key | [Ampersend docs](https://docs.ampersend.ai)                             | ampersend-x402                                                                      |
 | EOA private key (Base USDC) | Generate hex key, fund with USDC on Base                                | x402-payments                                                                       |
 

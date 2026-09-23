@@ -72,4 +72,4 @@ npm start
 
 - [Intents API](https://docs.1claw.co/docs/guides/intents-api) (1Claw docs)
 - [Transaction simulation](../tx-simulation/) (Tenderly + guardrails)
-- [Shroud demo](../shroud-demo/) (TEE path for the same API surface)
+- [Shroud demo](../shroud/01-basic-demo/) (TEE path for the same API surface)

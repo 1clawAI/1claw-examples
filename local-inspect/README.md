@@ -50,5 +50,5 @@ The `inspect_content` tool is available without vault credentials.
 
 ## Next steps
 
-- [Shroud security example](../shroud-security/) — broader samples using `@1claw/mcp/security`
+- [Shroud security example](../shroud/04-security-offline/) — broader samples using `@1claw/mcp/security`
 - [1Claw MCP](https://mcp.1claw.co) — full vault tools when not in local-only mode

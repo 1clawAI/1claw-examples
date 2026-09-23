@@ -45,5 +45,5 @@ To use inspection from an MCP client without 1Claw credentials:
 
 ## Next steps
 
-- [Local inspect](../local-inspect/) — smaller focused test scripts
-- [Shroud demo](../shroud-demo/) — health, Intents API, and LLM proxy against live Shroud
+- [Local inspect](../../local-inspect/) — smaller focused test scripts
+- [01-basic-demo](../01-basic-demo/) — health, Intents API, and LLM proxy against live Shroud
