@@ -4,29 +4,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign in with 1Claw — Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #fafafa;
-      color: #111;
+      background: radial-gradient(120% 120% at 50% 30%, #101013, #050506);
+      color: #ffffff;
     }
     .card {
-      background: #fff;
+      background: #0a090b;
+      border: 1px solid #322e30;
       border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 24px rgba(0,0,0,0.4);
       padding: 48px 40px;
       max-width: 420px;
       width: 100%;
       text-align: center;
     }
     h1 { font-size: 22px; margin: 0 0 8px; }
-    p { color: #555; font-size: 14px; line-height: 1.5; margin: 0 0 28px; }
+    p { color: #a1a1aa; font-size: 14px; line-height: 1.5; margin: 0 0 28px; }
     .signin-btn {
       display: inline-flex;
       align-items: center;
@@ -39,25 +43,26 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      background: #0f0f0f;
+      background: linear-gradient(135deg, #DF171A 0%, #c4123a 45%, #990029 100%);
       color: #fff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-      transition: background 0.15s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      transition: filter 0.15s;
     }
-    .signin-btn:hover { background: #1a1a1a; }
+    .signin-btn:hover { filter: brightness(1.1); }
     .signin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .signin-btn svg { flex-shrink: 0; }
     .config-note {
       margin-top: 24px;
       padding: 12px 16px;
-      background: #f5f5f5;
+      background: #141012;
+      border: 1px solid #322e30;
       border-radius: 8px;
       font-size: 12px;
-      color: #666;
+      color: #a1a1aa;
       text-align: left;
     }
-    .config-note code { background: #e8e8e8; padding: 1px 4px; border-radius: 3px; font-size: 11px; }
-    .error { color: #d32f2f; font-size: 13px; margin-top: 12px; }
+    .config-note code { background: #1e1c1d; padding: 1px 4px; border-radius: 3px; font-size: 11px; color: #e8e6e8; }
+    .error { color: #c4123a; font-size: 13px; margin-top: 12px; }
   </style>
 </head>
 <body>

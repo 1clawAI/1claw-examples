@@ -1,8 +1,8 @@
-# 1Claw + LangChain Agent
+# 1Claw + LangChain Agent (TypeScript)
 
 > **Reference only** — not for production use. Review and adapt for your own security requirements.
 
-A LangChain agent that fetches secrets from a 1Claw vault on demand. The LLM decides when to call vault tools — listing secrets and retrieving them just-in-time. Supports **OpenAI** or **Gemini** (free tier).
+**TypeScript**, using `@1claw/sdk`. A LangChain agent that fetches secrets from a 1Claw vault on demand — vault tools only, hand-rolled or via the hosted MCP server for all 27+ tools. The LLM decides when to call vault tools — listing secrets and retrieving them just-in-time. Supports **OpenAI** or **Gemini** (free tier). If you want the Python version with the full tool suite (signing, automations, memory RAG) instead, see [`langchain-1claw`](../langchain-1claw/).
 
 ## Quick start
 

@@ -1,8 +1,10 @@
-# langchain-1claw Example
+# langchain-1claw Example (Python)
 
 > **Reference only** -- not for production use. Review and adapt for your own security requirements.
 
-Three Python scripts showing how to use [`langchain-1claw`](https://pypi.org/project/langchain-1claw/) with LangChain agents. Each one covers a different part of the package.
+**Python.** The full [`langchain-1claw`](https://pypi.org/project/langchain-1claw/) package — 11 tools (vault CRUD, encrypted memory + semantic search, blockchain signing, automations), persistent chat history, and a RAG retriever over agent memory. If you want the TypeScript version instead, see [`langchain-agent`](../langchain-agent/) (vault-only tools, OpenAI or Gemini).
+
+Three Python scripts showing how to use `langchain-1claw` with LangChain agents. Each one covers a different part of the package.
 
 ## Prerequisites
 

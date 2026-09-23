@@ -44,6 +44,11 @@ Forty-one example applications demonstrating the [1Claw](https://1claw.co) SDK, 
 | [langchain-1claw](./langchain-1claw/)         | Beginner     | 5 min  | **LangChain (Python)**: tool-calling agent, persistent chat memory, RAG retriever (`pip install langchain-1claw`) |
 | [crewai-tools](./crewai-tools/)               | Beginner     | 5 min  | **CrewAI (Python)**: multi-agent crew with vault, memory, signing, and automation tools (`pip install 1claw-crewai-tools`) |
 | [sign-in-with-1claw](./sign-in-with-1claw/)   | Beginner     | 5 min  | **OAuth**: "Sign in with 1Claw" flow with PKCE — plain HTML, no build step                                                 |
+| [guardrail-hitl](./guardrail-hitl/)           | Intermediate | 5 min  | **Graduated HITL**: `tx_approval_policy`/`typed_data_policy`/`simulation_failure_policy` route edge cases to human approval |
+| [charts](./charts/)                           | Intermediate | 5 min  | **`1claw apply`**: declare a whole agent swarm in one YAML chart, diff/apply/delete by name like a mini Kubernetes          |
+| [browser-bridge](./browser-bridge/)           | Intermediate | 5 min  | **`@1claw/browser-bridge`**: agent drives a real `puppeteer-core` browser, a separate process fills the password — the agent never sees it |
+| [telegram-channel](./telegram-channel/)       | Beginner     | 5 min  | **Channels API**: register a Telegram bot, send outbound messages, read message history                                    |
+| [passkey-safe](./passkey-safe/)               | Intermediate | 10 min | **Passkey Safe**: a Gnosis Safe owned solely by your WebAuthn passkey — no private key exists anywhere                      |
 
 **Shroud LLM:** Examples that hit Shroud’s OpenAI-compatible surface (`shroud/01-basic-demo`, `shroud/02-llm-billing`) must send **`X-Shroud-Provider`** (e.g. `openai`, `anthropic`, `google`) on chat requests; omitting it returns **400** from Shroud.
 
