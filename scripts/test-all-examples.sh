@@ -486,12 +486,35 @@ echo "[29/30] python-sdk"
 PYSDK_DIR="$EXAMPLES_ROOT/python-sdk"
 if [ -d "$PYSDK_DIR" ]; then
   if [ "$SKIP" != "1" ]; then
-    (cd "$PYSDK_DIR" && python3 -m venv .venv 2>/dev/null && . .venv/bin/activate && pip install -q -r requirements.txt 2>/dev/null)
+    # Do NOT silence these. Both were `2>/dev/null`, so a failed venv creation
+    # or a failed pip install vanished and the example then failed with
+    # `ModuleNotFoundError: No module named 'dotenv'` -- which sends the reader
+    # to the example's imports instead of to the setup that did not run.
+    # Observed 2026-10-13: a half-created .venv with no `python` binary,
+    # reported as a code failure in the example.
+    pysdk_setup=$(mktemp 2>/dev/null || echo /tmp/pysdk-setup.$$)
+    if ! (cd "$PYSDK_DIR" \
+            && rm -rf .venv \
+            && python3 -m venv .venv \
+            && . .venv/bin/activate \
+            && pip install -q -r requirements.txt) >"$pysdk_setup" 2>&1; then
+      echo "  ✗ python-sdk SETUP failed (venv or pip), so the example was never run:"
+      sed 's/^/      /' "$pysdk_setup" | tail -12
+      ((FAIL++)) || true
+      PYSDK_SETUP_FAILED=1
+    fi
   fi
   ensure_live_api_key || true
   [ -f "$PYSDK_DIR/.env" ] || echo -e "ONECLAW_BASE_URL=${API_URL}\nONECLAW_API_KEY=${ONECLAW_API_KEY:-}" > "$PYSDK_DIR/.env"
   pysdk_out=$(mktemp 2>/dev/null || echo /tmp/pysdk-out.$$)
-  if (cd "$PYSDK_DIR" && . .venv/bin/activate && ONECLAW_API_KEY="${ONECLAW_API_KEY:-}" ONECLAW_BASE_URL="${API_URL}" python3 main.py >"$pysdk_out" 2>&1); then
+  # One failure per broken thing. Running anyway would count the same setup
+  # problem twice and describe it as a code problem the second time. (Guarded
+  # here rather than by blanking PYSDK_DIR: the enclosing `[ -d "$PYSDK_DIR" ]`
+  # has already passed, so an empty value would leave the `cd` in the current
+  # directory and run something unrelated.)
+  if [ "${PYSDK_SETUP_FAILED:-0}" = "1" ]; then
+    : # setup already reported; nothing to run
+  elif (cd "$PYSDK_DIR" && . .venv/bin/activate && ONECLAW_API_KEY="${ONECLAW_API_KEY:-}" ONECLAW_BASE_URL="${API_URL}" python3 main.py >"$pysdk_out" 2>&1); then
     if grep -q "All operations completed" "$pysdk_out" 2>/dev/null; then
       echo "  ✓ python-sdk passed"
       ((PASS++)) || true
