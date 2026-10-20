@@ -44,12 +44,12 @@ async function main() {
         }
 
         console.log(
-            `  ${wallet.chain.padEnd(10)} ${wallet.address}  ${balanceData!.native_balance} ${balanceData!.native_symbol}`,
+            `  ${wallet.chain.padEnd(10)} ${wallet.address}  ${balanceData!.native.balance_display} ${balanceData!.native.symbol}`,
         );
 
         if (balanceData!.tokens?.length) {
             for (const token of balanceData!.tokens) {
-                console.log(`  ${"".padEnd(10)} ${token.symbol}: ${token.balance}`);
+                console.log(`  ${"".padEnd(10)} ${token.contract_address}: ${token.balance_raw} (raw units)`);
             }
         }
     }
