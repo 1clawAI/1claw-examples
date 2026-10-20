@@ -9,7 +9,7 @@
     "browse": "npx tsx --env-file=.env browse-directory.ts"
   },
   "dependencies": {
-    "@1claw/sdk": "file:../../packages/sdk"
+    "@1claw/sdk": "^0.62.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

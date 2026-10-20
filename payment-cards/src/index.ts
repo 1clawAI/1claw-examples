@@ -11,7 +11,7 @@
  * wiring and degrades gracefully (it reports the block instead of failing).
  */
 
-import { createClient } from "@1claw/sdk";
+import { createClient, type OneclawResponse } from "@1claw/sdk";
 
 type SdkError = { status: number; detail?: string };
 
@@ -40,6 +40,22 @@ function asSdkError(err: unknown): SdkError | null {
   return typeof e.status === "number" ? e : null;
 }
 
+/**
+ * The SDK returns `{ data, error, meta }` rather than throwing. Unwrap it and
+ * throw `{ status, detail }` on error, so the status checks below can catch it.
+ */
+async function must<T>(p: Promise<OneclawResponse<T>>, what: string): Promise<T> {
+  const r = await p;
+  if (r.error) {
+    const status = r.meta?.status ?? 0;
+    throw Object.assign(new Error(`${what} → ${status}: ${r.error.detail ?? r.error.message}`), {
+      status,
+      detail: r.error.detail ?? r.error.message,
+    });
+  }
+  return r.data as T;
+}
+
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function main() {
@@ -57,28 +73,34 @@ async function main() {
   console.log("╚══════════════════════════════════════════════════════════════╝\n");
 
   const human = createClient({ baseUrl: BASE_URL, apiKey: USER_KEY });
-  await human.auth.apiKeyToken({ api_key: USER_KEY });
+  await must(human.auth.apiKeyToken({ api_key: USER_KEY }), "apiKeyToken");
   ok("Authenticated with human API key");
 
   // 1. Create (or reuse) a card-enabled agent with ordering guardrails.
   console.log("\n── 1. Card-enabled agent + guardrails ──");
   let agentId = (process.env.ONECLAW_AGENT_ID ?? "").trim();
   if (!agentId) {
-    const { data } = await human.agents.create({
-      name: `card-demo-${Date.now()}`,
-      description: "Payment Card Vault example",
-      cards_enabled: true,
-      card_max_order_usd: "100",
-      card_daily_limit_usd: "250",
-    });
+    const data = await must(
+      human.agents.create({
+        name: `card-demo-${Date.now()}`,
+        description: "Payment Card Vault example",
+        cards_enabled: true,
+        card_max_order_usd: "100",
+        card_daily_limit_usd: "250",
+      }),
+      "create agent",
+    );
     agentId = data.agent.id;
     ok(`Created agent ${agentId} (cards_enabled, max $100/order, $250/day)`);
   } else {
-    await human.agents.update(agentId, {
-      cards_enabled: true,
-      card_max_order_usd: "100",
-      card_daily_limit_usd: "250",
-    });
+    await must(
+      human.agents.update(agentId, {
+        cards_enabled: true,
+        card_max_order_usd: "100",
+        card_daily_limit_usd: "250",
+      }),
+      "update agent",
+    );
     ok(`Reusing agent ${agentId}, ensured card ordering enabled`);
   }
 
@@ -86,13 +108,16 @@ async function main() {
   console.log("\n── 2. Agent Ethereum signing key (x402 payer) ──");
   let ethAddress: string | undefined;
   try {
-    const { data } = await human.signingKeys.create(agentId, { chain: "ethereum" });
+    const data = await must(
+      human.signingKeys.create(agentId, { chain: "ethereum" }),
+      "create signing key",
+    );
     ethAddress = data.address;
     ok(`Provisioned Ethereum signing key: ${ethAddress}`);
   } catch (err) {
     const e = asSdkError(err);
     if (e?.status === 409) {
-      const { data } = await human.signingKeys.list(agentId);
+      const data = await must(human.signingKeys.list(agentId), "list signing keys");
       ethAddress = data.keys?.find((k: any) => k.chain === "ethereum")?.address;
       ok(`Ethereum signing key already present: ${ethAddress ?? "(unknown)"}`);
     } else {
@@ -111,10 +136,13 @@ async function main() {
     ? createClient({ baseUrl: BASE_URL, apiKey: agentApiKey })
     : human;
   try {
-    const { data: card } = await orderClient.cards.order(agentId, {
-      kind: "prepaid",
-      amount_usd: ORDER_AMOUNT,
-    });
+    const card = await must(
+      orderClient.cards.order(agentId, {
+        kind: "prepaid",
+        amount_usd: ORDER_AMOUNT,
+      }),
+      "order card",
+    );
     orderedCardId = card.id;
     ok(`Ordered card ${card.id} — status: ${card.status} (no PAN returned)`);
   } catch (err) {
@@ -134,7 +162,7 @@ async function main() {
     console.log("\n── 4. Poll until ready ──");
     for (let i = 0; i < 6; i++) {
       await sleep(10_000);
-      const { data: card } = await human.cards.get(orderedCardId);
+      const card = await must(human.cards.get(orderedCardId), "get card");
       note(`status: ${card.status}${card.last4 ? `, ····${card.last4}` : ""}`);
       if (card.status === "ready") {
         ok(`Card ready — ····${card.last4}, balance ${card.balance ?? "?"} ${card.currency}`);
@@ -149,7 +177,7 @@ async function main() {
 
   // 5. List cards (always masked to last4 — never a PAN).
   console.log("\n── 5. List cards (masked) ──");
-  const { data: list } = await human.cards.list();
+  const list = await must(human.cards.list(), "list cards");
   ok(`${list.cards.length} card(s) for this account`);
   for (const c of list.cards.slice(0, 5)) {
     note(`${c.kind} ${c.brand ?? ""} ····${c.last4 ?? "????"} — ${c.status}`);
@@ -159,7 +187,10 @@ async function main() {
   console.log("\n── 6. Reveal (human re-auth) ──");
   if (orderedCardId && REVEAL_PASSWORD) {
     try {
-      const { data } = await human.cards.reveal(orderedCardId, { password: REVEAL_PASSWORD });
+      const data = await must(
+        human.cards.reveal(orderedCardId, { password: REVEAL_PASSWORD }),
+        "reveal card",
+      );
       ok(`Revealed card ····${data.pan?.slice(-4) ?? "????"} (full PAN in memory only)`);
       note(data.disclaimer);
     } catch (err) {

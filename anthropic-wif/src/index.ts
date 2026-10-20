@@ -78,9 +78,6 @@ async function provisionAgent(client: OneclawClient): Promise<{
         description:
             "Anthropic WIF demo agent — federation_enabled, narrow audience allowlist.",
         auth_method: "api_key",
-        federation_enabled: true,
-        federation_audiences: [AUDIENCE],
-        federated_token_ttl_seconds: TTL_SECONDS,
     });
     if (res.error || !res.data) {
         throw new Error(
@@ -90,7 +87,18 @@ async function provisionAgent(client: OneclawClient): Promise<{
     if (!res.data.api_key) {
         throw new Error("Agent created but no API key returned.");
     }
-    return { agentId: res.data.agent.id, apiKey: res.data.api_key };
+    const agentId = res.data.agent.id;
+    // Federation is set on update, not create: POST /v1/agents rejects
+    // unknown fields, and the federation fields live on PATCH /v1/agents/{id}.
+    const upd = await client.agents.update(agentId, {
+        federation_enabled: true,
+        federation_audiences: [AUDIENCE],
+        federated_token_ttl_seconds: TTL_SECONDS,
+    });
+    if (upd.error) {
+        throw new Error(`Failed to enable federation: ${upd.error.message}`);
+    }
+    return { agentId, apiKey: res.data.api_key };
 }
 
 async function mintFederatedToken(apiKey: string): Promise<string> {

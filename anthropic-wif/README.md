@@ -4,7 +4,7 @@
 
 This example exercises the full Anthropic WIF flow with 1claw as the OIDC IdP:
 
-1. **Provision** an agent in 1claw with `federation_enabled = true`, an audience allowlist of `https://api.anthropic.com`, and a 15-minute TTL.
+1. **Provision** an agent in 1claw, then enable federation on it with `PATCH /v1/agents/{id}` (`federation_enabled = true`, an audience allowlist of `https://api.anthropic.com`, and a 15-minute TTL.
 2. **Mint** an RS256-signed federation JWT via `POST /v1/auth/federated-token`.
 3. **Decode** the JWT and assert that the `kid` resolves against `https://api.1claw.co/.well-known/jwks.json`.
 4. **Exchange** the JWT at Anthropic's `POST /v1/oauth/token` (skippable in CI via `DEMO_SKIP_ANTHROPIC=1`).

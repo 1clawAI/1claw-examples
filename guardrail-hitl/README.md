@@ -42,10 +42,15 @@ When a matching transaction is submitted, the API returns:
 }
 ```
 
-Humans approve in the dashboard **Approvals** inbox or via:
+Humans approve in the dashboard **Approvals** inbox or via the API (the
+decision is `approved` or `rejected`; a risk-tier 2 approval also needs a
+re-auth token in `X-Auth-Confirm`, purpose `approval.decide`):
 
 ```bash
-1claw approval decide <approval_id> --decision approved
+curl -X POST "https://api.1claw.co/v1/approvals/<approval_id>/decide" \
+  -H "Authorization: Bearer $ONECLAW_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"decision": "approved"}'
 ```
 
 ## Org emergency freeze

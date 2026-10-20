@@ -38,7 +38,7 @@ npm run demo
 | `ONECLAW_BASE_URL` | No | API base (default: `https://api.1claw.co`) |
 | `GITHUB_TOKEN` | No | GitHub PAT for the credential injection demo |
 | `EXEC_THEGRAPH_API_KEY` | No | The Graph Subgraph Studio key (real-service smoke: Uniswap V3 `_meta` query) |
-| `EXEC_POSTGRES_NEON` | No | Neon **connection URL** from Connect (`postgresql://…@ep-….neon.tech/…`) — not the `napi_` API key |
+| `EXEC_POSTGRES_NEON` | No | Neon **connection URL** from Connect (`postgresql://…@ep-….neon.tech/…?sslmode=verify-full`), not the `napi_` API key |
 | `OPENWEATHER_API_KEY` | No | OpenWeatherMap key for the weather demo |
 
 ## How it works
@@ -98,8 +98,8 @@ Setup-only binding creation (no smoke execute): `./scripts/bootstrap-execution-i
 |------|--------|-------------|
 | `http` | Live | REST API calls with bearer/header/query/basic credential injection |
 | `graphql` | Live | GraphQL queries with `{ query, variables, operationName }` |
-| `postgres` | Live | SQL queries via sqlx (set `read_only` guardrail for safe testing) |
-| `mysql` | Live | MySQL queries via sqlx |
+| `postgres` | Live | SQL queries via sqlx (set `read_only` guardrail for safe testing). Only `sslmode=verify-full` or `sslmode=disable` is accepted |
+| `mysql` | Live | MySQL queries via sqlx. Only `ssl-mode=VERIFY_IDENTITY` or `ssl-mode=DISABLED` is accepted |
 | `redis` | Live | Redis commands (`PING`, `GET`, …) |
 | `grpc` | Live | gRPC-JSON transcoding (Connect-style POST) |
 | `smtp` | Live | Plain TCP SMTP + AUTH PLAIN (no STARTTLS — use HTTP for TLS email APIs) |

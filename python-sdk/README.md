@@ -54,7 +54,9 @@ This will:
 2. List accessible vaults
 3. Read a secret (policy-gated)
 4. Fetch agent self-info (`/agents/me`)
-5. List recent audit events
+5. List recent audit events (with `oneclaw` 0.61.13 this step prints
+   "audit not accessible": the SDK's `audit.list()` calls `/v1/audit`, and the
+   API serves `/v1/audit/events`)
 
 ## Environment variables
 
@@ -79,8 +81,16 @@ client = create_client(api_key="ocv_...")
 
 # Context manager for automatic cleanup
 with create_client(api_key="ocv_...") as client:
-    vaults = client.vaults.list()
+    res = client.vaults.list()
+    # Calls return OneclawResponse(data, error, meta); they do not raise.
+    if res.error:
+        raise SystemExit(f"{res.meta.status}: {res.error.message}")
+    vaults = res.data["vaults"]
 ```
+
+Both scripts wrap calls in a small `unwrap()` helper that raises the typed
+error (`NotFoundError`, `AuthError`, ...) when `res.error` is set, so the
+`try`/`except` blocks catch real failures.
 
 Install from PyPI:
 

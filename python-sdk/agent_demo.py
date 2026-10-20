@@ -21,6 +21,7 @@ import sys
 from dotenv import load_dotenv
 
 from oneclaw import AuthError, NotFoundError, OneclawError, create_client
+from oneclaw.errors import error_from_response
 
 load_dotenv()
 
@@ -36,6 +37,21 @@ if not API_KEY or not API_KEY.startswith("ocv_"):
     sys.exit(1)
 
 
+def unwrap(res):
+    """Return ``res.data``, or raise the typed error.
+
+    The SDK returns ``OneclawResponse(data, error, meta)`` rather than raising,
+    so a failed call has to be checked. This turns it back into the typed
+    exception (``NotFoundError``, ``AuthError``, ...) the handlers below catch.
+    """
+    if res.error:
+        status = res.meta.status if res.meta else 0
+        raise error_from_response(
+            status, {"detail": res.error.detail or res.error.message, "type": res.error.type}
+        )
+    return res.data
+
+
 def main() -> None:
     print("Creating agent client...")
 
@@ -49,8 +65,7 @@ def main() -> None:
 
         # ── 1. List vaults ──────────────────────────────────────────
         print("\n--- Listing vaults ---")
-        vaults_res = client.vaults.list()
-        vaults = vaults_res.data.get("vaults", [])
+        vaults = (unwrap(client.vaults.list()) or {}).get("vaults", [])
         print(f"  Accessible vaults: {len(vaults)}")
         for v in vaults:
             print(f"    - {v.get('name', '?')} ({v['id'][:8]}...)")
@@ -59,11 +74,11 @@ def main() -> None:
         if VAULT_ID:
             print(f"\n--- Reading secret: {SECRET_PATH} ---")
             try:
-                secret = client.secrets.get(VAULT_ID, SECRET_PATH)
-                val = secret.data.get("value", "")
+                secret = unwrap(client.secrets.get(VAULT_ID, SECRET_PATH)) or {}
+                val = secret.get("value", "")
                 masked = val[:4] + "****" + val[-4:] if len(val) > 8 else "[short]"
                 print(f"  Value: {masked}")
-                print(f"  Type:  {secret.data.get('type', 'N/A')}")
+                print(f"  Type:  {secret.get('type', 'N/A')}")
             except NotFoundError:
                 print(f"  Secret '{SECRET_PATH}' not found in vault")
             except AuthError as e:
@@ -75,19 +90,18 @@ def main() -> None:
         if agent_id:
             print("\n--- Agent info (/agents/me) ---")
             try:
-                me = client.agents.me()
-                print(f"  Name:    {me.data.get('name', '?')}")
-                print(f"  Active:  {me.data.get('is_active', '?')}")
-                print(f"  Shroud:  {me.data.get('shroud_enabled', False)}")
-                print(f"  Intents: {me.data.get('intents_api_enabled', False)}")
+                me = unwrap(client.agents.me()) or {}
+                print(f"  Name:    {me.get('name', '?')}")
+                print(f"  Active:  {me.get('is_active', '?')}")
+                print(f"  Shroud:  {me.get('shroud_enabled', False)}")
+                print(f"  Intents: {me.get('intents_api_enabled', False)}")
             except OneclawError as e:
                 print(f"  Could not fetch agent info: {e}")
 
         # ── 4. Recent audit events ──────────────────────────────────
         print("\n--- Recent audit events ---")
         try:
-            audit = client.audit.list(limit=5)
-            events = audit.data.get("events", [])
+            events = (unwrap(client.audit.list(limit=5)) or {}).get("events", [])
             for ev in events:
                 action = ev.get("action", "?")
                 resource = ev.get("resource_type", "?")

@@ -5,7 +5,7 @@
  * list/revoke, and optional Shroud routing (X-Shroud-Provider: bankr).
  */
 
-import { createClient } from "@1claw/sdk";
+import { createClient, type OneclawResponse } from "@1claw/sdk";
 
 type SdkError = { status: number; detail?: string };
 
@@ -49,6 +49,23 @@ function isNotConfigured(err: unknown): boolean {
     e?.status === 400 &&
     (e.detail?.toLowerCase().includes("not configured") ?? false)
   );
+}
+
+/**
+ * The SDK returns `{ data, error, meta }` rather than throwing. Unwrap it and
+ * throw `{ status, detail }` on error, so the 403 / "not configured" checks
+ * below can catch it.
+ */
+async function must<T>(p: Promise<OneclawResponse<T>>, what: string): Promise<T> {
+  const r = await p;
+  if (r.error) {
+    const status = r.meta?.status ?? 0;
+    throw Object.assign(new Error(`${what} → ${status}: ${r.error.detail ?? r.error.message}`), {
+      status,
+      detail: r.error.detail ?? r.error.message,
+    });
+  }
+  return r.data as T;
 }
 
 async function exchangeAgentJwt(agentId: string, apiKey: string): Promise<string> {
@@ -111,7 +128,7 @@ async function main() {
   console.log("╚══════════════════════════════════════════════════════════════╝\n");
 
   const human = createClient({ baseUrl: BASE_URL, apiKey: USER_KEY });
-  await human.auth.apiKeyToken({ api_key: USER_KEY });
+  await must(human.auth.apiKeyToken({ api_key: USER_KEY }), "apiKeyToken");
   ok("Authenticated with human API key");
 
   let agentId = (process.env.ONECLAW_AGENT_ID ?? "").trim();
@@ -122,13 +139,16 @@ async function main() {
 
   if (!agentId || !agentApiKey || agentApiKey.includes("your_")) {
     console.log("\n── Bootstrap demo agent (shroud_enabled) ──");
-    const created = await human.agents.create({
-      name: `bankr-demo-${Date.now()}`,
-      description: "Bankr key vending example (ephemeral)",
-      shroud_enabled: true,
-    });
-    agentId = created.data.agent.id;
-    agentApiKey = created.data.api_key ?? "";
+    const created = await must(
+      human.agents.create({
+        name: `bankr-demo-${Date.now()}`,
+        description: "Bankr key vending example (ephemeral)",
+        shroud_enabled: true,
+      }),
+      "create agent",
+    );
+    agentId = created.agent.id;
+    agentApiKey = created.api_key ?? "";
     createdAgent = true;
     if (!agentApiKey) fail("create agent did not return api_key");
     ok(`Created agent ${agentId}`);
@@ -137,8 +157,8 @@ async function main() {
   }
 
   console.log("\n── Human: list active Bankr leases ──");
-  const listed = await human.agents.listBankrKeys(agentId);
-  ok(`listBankrKeys → ${listed.data.leases?.length ?? 0} active lease(s)`);
+  const listed = await must(human.agents.listBankrKeys(agentId), "listBankrKeys");
+  ok(`listBankrKeys → ${listed.leases?.length ?? 0} active lease(s)`);
 
   console.log("\n── Agent: deny-by-default (no bankr/* policy) ──");
   const agentClient = createClient({
@@ -147,7 +167,7 @@ async function main() {
     agentId,
   });
   try {
-    await agentClient.agents.leaseBankrKey(agentId, { ttl_seconds: 600 });
+    await must(agentClient.agents.leaseBankrKey(agentId, { ttl_seconds: 600 }), "agent lease");
     fail("expected 403 without bankr policy");
   } catch (err: unknown) {
     if (asSdkError(err)?.status === 403) {
@@ -158,36 +178,42 @@ async function main() {
   }
 
   console.log("\n── Human: grant least-privilege policy on __agent-keys ──");
-  const akv = await human.org.getAgentKeysVault();
-  const vaultId = akv.data.vault_id;
+  const akv = await must(human.org.getAgentKeysVault(), "getAgentKeysVault");
+  const vaultId = akv.vault_id;
   if (!vaultId) fail("org has no __agent-keys vault yet");
-  const policy = await human.access.grantAgent(vaultId, agentId, ["write"], {
-    secretPathPattern: `agents/${agentId}/bankr/*`,
-  });
-  bankrPolicyId = policy.data.id;
+  const policy = await must(
+    human.access.grantAgent(vaultId, agentId, ["write"], {
+      secretPathPattern: `agents/${agentId}/bankr/*`,
+    }),
+    "grantAgent",
+  );
+  bankrPolicyId = policy.id;
   ok(`Policy ${bankrPolicyId} on agents/${agentId}/bankr/*`);
 
-  await agentClient.auth.agentToken({ agent_id: agentId, api_key: agentApiKey });
+  await must(agentClient.auth.agentToken({ agent_id: agentId, api_key: agentApiKey }), "agentToken");
   ok("Re-exchanged agent JWT (scopes include bankr path)");
 
   console.log("\n── Agent: lease short-lived key (metadata only) ──");
   let agentLeaseOk = false;
   let agentJwtForShroud: string | undefined;
   try {
-    const lease = await agentClient.agents.leaseBankrKey(agentId, {
-      ttl_seconds: 600,
-      permissions: {
-        llm_gateway_enabled: true,
-        agent_api_enabled: false,
-        read_only: true,
-      },
-    });
-    if (lease.data.api_key) {
+    const lease = await must(
+      agentClient.agents.leaseBankrKey(agentId, {
+        ttl_seconds: 600,
+        permissions: {
+          llm_gateway_enabled: true,
+          agent_api_enabled: false,
+          read_only: true,
+        },
+      }),
+      "agent lease",
+    );
+    if (lease.api_key) {
       fail("agent lease must not include api_key (use Shroud for LLM traffic)");
     }
-    leaseIds.push(lease.data.lease_id);
+    leaseIds.push(lease.lease_id);
     agentLeaseOk = true;
-    ok(`Agent lease → ${lease.data.lease_id} (expires ${lease.data.expires_at})`);
+    ok(`Agent lease → ${lease.lease_id} (expires ${lease.expires_at})`);
     note("api_key omitted from agent response — key stored for Shroud resolution");
     agentJwtForShroud = await exchangeAgentJwt(agentId, agentApiKey);
   } catch (err) {
@@ -200,10 +226,13 @@ async function main() {
 
   console.log("\n── Human: lease (may include bk_usr_ once) ──");
   try {
-    const humanLease = await human.agents.leaseBankrKey(agentId, { ttl_seconds: 900 });
-    leaseIds.push(humanLease.data.lease_id);
-    ok(`Human lease → ${humanLease.data.lease_id}`);
-    if (humanLease.data.api_key?.startsWith("bk_usr_")) {
+    const humanLease = await must(
+      human.agents.leaseBankrKey(agentId, { ttl_seconds: 900 }),
+      "human lease",
+    );
+    leaseIds.push(humanLease.lease_id);
+    ok(`Human lease → ${humanLease.lease_id}`);
+    if (humanLease.api_key?.startsWith("bk_usr_")) {
       ok("Human response includes bk_usr_ (treat as secret — do not log)");
     } else if (agentLeaseOk) {
       note("Human lease metadata without api_key in this environment");
@@ -219,7 +248,7 @@ async function main() {
   if (leaseIds.length) {
     console.log("\n── Revoke leases (revoke-after-task pattern) ──");
     for (const id of [...new Set(leaseIds)]) {
-      await human.agents.revokeBankrKey(agentId, id);
+      await must(human.agents.revokeBankrKey(agentId, id), "revokeBankrKey");
       ok(`revokeBankrKey ${id} → 204`);
     }
   }
@@ -234,11 +263,11 @@ async function main() {
 
   console.log("\n── Cleanup ──");
   if (bankrPolicyId) {
-    await human.access.revoke(vaultId, bankrPolicyId);
+    await must(human.access.revoke(vaultId, bankrPolicyId), "revoke policy");
     ok("Revoked bankr policy");
   }
   if (createdAgent) {
-    await human.agents.delete(agentId);
+    await must(human.agents.delete(agentId), "delete agent");
     ok(`Deleted demo agent ${agentId}`);
   }
 
