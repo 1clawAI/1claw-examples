@@ -14,7 +14,7 @@
     "engine-v2": "npx tsx --env-file=.env engine-v2-automation.ts"
   },
   "dependencies": {
-    "@1claw/sdk": "^0.62.0"
+    "@1claw/sdk": "^0.63.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
