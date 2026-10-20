@@ -26,6 +26,15 @@ if (!SEND_PASSWORD) {
     process.exit(1);
 }
 
+/** "0.001" ETH -> "1000000000000000" wei, without floating point. */
+function ethToWei(eth: string): string {
+    const [whole, frac = ""] = eth.trim().split(".");
+    if (!/^\d*$/.test(whole) || !/^\d*$/.test(frac) || frac.length > 18) {
+        throw new Error(`SEND_AMOUNT must be a decimal ETH amount, got ${eth}`);
+    }
+    return (BigInt(whole || "0") * 10n ** 18n + BigInt((frac + "0".repeat(18)).slice(0, 18))).toString();
+}
+
 async function main() {
     const client = createClient({
         baseUrl: BASE_URL,
@@ -34,11 +43,12 @@ async function main() {
 
     console.log(`Sending ${SEND_AMOUNT} ETH to ${SEND_TO}...\n`);
 
+    // The API takes the amount in wei, as a decimal string.
     const { data, error } = await client.treasuryWallets.sendFromWallet(
         "ethereum",
         {
             to: SEND_TO!,
-            amount: SEND_AMOUNT,
+            value_wei: ethToWei(SEND_AMOUNT),
         },
         SEND_PASSWORD!,
     );
@@ -52,7 +62,7 @@ async function main() {
     console.log(`  Tx Hash: ${data!.tx_hash}`);
     console.log(`  From:    ${data!.from}`);
     console.log(`  To:      ${data!.to}`);
-    console.log(`  Amount:  ${data!.amount}`);
+    console.log(`  Value:   ${data!.value_wei} wei`);
     console.log(`  Chain:   ${data!.chain}`);
 }
 
