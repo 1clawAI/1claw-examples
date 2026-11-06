@@ -39,7 +39,7 @@ npm run send
 
 | Script | Description |
 |---|---|
-| `npm run setup` | Create vault + agent with `message_signing_enabled`, print the custodied address + credentials |
+| `npm run setup` | Create vault + agent with `message_signing_enabled`, provision its EVM signing key inside 1Claw, probe one `personal_sign`, print the custodied address + credentials |
 | `npm run send` | Build a `SignaSigner` backed by 1Claw `personal_sign`, send a wallet-signed SIGNA DM, print the re-verify URL |
 
 ## How it works
@@ -68,7 +68,8 @@ const signer = {
   address: AGENT_ADDRESS,
   async signMessage({ message }) {
     const { data, error } = await claw.agents.sign(AGENT_ID, {
-      intent_type: "personal_sign", chain: "base", message,
+      // personal_sign takes the message as hex bytes
+      intent_type: "personal_sign", chain: "base", message: toHex(message),
     });
     if (error) throw new Error(error.message);
     return data.signature;
@@ -80,8 +81,10 @@ const agent = new SignaAgent({ account: signer }); // no privateKey — signing 
 await agent.send(to, "signed by a key in 1Claw's HSM, posted by SIGNA");
 ```
 
-signa-agent ships `oneClawSigner(...)` that wraps this for you; this example
-shows the wiring explicitly so you can see exactly where the key boundary is.
+Use this wiring rather than signa-agent's `oneClawSigner(...)` helper: its
+defaults call `POST /v1/intents/sign` with a digest, which is not 1Claw's API
+(signing is `POST /v1/agents/{id}/sign`). The explicit version also shows
+exactly where the key boundary is.
 
 ## Learn more
 

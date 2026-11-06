@@ -6,6 +6,7 @@
  * leaves. `npm run send` then uses it to sign SIGNA messages.
  */
 import { createClient } from "@1claw/sdk";
+import { toHex } from "viem";
 
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 const API_KEY = process.env.ONECLAW_API_KEY;
@@ -60,10 +61,26 @@ async function main() {
     const upd = await client.agents.update(agent.id, { message_signing_enabled: true });
     if (upd.error) console.warn("  (could not auto-enable message signing — enable it in the dashboard)");
 
-    // ── 3. Recover the custodied address via a probe personal_sign ──────
+    // ── 3. Provision the custodied EVM key ──────────────────────────────
+    // Generated inside 1Claw; only the public key and address come back.
+    // EVM keys are provisioned under "ethereum": one key signs for every EVM
+    // network, and a sign request on "base" resolves to it.
+    console.log("\n🔑 Provisioning an EVM signing key...\n");
+    const keyResult = await client.signingKeys.create(agent.id, { chain: "ethereum" });
+    if (keyResult.error || !keyResult.data?.address) {
+        console.error("Failed to provision signing key:", keyResult.error);
+        process.exit(1);
+    }
+    const address = keyResult.data.address;
+    console.log(`  Address: ${address}`);
+
+    // ── 4. Probe: sign once as the agent, the way `npm run send` will ───
     const probe = await createClient({ baseUrl: BASE_URL, apiKey: agentApiKey, agentId: agent.id })
-        .agents.sign(agent.id, { intent_type: "personal_sign", chain: "base", message: "signa:setup-probe" });
-    const address = probe.data?.from ?? "(sign a message to reveal — see send-signed-dm.ts)";
+        .agents.sign(agent.id, { intent_type: "personal_sign", chain: "base", message: toHex("signa:setup-probe") });
+    if (probe.error) {
+        console.error("Probe personal_sign failed:", probe.error);
+        process.exit(1);
+    }
 
     console.log("\n✅ Setup complete. Add these to your .env:\n");
     console.log(`  ONECLAW_AGENT_ID=${agent.id}`);

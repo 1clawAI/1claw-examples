@@ -11,7 +11,7 @@
  */
 import { createClient } from "@1claw/sdk";
 import { SignaAgent, type SignaSigner } from "signa-agent";
-import { recoverMessageAddress } from "viem";
+import { recoverMessageAddress, toHex } from "viem";
 
 const BASE_URL = process.env.ONECLAW_BASE_URL ?? "https://api.1claw.xyz";
 const AGENT_ID = process.env.ONECLAW_AGENT_ID;
@@ -32,11 +32,18 @@ const claw = createClient({ baseUrl: BASE_URL, apiKey: AGENT_API_KEY!, agentId: 
 const signer: SignaSigner = {
     address: AGENT_ADDRESS as `0x${string}`,
     async signMessage({ message }) {
-        const preimage = typeof message === "string" ? message : message.raw;
+        // 1Claw's personal_sign takes the message as hex bytes, so encode
+        // SIGNA's UTF-8 preimage; a `raw` message is already bytes.
+        const hex =
+            typeof message === "string"
+                ? toHex(message)
+                : typeof message.raw === "string"
+                  ? message.raw
+                  : toHex(message.raw);
         const { data, error } = await claw.agents.sign(AGENT_ID!, {
             intent_type: "personal_sign",
             chain: "base",
-            message: preimage,
+            message: hex,
         });
         if (error) throw new Error(`1Claw personal_sign failed: ${error.message}`);
         return data!.signature as `0x${string}`;
@@ -47,7 +54,7 @@ const signer: SignaSigner = {
             intent_type: "typed_data",
             chain: "base",
             typed_data: typedData,
-        } as never);
+        });
         if (error) throw new Error(`1Claw typed_data sign failed: ${error.message}`);
         return data!.signature as `0x${string}`;
     },

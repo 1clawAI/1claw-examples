@@ -2,7 +2,7 @@
 
 > **Reference only** — these examples are for educational and demo purposes. They are not production-ready and may contain hardcoded values, skip error handling, or use development-only configurations. Always review and adapt for your own security requirements.
 
-Forty-one example applications demonstrating the [1Claw](https://1claw.co) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
+Forty-two example applications demonstrating the [1Claw](https://1claw.co) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
 
 ## Quick reference
 

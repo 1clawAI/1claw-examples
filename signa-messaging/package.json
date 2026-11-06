@@ -10,8 +10,8 @@
         "start": "npx tsx --env-file=.env src/setup.ts"
     },
     "dependencies": {
-        "@1claw/sdk": "^0.28.0",
-        "signa-agent": "^0.12.0",
+        "@1claw/sdk": "^0.63.0",
+        "signa-agent": "^0.14.0",
         "viem": "^2.21.0"
     },
     "devDependencies": {
