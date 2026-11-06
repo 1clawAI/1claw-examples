@@ -71,6 +71,7 @@ MANIFEST=(
   "execution-intents|.env.example|.env"
   "payment-cards|.env.example|.env"
   "python-sdk|.env.example|.env"
+  "signa-messaging|.env.example|.env"
 )
 copied=0
 skipped=0

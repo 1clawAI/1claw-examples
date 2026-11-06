@@ -2,7 +2,7 @@
 
 > **Reference only** — these examples are for educational and demo purposes. They are not production-ready and may contain hardcoded values, skip error handling, or use development-only configurations. Always review and adapt for your own security requirements.
 
-Forty-one example applications demonstrating the [1Claw](https://1claw.co) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
+Forty-two example applications demonstrating the [1Claw](https://1claw.co) SDK, API, and MCP server in agentic workflows. Each is self-contained with a step-by-step walkthrough you can run in 5–10 minutes.
 
 ## Quick reference
 
@@ -49,6 +49,7 @@ Forty-one example applications demonstrating the [1Claw](https://1claw.co) SDK, 
 | [browser-bridge](./browser-bridge/)           | Intermediate | 5 min  | **`@1claw/browser-bridge`**: agent drives a real `puppeteer-core` browser, a separate process fills the password — the agent never sees it |
 | [telegram-channel](./telegram-channel/)       | Beginner     | 5 min  | **Channels API**: register a Telegram bot, send outbound messages, read message history                                    |
 | [passkey-safe](./passkey-safe/)               | Intermediate | 10 min | **Passkey Safe**: a Gnosis Safe owned solely by your WebAuthn passkey — no private key exists anywhere                      |
+| [signa-messaging](./signa-messaging/)         | Beginner     | 5 min  | **SIGNA**: a custodied key signs wallet-signed agent DMs on Base — `personal_sign` → SignaAgent, re-verifiable, key never on disk |
 
 **Shroud LLM:** Examples that hit Shroud’s OpenAI-compatible surface (`shroud/01-basic-demo`, `shroud/02-llm-billing`) must send **`X-Shroud-Provider`** (e.g. `openai`, `anthropic`, `google`) on chat requests; omitting it returns **400** from Shroud.
 
