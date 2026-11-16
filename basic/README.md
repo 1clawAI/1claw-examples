@@ -86,7 +86,7 @@ Secret: OPENAI_KEY
 
 --- Billing usage ---
   Tier: free
-  Free limit: 1000/month
+  Free limit: 100/month
   Used this month: 5
 
 --- Cleaning up ---
